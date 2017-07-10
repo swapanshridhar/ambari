@@ -1343,7 +1343,7 @@ public class RequestResourceProviderTest {
     ExecuteActionRequest capturedRequest = actionRequest.getValue();
     RequestOperationLevel level = capturedRequest.getOperationLevel();
     Assert.assertEquals(level.getLevel().toString(), "HostComponent");
-    Assert.assertEquals(level.getClusterName(), c1);
+    Assert.assertEquals(level.getClusterId(), c1);
     Assert.assertEquals(level.getServiceName(), service_id);
     Assert.assertEquals(level.getHostComponentName(), hostcomponent_id);
     Assert.assertEquals(level.getHostName(), host_name);

@@ -1,0 +1,37 @@
+***************
+*** 62,78 ****
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster id
+     * @param serviceName service id
+     */
+-   public ComponentService(ApiVersion apiVersion, String clusterName, String serviceName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+      m_serviceName = serviceName;
+    }
+  
+    /**
+-    * Handles GET: /clusters/{clusterID}/services/{serviceID}/components/{componentID}
+     * Get a specific component.
+     *
+     * @param headers       http headers
+--- 62,78 ----
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster id
+     * @param serviceName service id
+     */
++   public ComponentService(ApiVersion apiVersion, Long clusterId, String serviceName) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+      m_serviceName = serviceName;
+    }
+  
+    /**
++    * Handles GET: /clusters/{clusterId}/services/{serviceID}/components/{componentID}
+     * Get a specific component.
+     *
+     * @param headers       http headers

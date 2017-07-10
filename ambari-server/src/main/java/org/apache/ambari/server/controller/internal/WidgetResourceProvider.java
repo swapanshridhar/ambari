@@ -45,6 +45,7 @@ import org.apache.ambari.server.orm.entities.WidgetEntity;
 import org.apache.ambari.server.orm.entities.WidgetLayoutUserWidgetEntity;
 import org.apache.ambari.server.security.authorization.AmbariGrantedAuthority;
 import org.apache.ambari.server.security.authorization.AuthorizationHelper;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.access.AccessDeniedException;
@@ -63,17 +64,17 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
 
   // ----- Property ID constants ---------------------------------------------
 
-  public static final String WIDGET_ID_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "id");
-  public static final String WIDGET_CLUSTER_NAME_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "cluster_name");
-  public static final String WIDGET_WIDGET_NAME_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "widget_name");
-  public static final String WIDGET_WIDGET_TYPE_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "widget_type");
-  public static final String WIDGET_TIME_CREATED_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "time_created");
-  public static final String WIDGET_AUTHOR_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "author");
-  public static final String WIDGET_DESCRIPTION_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "description");
-  public static final String WIDGET_SCOPE_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "scope");
-  public static final String WIDGET_METRICS_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "metrics");
-  public static final String WIDGET_VALUES_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "values");
-  public static final String WIDGET_PROPERTIES_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetInfo", "properties");
+  public static final String WIDGET_ID_PROPERTY_ID                = PropertyHelper.getPropertyId("WidgetInfo", "id");
+  public static final String WIDGET_CLUSTER_ID_PROPERTY_ID        = PropertyHelper.getPropertyId("WidgetInfo", "cluster_id");
+  public static final String WIDGET_WIDGET_NAME_PROPERTY_ID       = PropertyHelper.getPropertyId("WidgetInfo", "widget_name");
+  public static final String WIDGET_WIDGET_TYPE_PROPERTY_ID       = PropertyHelper.getPropertyId("WidgetInfo", "widget_type");
+  public static final String WIDGET_TIME_CREATED_PROPERTY_ID      = PropertyHelper.getPropertyId("WidgetInfo", "time_created");
+  public static final String WIDGET_AUTHOR_PROPERTY_ID            = PropertyHelper.getPropertyId("WidgetInfo", "author");
+  public static final String WIDGET_DESCRIPTION_PROPERTY_ID       = PropertyHelper.getPropertyId("WidgetInfo", "description");
+  public static final String WIDGET_SCOPE_PROPERTY_ID             = PropertyHelper.getPropertyId("WidgetInfo", "scope");
+  public static final String WIDGET_METRICS_PROPERTY_ID           = PropertyHelper.getPropertyId("WidgetInfo", "metrics");
+  public static final String WIDGET_VALUES_PROPERTY_ID            = PropertyHelper.getPropertyId("WidgetInfo", "values");
+  public static final String WIDGET_PROPERTIES_PROPERTY_ID        = PropertyHelper.getPropertyId("WidgetInfo", "properties");
   public enum SCOPE {
     CLUSTER,
     USER
@@ -93,7 +94,7 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
       add(WIDGET_WIDGET_NAME_PROPERTY_ID);
       add(WIDGET_WIDGET_TYPE_PROPERTY_ID);
       add(WIDGET_TIME_CREATED_PROPERTY_ID);
-      add(WIDGET_CLUSTER_NAME_PROPERTY_ID);
+      add(WIDGET_CLUSTER_ID_PROPERTY_ID);
       add(WIDGET_AUTHOR_PROPERTY_ID);
       add(WIDGET_DESCRIPTION_PROPERTY_ID);
       add(WIDGET_SCOPE_PROPERTY_ID);
@@ -107,7 +108,7 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
   public static Map<Type, String> keyPropertyIds = new HashMap<Type, String>() {
     {
       put(Type.Widget, WIDGET_ID_PROPERTY_ID);
-      put(Type.Cluster, WIDGET_CLUSTER_NAME_PROPERTY_ID);
+      put(Type.Cluster, WIDGET_CLUSTER_ID_PROPERTY_ID);
       put(Type.User, WIDGET_AUTHOR_PROPERTY_ID);
     }
   };
@@ -141,7 +142,7 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
         @Override
         public WidgetEntity invoke() throws AmbariException {
           final String[] requiredProperties = {
-              WIDGET_CLUSTER_NAME_PROPERTY_ID,
+            WIDGET_CLUSTER_ID_PROPERTY_ID,
               WIDGET_WIDGET_NAME_PROPERTY_ID,
               WIDGET_WIDGET_TYPE_PROPERTY_ID,
               WIDGET_SCOPE_PROPERTY_ID
@@ -152,7 +153,7 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
             }
           }
           final WidgetEntity entity = new WidgetEntity();
-          String clusterName = properties.get(WIDGET_CLUSTER_NAME_PROPERTY_ID).toString();
+          Long clusterId = MapUtils.parseLong(properties, WIDGET_CLUSTER_ID_PROPERTY_ID);
           String scope = properties.get(WIDGET_SCOPE_PROPERTY_ID).toString();
 
           if (!isScopeAllowedForUser(scope)) {
@@ -161,7 +162,7 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
 
           entity.setWidgetName(properties.get(WIDGET_WIDGET_NAME_PROPERTY_ID).toString());
           entity.setWidgetType(properties.get(WIDGET_WIDGET_TYPE_PROPERTY_ID).toString());
-          entity.setClusterId(getManagementController().getClusters().getCluster(clusterName).getClusterId());
+          entity.setClusterId(getManagementController().getClusters().getCluster(clusterId).getClusterId());
           entity.setScope(scope);
 
           String metrics = (properties.containsKey(WIDGET_METRICS_PROPERTY_ID)) ?
@@ -247,13 +248,13 @@ public class WidgetResourceProvider extends AbstractControllerResourceProvider {
       setResourceProperty(resource, WIDGET_VALUES_PROPERTY_ID, entity.getWidgetValues(), requestedIds);
       setResourceProperty(resource, WIDGET_PROPERTIES_PROPERTY_ID, entity.getProperties(), requestedIds);
 
-      String clusterName = null;
+      Long clusterId = null;
       try {
-        clusterName = getManagementController().getClusters().getClusterById(entity.getClusterId()).getClusterName();
+        clusterId = getManagementController().getClusters().getClusterById(entity.getClusterId()).getClusterId();
       } catch (AmbariException e) {
         throw new SystemException(e.getMessage());
       }
-      setResourceProperty(resource, WIDGET_CLUSTER_NAME_PROPERTY_ID, clusterName, requestedIds);
+      setResourceProperty(resource, WIDGET_CLUSTER_ID_PROPERTY_ID, clusterId, requestedIds);
 
       resources.add(resource);
     }

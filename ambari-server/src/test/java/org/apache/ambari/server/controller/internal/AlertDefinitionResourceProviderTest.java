@@ -154,7 +154,7 @@ public class AlertDefinitionResourceProviderTest {
    */
   private void testGetResourcesClusterPredicate(Authentication authentication, boolean expectResults) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME,
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_NAME,
         AlertDefinitionResourceProvider.ALERT_DEF_LABEL);
@@ -168,7 +168,7 @@ public class AlertDefinitionResourceProviderTest {
     expect(cluster.getResourceId()).andReturn(4L).anyTimes();
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID).equals("c1").toPredicate();
 
     expect(dao.findAll(1L)).andReturn(getMockEntities());
 
@@ -223,7 +223,7 @@ public class AlertDefinitionResourceProviderTest {
    */
   private void testGetSingleResource(Authentication authentication) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME,
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_NAME,
         AlertDefinitionResourceProvider.ALERT_DEF_LABEL,
@@ -241,7 +241,7 @@ public class AlertDefinitionResourceProviderTest {
     expect(cluster.getClusterId()).andReturn(Long.valueOf(1)).anyTimes();
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME).equals("c1")
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID).equals("c1")
           .and().property(AlertDefinitionResourceProvider.ALERT_DEF_ID).equals("1").toPredicate();
 
     expect(dao.findById(1L)).andReturn(getMockEntities().get(0));
@@ -320,7 +320,7 @@ public class AlertDefinitionResourceProviderTest {
    */
   private void testGetResourcesAssertSourceType(Authentication authentication, boolean expectResults) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME,
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_NAME,
         AlertDefinitionResourceProvider.ALERT_DEF_LABEL,
@@ -336,7 +336,7 @@ public class AlertDefinitionResourceProviderTest {
     expect(cluster.getResourceId()).andReturn(4L).anyTimes();
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID).equals("c1").toPredicate();
 
     expect(dao.findAll(1L)).andReturn(getMockEntities()).atLeastOnce();
 
@@ -366,7 +366,7 @@ public class AlertDefinitionResourceProviderTest {
     // make another request, this time without the source and ensure that no
     // source properties come back
     request = PropertyHelper.getReadRequest(
-        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME,
+        AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_ID,
         AlertDefinitionResourceProvider.ALERT_DEF_NAME);
 
@@ -439,7 +439,7 @@ public class AlertDefinitionResourceProviderTest {
     AlertDefinitionResourceProvider provider = createProvider(amc);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME, "c1");
+    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID, "c1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_INTERVAL, "1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_NAME, "my_def");
 
@@ -587,7 +587,7 @@ public class AlertDefinitionResourceProviderTest {
     MetricSource source = (MetricSource) getMockSource();
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME, "c1");
+    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID, "c1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_INTERVAL, "1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_NAME, "my_def");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_LABEL, "Label");
@@ -637,7 +637,7 @@ public class AlertDefinitionResourceProviderTest {
     Assert.assertNotNull(entity);
 
     Predicate p = new PredicateBuilder().property(AlertDefinitionResourceProvider.ALERT_DEF_ID).equals(
-        "1").and().property(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME).equals("c1").toPredicate();
+        "1").and().property(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID).equals("c1").toPredicate();
 
     // everything is mocked, there is no DB
     entity.setDefinitionId(Long.valueOf(1));
@@ -657,7 +657,7 @@ public class AlertDefinitionResourceProviderTest {
 
     requestProps = new HashMap<>();
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_ID, "1");
-    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME, "c1");
+    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID, "c1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_INTERVAL, "2");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_NAME, "my_def2");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_LABEL, "Label 2");
@@ -720,7 +720,7 @@ public class AlertDefinitionResourceProviderTest {
 
     MetricSource source = (MetricSource) getMockSource();
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME, "c1");
+    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID, "c1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_INTERVAL, "1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_NAME, "my_def");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_SERVICE_NAME, "HDFS");
@@ -805,7 +805,7 @@ public class AlertDefinitionResourceProviderTest {
     AlertDefinitionResourceProvider provider = createProvider(amc);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME, "c1");
+    requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID, "c1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_INTERVAL, "1");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_NAME, "my_def");
     requestProps.put(AlertDefinitionResourceProvider.ALERT_DEF_SERVICE_NAME, "HDFS");
@@ -821,7 +821,7 @@ public class AlertDefinitionResourceProviderTest {
 
     Predicate p = new PredicateBuilder().property(
         AlertDefinitionResourceProvider.ALERT_DEF_ID).equals("1").and().property(
-            AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_NAME).equals("c1").toPredicate();
+            AlertDefinitionResourceProvider.ALERT_DEF_CLUSTER_ID).equals("c1").toPredicate();
     // everything is mocked, there is no DB
     entity.setDefinitionId(Long.valueOf(1));
 

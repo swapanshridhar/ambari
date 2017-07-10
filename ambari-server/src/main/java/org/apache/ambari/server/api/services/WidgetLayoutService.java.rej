@@ -1,0 +1,25 @@
+***************
+*** 41,51 ****
+   */
+  public class WidgetLayoutService extends BaseService {
+    
+-   private final String clusterName;
+  
+-   public  WidgetLayoutService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    @GET
+--- 41,51 ----
+   */
+  public class WidgetLayoutService extends BaseService {
+    
++   private final Long clusterId;
+  
++   public  WidgetLayoutService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    @GET

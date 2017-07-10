@@ -95,7 +95,7 @@ public class HostsMasterMaintenanceCheck extends AbstractCheckDescriptor {
         }
       }
     }
-    final Map<String, Host> clusterHosts = clustersProvider.get().getHostsForCluster(clusterName);
+    final Map<String, Host> clusterHosts = clustersProvider.get().getHostsForCluster(clusterId);
     for (Map.Entry<String, Host> hostEntry : clusterHosts.entrySet()) {
       final Host host = hostEntry.getValue();
       if (host.getMaintenanceState(cluster.getClusterId()) == MaintenanceState.ON && hostsWithMasterComponent.contains(host.getHostName())) {

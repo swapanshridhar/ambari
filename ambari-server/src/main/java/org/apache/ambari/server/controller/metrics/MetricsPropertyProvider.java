@@ -45,7 +45,7 @@ public abstract class MetricsPropertyProvider extends AbstractPropertyProvider {
 
   protected final MetricHostProvider hostProvider;
 
-  protected final String clusterNamePropertyId;
+  protected final String clusterIdPropertyId;
 
   protected final String hostNamePropertyId;
 
@@ -63,7 +63,7 @@ public abstract class MetricsPropertyProvider extends AbstractPropertyProvider {
        URLStreamProvider streamProvider,
        ComponentSSLConfiguration configuration,
        MetricHostProvider hostProvider,
-       String clusterNamePropertyId,
+       String clusterIdPropertyId,
        String hostNamePropertyId,
        String componentNamePropertyId) {
 
@@ -72,7 +72,7 @@ public abstract class MetricsPropertyProvider extends AbstractPropertyProvider {
     this.streamProvider           = streamProvider;
     this.configuration            = configuration;
     this.hostProvider             = hostProvider;
-    this.clusterNamePropertyId    = clusterNamePropertyId;
+    this.clusterIdPropertyId      = clusterIdPropertyId;
     this.hostNamePropertyId       = hostNamePropertyId;
     this.componentNamePropertyId  = componentNamePropertyId;
   }
@@ -85,7 +85,7 @@ public abstract class MetricsPropertyProvider extends AbstractPropertyProvider {
         TimelineMetricCacheProvider cacheProvider,
         MetricHostProvider hostProvider,
         MetricsServiceProvider serviceProvider,
-        String clusterNamePropertyId,
+        String clusterIdPropertyId,
         String hostNamePropertyId,
         String componentNamePropertyId) {
 
@@ -98,7 +98,7 @@ public abstract class MetricsPropertyProvider extends AbstractPropertyProvider {
         cacheProvider,
         hostProvider,
         serviceProvider,
-        clusterNamePropertyId,
+        clusterIdPropertyId,
         hostNamePropertyId,
         componentNamePropertyId
       );
@@ -133,7 +133,7 @@ public abstract class MetricsPropertyProvider extends AbstractPropertyProvider {
       return resources;
     }
 
-    if (!checkAuthorizationForMetrics(resources, clusterNamePropertyId)) {
+    if (!checkAuthorizationForMetrics(resources, clusterIdPropertyId)) {
       return resources;
     }
 

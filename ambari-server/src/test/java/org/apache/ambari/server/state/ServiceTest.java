@@ -278,7 +278,7 @@ public class ServiceTest {
     Assert.assertNotNull(service);
 
     ClusterServiceDAO dao = injector.getInstance(ClusterServiceDAO.class);
-    ClusterServiceEntity entity = dao.findByClusterAndServiceNames(clusterName, serviceName);
+    ClusterServiceEntity entity = dao.findByClusterAndServiceNames(cluster.getClusterId(), serviceName);
     Assert.assertNotNull(entity);
     Assert.assertEquals(MaintenanceState.OFF, entity.getServiceDesiredStateEntity().getMaintenanceState());
     Assert.assertEquals(MaintenanceState.OFF, service.getMaintenanceState());
@@ -286,7 +286,7 @@ public class ServiceTest {
     service.setMaintenanceState(MaintenanceState.ON);
     Assert.assertEquals(MaintenanceState.ON, service.getMaintenanceState());
 
-    entity = dao.findByClusterAndServiceNames(clusterName, serviceName);
+    entity = dao.findByClusterAndServiceNames(cluster.getClusterId(), serviceName);
     Assert.assertNotNull(entity);
     Assert.assertEquals(MaintenanceState.ON, entity.getServiceDesiredStateEntity().getMaintenanceState());
   }
@@ -301,7 +301,7 @@ public class ServiceTest {
     Assert.assertNotNull(service);
 
     ClusterServiceDAO dao = injector.getInstance(ClusterServiceDAO.class);
-    ClusterServiceEntity entity = dao.findByClusterAndServiceNames(clusterName, serviceName);
+    ClusterServiceEntity entity = dao.findByClusterAndServiceNames(cluster.getClusterId(), serviceName);
     Assert.assertNotNull(entity);
     Assert.assertEquals(SecurityState.UNSECURED, entity.getServiceDesiredStateEntity().getSecurityState());
     Assert.assertEquals(SecurityState.UNSECURED, service.getSecurityState());
@@ -309,7 +309,7 @@ public class ServiceTest {
     service.setSecurityState(SecurityState.SECURED_KERBEROS);
     Assert.assertEquals(SecurityState.SECURED_KERBEROS, service.getSecurityState());
 
-    entity = dao.findByClusterAndServiceNames(clusterName, serviceName);
+    entity = dao.findByClusterAndServiceNames(cluster.getClusterId(), serviceName);
     Assert.assertNotNull(entity);
     Assert.assertEquals(SecurityState.SECURED_KERBEROS, entity.getServiceDesiredStateEntity().getSecurityState());
 
@@ -343,6 +343,6 @@ public class ServiceTest {
     hostAttributes.put("os_release_version", "6.3");
     h.setHostAttributes(hostAttributes);
 
-    clusters.mapHostToCluster(hostname, clusterName);
+    clusters.mapHostToCluster(hostname, cluster.getClusterId());
   }
 }

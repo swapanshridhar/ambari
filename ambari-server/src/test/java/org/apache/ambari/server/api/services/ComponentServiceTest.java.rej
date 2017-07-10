@@ -1,0 +1,25 @@
+***************
+*** 87,97 ****
+    }
+  
+    private class TestComponentService extends ComponentService {
+-     private String m_clusterId;
+      private String m_serviceId;
+      private String m_componentId;
+  
+-     private TestComponentService(String clusterId, String serviceId, String componentId) {
+        super(ApiVersion.Default, clusterId, serviceId);
+        m_clusterId = clusterId;
+        m_serviceId = serviceId;
+--- 87,97 ----
+    }
+  
+    private class TestComponentService extends ComponentService {
++     private Long m_clusterId;
+      private String m_serviceId;
+      private String m_componentId;
+  
++     private TestComponentService(Long clusterId, String serviceId, String componentId) {
+        super(ApiVersion.Default, clusterId, serviceId);
+        m_clusterId = clusterId;
+        m_serviceId = serviceId;

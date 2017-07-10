@@ -47,6 +47,7 @@ public class LoggingRequestHelperFactoryImplTest {
   @Test
   public void testHelperCreation() throws Exception {
     final String expectedClusterName = "testclusterone";
+    final Long expectedClusterId = 1L;
     final String expectedHostName = "c6410.ambari.apache.org";
     final String expectedPortNumber = "61889";
     final int expectedConnectTimeout = 3000;
@@ -100,7 +101,7 @@ public class LoggingRequestHelperFactoryImplTest {
     ((LoggingRequestHelperFactoryImpl)helperFactory).setAmbariServerConfiguration(serverConfigMock);
 
     LoggingRequestHelper helper =
-      helperFactory.getHelper(controllerMock, expectedClusterName);
+      helperFactory.getHelper(controllerMock, expectedClusterId);
 
     assertNotNull("LoggingRequestHelper object returned by the factory was null",
       helper);
@@ -120,6 +121,7 @@ public class LoggingRequestHelperFactoryImplTest {
   @Test
   public void testHelperCreationLogSearchServerNotStarted() throws Exception {
     final String expectedClusterName = "testclusterone";
+    final Long expectedClusterId = 1L;
     final String expectedHostName = "c6410.ambari.apache.org";
     final String expectedPortNumber = "61889";
 
@@ -167,7 +169,7 @@ public class LoggingRequestHelperFactoryImplTest {
     ((LoggingRequestHelperFactoryImpl)helperFactory).setAmbariServerConfiguration(serverConfigMock);
 
     LoggingRequestHelper helper =
-      helperFactory.getHelper(controllerMock, expectedClusterName);
+      helperFactory.getHelper(controllerMock, expectedClusterId);
 
     assertNull("LoggingRequestHelper object returned by the factory should have been null",
       helper);
@@ -178,6 +180,7 @@ public class LoggingRequestHelperFactoryImplTest {
   @Test
    public void testHelperCreationWithNoLogSearchServersAvailable() throws Exception {
     final String expectedClusterName = "testclusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -211,7 +214,7 @@ public class LoggingRequestHelperFactoryImplTest {
     ((LoggingRequestHelperFactoryImpl)helperFactory).setAmbariServerConfiguration(serverConfigMock);
 
     LoggingRequestHelper helper =
-      helperFactory.getHelper(controllerMock, expectedClusterName);
+      helperFactory.getHelper(controllerMock, expectedClusterId);
 
     assertNull("LoggingRequestHelper object returned by the factory should have been null",
       helper);
@@ -222,6 +225,7 @@ public class LoggingRequestHelperFactoryImplTest {
   @Test
   public void testHelperCreationWithNoLogSearchServiceDeployed() throws Exception {
     final String expectedClusterName = "testclusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -251,7 +255,7 @@ public class LoggingRequestHelperFactoryImplTest {
     ((LoggingRequestHelperFactoryImpl)helperFactory).setAmbariServerConfiguration(serverConfigMock);
 
     LoggingRequestHelper helper =
-      helperFactory.getHelper(controllerMock, expectedClusterName);
+      helperFactory.getHelper(controllerMock, expectedClusterId);
 
     assertNull("LoggingRequestHelper object returned by the factory should have been null",
       helper);
@@ -262,6 +266,7 @@ public class LoggingRequestHelperFactoryImplTest {
   @Test
   public void testHelperCreationWithNoAmbariServerConfiguration() throws Exception {
     final String expectedClusterName = "testclusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -278,7 +283,7 @@ public class LoggingRequestHelperFactoryImplTest {
     ((LoggingRequestHelperFactoryImpl)helperFactory).setAmbariServerConfiguration(null);
 
     LoggingRequestHelper helper =
-      helperFactory.getHelper(controllerMock, expectedClusterName);
+      helperFactory.getHelper(controllerMock, expectedClusterId);
 
     assertNull("LoggingRequestHelper object returned by the factory should have been null",
       helper);

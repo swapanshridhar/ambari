@@ -65,6 +65,7 @@ import org.apache.ambari.server.state.fsm.InvalidStateTransitionException;
 import org.apache.ambari.server.state.svccomphost.ServiceComponentHostDisableEvent;
 import org.apache.ambari.server.state.svccomphost.ServiceComponentHostRestoreEvent;
 import org.apache.ambari.server.topology.Setting;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.inject.Inject;
@@ -80,8 +81,8 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
   // ----- Property ID constants ---------------------------------------------
 
   // Host Components
-  public static final String HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID
-      = PropertyHelper.getPropertyId("HostRoles", "cluster_name");
+  public static final String HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID
+      = PropertyHelper.getPropertyId("HostRoles", "cluster_id");
   public static final String HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID
       = PropertyHelper.getPropertyId("HostRoles", "service_name");
   public static final String HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID
@@ -116,7 +117,7 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
   private static final String QUERY_PARAMETERS_RUN_SMOKE_TEST_ID = "params/run_smoke_test";
   private static Set<String> pkPropertyIds =
     new HashSet<>(Arrays.asList(new String[]{
-      HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID,
+      HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID,
       HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID,
       HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID,
       HOST_COMPONENT_HOST_NAME_PROPERTY_ID}));
@@ -220,8 +221,8 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
 
     for (ServiceComponentHostResponse response : responses) {
       Resource resource = new ResourceImpl(Resource.Type.HostComponent);
-      setResourceProperty(resource, HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID,
-              response.getClusterName(), requestedIds);
+      setResourceProperty(resource, HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID,
+              response.getClusterId(), requestedIds);
       setResourceProperty(resource, HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID,
               response.getServiceName(), requestedIds);
       setResourceProperty(resource, HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID,
@@ -347,7 +348,7 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
     Request installRequest = PropertyHelper.getUpdateRequest(installProperties, requestInfo);
 
     Predicate statePredicate = new EqualsPredicate<>(HOST_COMPONENT_STATE_PROPERTY_ID, "INIT");
-    Predicate clusterPredicate = new EqualsPredicate<>(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, cluster);
+    Predicate clusterPredicate = new EqualsPredicate<>(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, cluster);
     // single host
     Predicate hostPredicate = new EqualsPredicate<>(HOST_COMPONENT_HOST_NAME_PROPERTY_ID, hostname);
     //Predicate hostPredicate = new OrPredicate(hostPredicates.toArray(new Predicate[hostPredicates.size()]));
@@ -388,7 +389,7 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
     requestInfo.put("phase", "INITIAL_START");
     requestInfo.put(Setting.SETTING_NAME_SKIP_FAILURE, Boolean.toString(skipFailure));
 
-    Predicate clusterPredicate = new EqualsPredicate<>(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, cluster);
+    Predicate clusterPredicate = new EqualsPredicate<>(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, cluster);
     Predicate hostPredicate = new EqualsPredicate<>(HOST_COMPONENT_HOST_NAME_PROPERTY_ID, hostName);
     //Predicate hostPredicate = new OrPredicate(hostPredicates.toArray(new Predicate[hostPredicates.size()]));
 
@@ -476,21 +477,21 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
 
     Map<String, Map<State, List<ServiceComponentHost>>> changedScHosts = new HashMap<>();
     Collection<ServiceComponentHost> ignoredScHosts = new ArrayList<>();
-    Set<String> clusterNames = new HashSet<>();
-    Map<String, Map<String, Map<String, Set<String>>>> requestClusters = new HashMap<>();
+    Set<Long> clusterIds = new HashSet<>();
+    Map<Long, Map<String, Map<String, Set<String>>>> requestClusters = new HashMap<>();
     Map<ServiceComponentHost, State> directTransitionScHosts = new HashMap<>();
 
     Resource.Type reqOpLvl = determineOperationLevel(requestProperties);
 
-    String clusterName = requestProperties.get(RequestOperationLevel.OPERATION_CLUSTER_ID);
-    if (clusterName != null && !clusterName.isEmpty()) {
-      clusterNames.add(clusterName);
+    Long clusterId = Long.parseLong(requestProperties.get(RequestOperationLevel.OPERATION_CLUSTER_ID));
+    if (clusterId != null) {
+      clusterIds.add(clusterId);
     }
 
     for (ServiceComponentHostRequest request : requests) {
       validateServiceComponentHostRequest(request);
 
-      Cluster cluster = clusters.getCluster(request.getClusterName());
+      Cluster cluster = clusters.getCluster(request.getClusterId());
 
       if(runSmokeTest) {
         if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, cluster.getResourceId(), RoleAuthorization.SERVICE_RUN_SERVICE_CHECK)) {
@@ -503,26 +504,24 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
       }
 
       ServiceComponent sc = getServiceComponent(
-          request.getClusterName(), request.getServiceName(), request.getComponentName());
+          request.getClusterId(), request.getServiceName(), request.getComponentName());
 
       logRequestInfo("Received a updateHostComponent request", request);
 
-      if((clusterName == null || clusterName.isEmpty())
-              && (request.getClusterName() != null
-              && !request.getClusterName().isEmpty())) {
-        clusterNames.add(request.getClusterName());
+      if(clusterId == null && request.getClusterId() != null) {
+        clusterIds.add(request.getClusterId());
       }
 
-      if (clusterNames.size() > 1) {
+      if (clusterIds.size() > 1) {
         throw new IllegalArgumentException("Updates to multiple clusters is not"
             + " supported");
       }
 
       // maps of cluster->services, services->components, components->hosts
-      Map<String, Map<String, Set<String>>> clusterServices = requestClusters.get(request.getClusterName());
+      Map<String, Map<String, Set<String>>> clusterServices = requestClusters.get(request.getClusterId());
       if (clusterServices == null) {
         clusterServices = new HashMap<>();
-        requestClusters.put(request.getClusterName(), clusterServices);
+        requestClusters.put(request.getClusterId(), clusterServices);
       }
 
       Map<String, Set<String>> serviceComponents = clusterServices.get(request.getServiceName());
@@ -647,7 +646,7 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
     doDirectTransitions(directTransitionScHosts);
 
     // just getting the first cluster
-    Cluster cluster = clusters.getCluster(clusterNames.iterator().next());
+    Cluster cluster = clusters.getCluster(clusterIds.iterator().next());
 
     return getManagementController().addStages(
         stages, cluster, requestProperties, null, null, null,
@@ -669,8 +668,9 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
    * @return the component request object
    */
   private ServiceComponentHostRequest getRequest(Map<String, Object> properties) {
+    Long clusterId = MapUtils.parseLong(properties, HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID);
     ServiceComponentHostRequest serviceComponentHostRequest = new ServiceComponentHostRequest(
-        (String) properties.get(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID),
+        clusterId,
         (String) properties.get(HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID),
         (String) properties.get(HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID),
         (String) properties.get(HOST_COMPONENT_HOST_NAME_PROPERTY_ID),
@@ -706,8 +706,9 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
    * @return the component request object
    */
   private ServiceComponentHostRequest changeRequest(Map<String, Object> properties) {
+    Long clusterId = MapUtils.parseLong(properties, HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID);
     ServiceComponentHostRequest serviceComponentHostRequest = new ServiceComponentHostRequest(
-            (String) properties.get(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID),
+            clusterId,
             (String) properties.get(HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID),
             (String) properties.get(HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID),
             (String) properties.get(HOST_COMPONENT_HOST_NAME_PROPERTY_ID),
@@ -878,11 +879,11 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
     return false;
   }
 
-  private ServiceComponent getServiceComponent(String clusterName, String serviceName, String componentName)
+  private ServiceComponent getServiceComponent(Long clusterId, String serviceName, String componentName)
       throws AmbariException {
 
     Clusters clusters = getManagementController().getClusters();
-    return clusters.getCluster(clusterName).getService(serviceName).getServiceComponent(componentName);
+    return clusters.getCluster(clusterId).getService(serviceName).getServiceComponent(componentName);
   }
 
   // Perform direct transitions (without task generation)
@@ -925,9 +926,9 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
    * @param request  the request to log
    */
   private void logRequestInfo(String msg, ServiceComponentHostRequest request) {
-    LOG.info("{}, clusterName={}, serviceName={}, componentName={}, hostname={}, request={}",
+    LOG.info("{}, clusterId={}, serviceName={}, componentName={}, hostname={}, request={}",
         msg,
-        request.getClusterName(),
+        request.getClusterId(),
         request.getServiceName(),
         request.getComponentName(),
         request.getHostname(),
@@ -945,7 +946,7 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
     StringBuilder sb = new StringBuilder();
 
     sb.append(msg)
-      .append(", clusterName=").append(request.getClusterName())
+      .append(", clusterId=").append(request.getClusterId())
       .append(", serviceName=").append(request.getServiceName())
       .append(", componentName=").append(request.getComponentName())
       .append(", hostname=").append(request.getHostname())
@@ -983,8 +984,7 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
    * @throws IllegalArgumentException if the request is invalid
    */
   private void validateServiceComponentHostRequest(ServiceComponentHostRequest request) {
-    if (request.getClusterName() == null
-        || request.getClusterName().isEmpty()
+    if (request.getClusterId() == null
         || request.getComponentName() == null
         || request.getComponentName().isEmpty()
         || request.getHostname() == null
@@ -1015,15 +1015,20 @@ public class HostComponentResourceProvider extends AbstractControllerResourcePro
       try {
         if (componentName != null && !componentName.isEmpty()) {
           AmbariManagementController managementController = getManagementController();
-          String clusterName = (String) resource.getPropertyValue(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID);
+          String clusterName = (String) resource.getPropertyValue(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID);
           String serviceName = (String) resource.getPropertyValue(HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID);
           if (StringUtils.isEmpty(serviceName)) {
             Cluster cluster = managementController.getClusters().getCluster(clusterName);
             serviceName = managementController.findServiceName(cluster, componentName);
           }
 
-          ServiceComponent sc = getServiceComponent((String) resource.getPropertyValue(
-              HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID), serviceName, componentName);
+          Long clusterId = null;
+          String clusterIdStr = (String) resource.getPropertyValue(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID);
+          if(StringUtils.isNotBlank(clusterIdStr)) {
+            clusterId = Long.parseLong(clusterIdStr);
+          }
+          ServiceComponent sc = getServiceComponent((Long) resource.getPropertyValue(
+              HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID), serviceName, componentName);
           isClient = sc.isClientComponent();
         }
       } catch (AmbariException e) {

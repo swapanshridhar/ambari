@@ -843,6 +843,7 @@ public class TestHeartbeatHandler {
 
   @Test
   public void testOPFailedEventForAbortedTask() throws Exception, InvalidStateTransitionException {
+    Long cluster1 = 1L;
     Cluster cluster = heartbeatTestHelper.getDummyCluster();
     Service hdfs = addService(cluster, HDFS);
     hdfs.addServiceComponent(DATANODE);
@@ -864,7 +865,7 @@ public class TestHeartbeatHandler {
     s.addHostRoleExecutionCommand(DummyHostname1, Role.DATANODE, RoleCommand.INSTALL,
       new ServiceComponentHostInstallEvent(Role.DATANODE.toString(),
         DummyHostname1, System.currentTimeMillis(), "HDP-1.3.0"),
-          DummyCluster, "HDFS", false, false);
+        cluster1, "HDFS", false, false);
     List<Stage> stages = new ArrayList<>();
     stages.add(s);
     Request request = new Request(stages, "clusterHostInfo", clusters);

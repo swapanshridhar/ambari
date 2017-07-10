@@ -56,7 +56,7 @@ public class RequestOperationLevelTest {
     // Check normal creation
     RequestOperationLevel opLevel = new RequestOperationLevel(requestInfoProperties);
     assertEquals(opLevel.getLevel().toString(), "HostComponent");
-    assertEquals(opLevel.getClusterName(), c1);
+    assertEquals(opLevel.getClusterId(), Long.valueOf(1));
     assertEquals(opLevel.getServiceName(), service_id);
     assertEquals(opLevel.getHostComponentName(), hostcomponent_id);
     assertEquals(opLevel.getHostName(), host_id);

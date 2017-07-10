@@ -578,7 +578,7 @@ public class AlertDispatchDAOTest {
     Predicate noticeIdPredicate = null;
 
     clusterPredicate = new PredicateBuilder().property(
-        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_ID).equals("c1").toPredicate();
 
     hdfsPredicate = new PredicateBuilder().property(
         AlertNoticeResourceProvider.ALERT_NOTICE_SERVICE_NAME).equals("HDFS").toPredicate();
@@ -697,7 +697,7 @@ public class AlertDispatchDAOTest {
     request.Sort = sortRequest;
 
     Predicate clusterPredicate = new PredicateBuilder().property(
-        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_ID).equals("c1").toPredicate();
 
     request.Predicate = clusterPredicate;
 

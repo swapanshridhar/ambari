@@ -1,0 +1,19 @@
+***************
+*** 55,62 ****
+  
+    private class TestPreUpgradeCheckService extends PreUpgradeCheckService {
+  
+-     public TestPreUpgradeCheckService(String clusterName) {
+-       super(ApiVersion.Default, clusterName);
+      }
+  
+      @Override
+--- 55,62 ----
+  
+    private class TestPreUpgradeCheckService extends PreUpgradeCheckService {
+  
++     public TestPreUpgradeCheckService(Long clusterId) {
++       super(ApiVersion.Default, clusterId);
+      }
+  
+      @Override

@@ -39,7 +39,7 @@ public class TaskAttemptServiceTest extends BaseServiceTest {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
 
     // getTaskAttempt
-    TestTaskAttemptService service = new TestTaskAttemptService("clusterName",
+    TestTaskAttemptService service = new TestTaskAttemptService(1L,
         "workflowId", "jobId");
     Method m = service.getClass().getMethod("getTaskAttempt",
       String.class, HttpHeaders.class, UriInfo.class, String.class);
@@ -48,7 +48,7 @@ public class TaskAttemptServiceTest extends BaseServiceTest {
         args, null));
 
     // getTaskAttempts
-    service = new TestTaskAttemptService("clusterName", "workflowId", "jobId");
+    service = new TestTaskAttemptService(1L, "workflowId", "jobId");
     m = service.getClass().getMethod("getTaskAttempts", String.class, HttpHeaders.class,
         UriInfo.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo()};

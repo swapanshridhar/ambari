@@ -37,13 +37,13 @@ public class ConfigurationServiceTest extends BaseServiceTest {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
 
     //getConfigurations
-    ConfigurationService service = new TestConfigurationService("clusterName");
+    ConfigurationService service = new TestConfigurationService(1L);
     Method m = service.getClass().getMethod("getConfigurations", String.class, HttpHeaders.class, UriInfo.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
     //createConfigurations
-    service = new TestConfigurationService("clusterName");
+    service = new TestConfigurationService(1L);
     m = service.getClass().getMethod("createConfigurations", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, service, m, args, "body"));

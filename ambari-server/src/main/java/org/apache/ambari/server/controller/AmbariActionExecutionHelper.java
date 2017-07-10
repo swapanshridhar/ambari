@@ -140,12 +140,12 @@ public class AmbariActionExecutionHelper {
     String targetService = "";
     String targetComponent = "";
 
-    if (null != actionRequest.getClusterName()) {
-      Cluster cluster = clusters.getCluster(actionRequest.getClusterName());
+    if (null != actionRequest.getClusterId()) {
+      Cluster cluster = clusters.getCluster(actionRequest.getClusterId());
 
       if (cluster == null) {
         throw new AmbariException("Unable to find cluster. clusterName = " +
-          actionRequest.getClusterName());
+          actionRequest.getClusterId());
       }
 
       String expectedService = actionDef.getTargetService() == null ? "" : actionDef.getTargetService();
@@ -257,10 +257,10 @@ public class AmbariActionExecutionHelper {
       throws AmbariException {
 
     String actionName = actionContext.getActionName();
-    String clusterName = actionContext.getClusterName();
+    Long clusterId = actionContext.getClusterId();
     final Cluster cluster;
-    if (null != clusterName) {
-      cluster = clusters.getCluster(clusterName);
+    if (null != clusterId) {
+      cluster = clusters.getCluster(clusterId);
     } else {
       cluster = null;
     }
@@ -395,7 +395,7 @@ public class AmbariActionExecutionHelper {
           RoleCommand.ACTIONEXECUTE,
           new ServiceComponentHostOpInProgressEvent(actionContext.getActionName(), hostName,
               System.currentTimeMillis()),
-          clusterName, serviceName, actionContext.isRetryAllowed(),
+          clusterId, serviceName, actionContext.isRetryAllowed(),
           actionContext.isFailureAutoSkipped());
 
       Map<String, String> commandParams = new TreeMap<>();

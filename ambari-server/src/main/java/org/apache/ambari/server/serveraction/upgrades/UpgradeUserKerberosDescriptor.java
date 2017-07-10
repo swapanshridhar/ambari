@@ -171,7 +171,7 @@ public class UpgradeUserKerberosDescriptor extends AbstractServerAction {
         logMessage(messages, "A user-specified Kerberos descriptor was not found. No updates are necessary.");
       }
     } else {
-      logErrorMessage(messages, errorMessages, String.format("The cluster named %s was not found.", clusterName));
+      logErrorMessage(messages, errorMessages, String.format("The cluster named %s was not found.", cluster.getClusterName()));
     }
 
     if (!errorMessages.isEmpty()) {

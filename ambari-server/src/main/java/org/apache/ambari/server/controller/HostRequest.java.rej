@@ -1,0 +1,82 @@
+***************
+*** 26,32 ****
+  
+    private String hostname;
+    private String publicHostname;
+-   private String clusterName; // CREATE/UPDATE
+    private Map<String, String> hostAttributes; // CREATE/UPDATE
+    private String rackInfo;
+    private List<ConfigurationRequest> desiredConfigs; // UPDATE
+--- 26,32 ----
+  
+    private String hostname;
+    private String publicHostname;
++   private Long clusterId; // CREATE/UPDATE
+    private Map<String, String> hostAttributes; // CREATE/UPDATE
+    private String rackInfo;
+    private List<ConfigurationRequest> desiredConfigs; // UPDATE
+***************
+*** 35,43 ****
+    private String hostgroup;
+    private String hostToClone;
+  
+-   public HostRequest(String hostname, String clusterName, Map<String, String> hostAttributes) {
+      this.hostname = hostname;
+-     this.clusterName = clusterName;
+      this.hostAttributes = hostAttributes;
+    }
+  
+--- 35,43 ----
+    private String hostgroup;
+    private String hostToClone;
+  
++   public HostRequest(String hostname, Long clusterId, Map<String, String> hostAttributes) {
+      this.hostname = hostname;
++     this.clusterId = clusterId;
+      this.hostAttributes = hostAttributes;
+    }
+  
+***************
+*** 49,60 ****
+      this.hostname = hostname;
+    }
+  
+-   public String getClusterName() {
+-     return clusterName;
+    }
+  
+-   public void setClusterName(String clusterName) {
+-     this.clusterName = clusterName;
+    }
+  
+    public Map<String, String> getHostAttributes() {
+--- 49,60 ----
+      this.hostname = hostname;
+    }
+  
++   public Long getClusterId() {
++     return clusterId;
+    }
+  
++   public void setClusterId(Long clusterId) {
++     this.clusterId = clusterId;
+    }
+  
+    public Map<String, String> getHostAttributes() {
+***************
+*** 123,129 ****
+  
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
+-     sb.append("{ hostname=").append(hostname).append(", clusterName=").append(clusterName);
+      if (hostAttributes != null) {
+        sb.append(", hostAttributes=[");
+        int i = 0;
+--- 123,129 ----
+  
+    public String toString() {
+      StringBuilder sb = new StringBuilder();
++     sb.append("{ hostname=").append(hostname).append(", clusterId=").append(clusterId);
+      if (hostAttributes != null) {
+        sb.append(", hostAttributes=[");
+        int i = 0;

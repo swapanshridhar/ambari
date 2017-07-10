@@ -22,17 +22,17 @@ import org.apache.ambari.server.state.scheduler.Schedule;
 
 public class RequestScheduleRequest {
   private Long id;
-  private String clusterName;
+  private Long clusterId;
   private String description;
   private String status;
   private Batch batch;
   private Schedule schedule;
 
-  public RequestScheduleRequest(Long id, String clusterName,
+  public RequestScheduleRequest(Long id, Long clusterId,
                                 String description, String status,
                                 Batch batch, Schedule schedule) {
     this.id = id;
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.description = description;
     this.status = status;
     this.batch = batch;
@@ -47,12 +47,12 @@ public class RequestScheduleRequest {
     this.id = id;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   public String getDescription() {

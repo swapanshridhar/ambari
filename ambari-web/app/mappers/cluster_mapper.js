@@ -53,6 +53,7 @@ App.clusterMapper = App.QuickDataMapper.create({
     config : {
       id:'Clusters.cluster_id',
       cluster_name: 'Clusters.cluster_name',
+      cluster_id: 'Clusters.cluster_id',
       stack_name: 'Clusters.stack_name',
       version: 'Clusters.version',
       security_type: 'Clusters.security_type',

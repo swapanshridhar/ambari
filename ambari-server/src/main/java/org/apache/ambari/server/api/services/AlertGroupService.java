@@ -61,7 +61,7 @@ public class AlertGroupService extends BaseService {
   public Response getGroups(@Context HttpHeaders headers,
       @Context UriInfo ui) {
     return handleRequest(headers, null, ui, Request.Type.GET,
-        createAlertGroupResource(m_clusterName, null));
+        createAlertGroupResource(m_clusterId, null));
   }
 
   @GET @ApiIgnore // until documented
@@ -70,7 +70,7 @@ public class AlertGroupService extends BaseService {
   public Response getGroup(@Context HttpHeaders headers,
       @Context UriInfo ui, @PathParam("groupId") Long groupId) {
     return handleRequest(headers, null, ui, Request.Type.GET,
-        createAlertGroupResource(m_clusterName, groupId));
+        createAlertGroupResource(m_clusterId, groupId));
   }
 
   @POST @ApiIgnore // until documented
@@ -78,7 +78,7 @@ public class AlertGroupService extends BaseService {
   public Response createGroup(String body, @Context HttpHeaders headers,
       @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.POST,
-        createAlertGroupResource(m_clusterName, null));
+        createAlertGroupResource(m_clusterId, null));
   }
 
   @PUT @ApiIgnore // until documented
@@ -87,7 +87,7 @@ public class AlertGroupService extends BaseService {
   public Response updateGroup(String body, @Context HttpHeaders headers,
       @Context UriInfo ui, @PathParam("groupId") Long groupId) {
     return handleRequest(headers, body, ui, Request.Type.PUT,
-        createAlertGroupResource(m_clusterName, groupId));
+        createAlertGroupResource(m_clusterId, groupId));
   }
 
   @DELETE @ApiIgnore // until documented
@@ -96,7 +96,7 @@ public class AlertGroupService extends BaseService {
   public Response deleteGroup(String body, @Context HttpHeaders headers,
       @Context UriInfo ui, @PathParam("groupId") Long groupId) {
     return handleRequest(headers, body, ui, Request.Type.DELETE,
-        createAlertGroupResource(m_clusterName, groupId));
+        createAlertGroupResource(m_clusterId, groupId));
   }
 
   /**
@@ -108,11 +108,11 @@ public class AlertGroupService extends BaseService {
    *          {@code null}).
    * @return the instance of the query.
    */
-  private ResourceInstance createAlertGroupResource(String clusterName,
+  private ResourceInstance createAlertGroupResource(Long clusterId,
       Long groupId) {
 
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, m_clusterName);
+    mapIds.put(Resource.Type.Cluster, m_clusterId.toString());
     mapIds.put(Resource.Type.AlertGroup,
         null == groupId ? null : groupId.toString());
 

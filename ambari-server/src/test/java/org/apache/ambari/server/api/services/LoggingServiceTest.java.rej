@@ -1,0 +1,17 @@
+***************
+*** 125,131 ****
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+  
+      LoggingService loggingService =
+-       new LoggingService(ApiVersion.Default, expectedClusterName, controllerFactoryMock);
+      loggingService.setLoggingRequestHelperFactory(helperFactoryMock);
+  
+      Response resource = loggingService.getSearchEngine("", null, uriInfoMock);
+--- 125,131 ----
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+  
+      LoggingService loggingService =
++       new LoggingService(ApiVersion.Default, 1L, controllerFactoryMock);
+      loggingService.setLoggingRequestHelperFactory(helperFactoryMock);
+  
+      Response resource = loggingService.getSearchEngine("", null, uriInfoMock);

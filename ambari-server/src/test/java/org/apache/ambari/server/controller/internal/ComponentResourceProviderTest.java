@@ -168,7 +168,7 @@ public class ComponentResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(ComponentResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID, "Service100");
     properties.put(ComponentResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID, "Component100");
 
@@ -274,7 +274,7 @@ public class ComponentResourceProviderTest {
 
     Set<String> propertyIds = new HashSet<>();
 
-    propertyIds.add(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(ComponentResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID);
     propertyIds.add(ComponentResourceProvider.COMPONENT_CATEGORY_PROPERTY_ID);
     propertyIds.add(ComponentResourceProvider.COMPONENT_TOTAL_COUNT_PROPERTY_ID);
@@ -288,7 +288,7 @@ public class ComponentResourceProviderTest {
     propertyIds.add(ComponentResourceProvider.COMPONENT_REPOSITORY_STATE);
 
     Predicate predicate = new PredicateBuilder()
-      .property(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID)
+      .property(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID)
       .equals("Cluster100")
       .and()
       .property(ComponentResourceProvider.COMPONENT_CATEGORY_PROPERTY_ID)
@@ -300,7 +300,7 @@ public class ComponentResourceProviderTest {
     Assert.assertEquals(2, resources.size());
     for (Resource resource : resources) {
       String clusterName = (String) resource.getPropertyValue(
-          ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID);
+          ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       Assert.assertEquals("MASTER", resource.getPropertyValue(
           ComponentResourceProvider.COMPONENT_CATEGORY_PROPERTY_ID));
@@ -469,13 +469,13 @@ public class ComponentResourceProviderTest {
 
     properties.put(ComponentResourceProvider.COMPONENT_RECOVERY_ENABLED_ID, String.valueOf(true) /* recovery enabled */);
     properties.put(ComponentResourceProvider.COMPONENT_STATE_PROPERTY_ID, "STARTED");
-    properties.put(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID, "Cluster100");
 
     // create the request
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
 
     // update the cluster named Cluster100
-    Predicate predicate = new PredicateBuilder().property(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID).
+    Predicate predicate = new PredicateBuilder().property(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID).
         equals("Cluster100").toPredicate();
     provider.updateResources(request, predicate);
 
@@ -556,7 +556,7 @@ public class ComponentResourceProviderTest {
 
 
     Predicate predicate = new PredicateBuilder()
-                .property(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID)
+                .property(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID)
                 .equals("Cluster100")
                 .and()
                 .property(ComponentResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID)
@@ -624,7 +624,7 @@ public class ComponentResourceProviderTest {
     }
 
     Predicate predicate2 = new PredicateBuilder()
-                .property(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID)
+                .property(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID)
                 .equals("Cluster100")
                 .and()
                 .property(ComponentResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID)
@@ -768,7 +768,7 @@ public class ComponentResourceProviderTest {
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
 
     // update the cluster named Cluster100
-    Predicate predicate = new PredicateBuilder().property(ComponentResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID).
+    Predicate predicate = new PredicateBuilder().property(ComponentResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID).
         equals("Cluster100").toPredicate();
     provider.updateResources(request, predicate);
 
@@ -792,7 +792,7 @@ public class ComponentResourceProviderTest {
     ServiceComponentResponse response = createNiceMock(ServiceComponentResponse.class);
 
     // requests
-    ServiceComponentRequest request1 = new ServiceComponentRequest("cluster1", "service1", "component1",
+    ServiceComponentRequest request1 = new ServiceComponentRequest(1L, "service1", "component1",
         null, String.valueOf(true /* recovery enabled */));
 
     Set<ServiceComponentRequest> setRequests = new HashSet<>();
@@ -852,15 +852,15 @@ public class ComponentResourceProviderTest {
     ServiceComponentResponse response2 = createNiceMock(ServiceComponentResponse.class);
 
     // requests
-    ServiceComponentRequest request1 = new ServiceComponentRequest("cluster1", "service1", "component1",
+    ServiceComponentRequest request1 = new ServiceComponentRequest(1L, "service1", "component1",
         null, String.valueOf(true /* recovery enabled */));
-    ServiceComponentRequest request2 = new ServiceComponentRequest("cluster1", "service1", "component2",
+    ServiceComponentRequest request2 = new ServiceComponentRequest(1L, "service1", "component2",
         null, String.valueOf(true /* recovery enabled */));
-    ServiceComponentRequest request3 = new ServiceComponentRequest("cluster1", "service1", "component3",
+    ServiceComponentRequest request3 = new ServiceComponentRequest(1L, "service1", "component3",
         null, String.valueOf(true /* recovery enabled */));
-    ServiceComponentRequest request4 = new ServiceComponentRequest("cluster1", "service1", "component4",
+    ServiceComponentRequest request4 = new ServiceComponentRequest(1L, "service1", "component4",
         null, String.valueOf(true /* recovery enabled */));
-    ServiceComponentRequest request5 = new ServiceComponentRequest("cluster1", "service2", null, null,
+    ServiceComponentRequest request5 = new ServiceComponentRequest(1L, "service2", null, null,
               String.valueOf(true /* recovery enabled */));
 
     Set<ServiceComponentRequest> setRequests = new HashSet<>();
@@ -943,7 +943,7 @@ public class ComponentResourceProviderTest {
     Service service = createNiceMock(Service.class);
 
     // requests
-    ServiceComponentRequest request1 = new ServiceComponentRequest("cluster1", "service1", "component1",
+    ServiceComponentRequest request1 = new ServiceComponentRequest(1L, "service1", "component1",
         null, String.valueOf(true /* recovery enabled */));
 
     Set<ServiceComponentRequest> setRequests = new HashSet<>();

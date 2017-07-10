@@ -1,0 +1,17 @@
+***************
+*** 1218,1224 ****
+        displayName = serviceComponentName;
+      }
+  
+-     ServiceComponentHostResponse r = new ServiceComponentHostResponse(clusterName, serviceName,
+          serviceComponentName, displayName, hostName, publicHostName, state, stackId, 
+          desiredState, desiredStackId, componentAdminState);
+  
+--- 1218,1224 ----
+        displayName = serviceComponentName;
+      }
+  
++     ServiceComponentHostResponse r = new ServiceComponentHostResponse(clusterId, serviceName,
+          serviceComponentName, displayName, hostName, publicHostName, state, stackId, 
+          desiredState, desiredStackId, componentAdminState);
+  

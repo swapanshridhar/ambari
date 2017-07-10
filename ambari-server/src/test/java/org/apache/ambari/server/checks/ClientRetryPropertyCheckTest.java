@@ -72,7 +72,7 @@ public class ClientRetryPropertyCheckTest {
     Map<String, Service> services = new HashMap<>();
     Mockito.when(cluster.getServices()).thenReturn(services);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.3.0.0");
 
     // nothing installed
@@ -117,13 +117,13 @@ public class ClientRetryPropertyCheckTest {
     properties.put("dfs.client.retry.policy.enabled", "true");
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     // Change property to pass
     properties.put("dfs.client.retry.policy.enabled", "false");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Add HIVE
@@ -132,13 +132,13 @@ public class ClientRetryPropertyCheckTest {
     // Fail with bad property
     properties.put("hive.metastore.failure.retries", "0");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     // Add hive retry in order to pass
     properties.put("hive.metastore.failure.retries", "5");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Add OOZIE
@@ -146,19 +146,19 @@ public class ClientRetryPropertyCheckTest {
 
     // Fail without property
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     // Fail without right property
     properties.put("template", "foo bar baz");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     // Pass with right property
     properties.put("content", "foo bar baz -Doozie.connection.retry.count=5 foobarbaz");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
   }

@@ -145,7 +145,7 @@ public class BackgroundCustomCommandExecutionTest {
         }
       };
 
-      ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1",
+      ExecuteActionRequest actionRequest = new ExecuteActionRequest(1L,
           "REBALANCEHDFS", new HashMap<String, String>(), false);
       actionRequest.getResourceFilters().add(new RequestResourceFilter("HDFS", "NAMENODE",Collections.singletonList("c6401")));
 
@@ -177,23 +177,23 @@ public class BackgroundCustomCommandExecutionTest {
   }
 
   private void createClusterFixture() throws AmbariException, AuthorizationException {
-    createCluster("c1");
-    addHost("c6401","c1");
-    addHost("c6402","c1");
+    createCluster(1L, "c1");
+    addHost("c6401",1L);
+    addHost("c6402",1L);
 
     clusters.getCluster("c1");
-    createService("c1", "HDFS", null);
+    createService(1L, "HDFS", null);
 
-    createServiceComponent("c1","HDFS","NAMENODE", State.INIT);
+    createServiceComponent(1L,"HDFS","NAMENODE", State.INIT);
 
-    createServiceComponentHost("c1","HDFS","NAMENODE","c6401", null);
+    createServiceComponentHost(1L,"HDFS","NAMENODE","c6401", null);
   }
-  private void addHost(String hostname, String clusterName) throws AmbariException {
+  private void addHost(String hostname, Long clusterId) throws AmbariException {
     clusters.addHost(hostname);
     setOsFamily(clusters.getHost(hostname), "redhat", "6.3");
     clusters.getHost(hostname).setState(HostState.HEALTHY);
-    if (null != clusterName) {
-      clusters.mapHostToCluster(hostname, clusterName);
+    if (null != clusterId) {
+      clusters.mapHostToCluster(hostname, clusterId);
     }
   }
   private void setOsFamily(Host host, String osFamily, String osVersion) {
@@ -242,13 +242,13 @@ public class BackgroundCustomCommandExecutionTest {
     ComponentResourceProviderTest.createComponents(controller, requests);
   }
 
-  private void createServiceComponentHost(String clusterName, String serviceName, String componentName, String hostname, State desiredState)
+  private void createServiceComponentHost(Long clusterId, String serviceName, String componentName, String hostname, State desiredState)
       throws AmbariException, AuthorizationException {
     String dStateStr = null;
     if (desiredState != null) {
       dStateStr = desiredState.toString();
     }
-    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterName,
+    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterId,
         serviceName, componentName, hostname, dStateStr);
     Set<ServiceComponentHostRequest> requests =
       new HashSet<>();

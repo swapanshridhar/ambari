@@ -1,0 +1,26 @@
+***************
+*** 81,91 ****
+    public State getState(String clusterName, String serviceName) {
+        try {
+          Cluster cluster = getCluster(clusterName);
+          if (cluster != null && managementControllerProvider != null) {
+            AmbariMetaInfo ambariMetaInfo = managementControllerProvider.get().getAmbariMetaInfo();
+            StackId stackId = cluster.getDesiredStackVersion();
+  
+-           ServiceComponentHostRequest request = new ServiceComponentHostRequest(clusterName,
+              serviceName, null, null, null);
+  
+            Set<ServiceComponentHostResponse> hostComponentResponses =
+--- 81,92 ----
+    public State getState(String clusterName, String serviceName) {
+        try {
+          Cluster cluster = getCluster(clusterName);
++         Long clusterId = cluster.getClusterId();
+          if (cluster != null && managementControllerProvider != null) {
+            AmbariMetaInfo ambariMetaInfo = managementControllerProvider.get().getAmbariMetaInfo();
+            StackId stackId = cluster.getDesiredStackVersion();
+  
++           ServiceComponentHostRequest request = new ServiceComponentHostRequest(clusterId,
+              serviceName, null, null, null);
+  
+            Set<ServiceComponentHostResponse> hostComponentResponses =

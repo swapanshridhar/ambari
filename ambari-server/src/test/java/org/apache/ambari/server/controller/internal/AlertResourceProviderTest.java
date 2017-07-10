@@ -168,7 +168,7 @@ public class AlertResourceProviderTest {
         AlertResourceProvider.ALERT_LABEL);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals(1L).toPredicate();
 
     AlertResourceProvider provider = createProvider();
     Set<Resource> results = provider.getResources(request, predicate);
@@ -176,7 +176,7 @@ public class AlertResourceProviderTest {
     assertEquals(1, results.size());
 
     Resource r = results.iterator().next();
-    assertEquals("c1", r.getPropertyValue(AlertResourceProvider.ALERT_CLUSTER_NAME));
+    assertEquals(1L, r.getPropertyValue(AlertResourceProvider.ALERT_CLUSTER_ID));
 
     verify(m_dao);
   }
@@ -218,7 +218,7 @@ public class AlertResourceProviderTest {
         AlertResourceProvider.ALERT_LABEL);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals("c1").and()
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals(1L).and()
         .property(AlertResourceProvider.ALERT_SERVICE).equals(ALERT_VALUE_SERVICE).toPredicate();
 
     AlertResourceProvider provider = createProvider();
@@ -227,7 +227,7 @@ public class AlertResourceProviderTest {
     assertEquals(1, results.size());
 
     Resource r = results.iterator().next();
-    assertEquals("c1", r.getPropertyValue(AlertResourceProvider.ALERT_CLUSTER_NAME));
+    assertEquals("c1", r.getPropertyValue(AlertResourceProvider.ALERT_CLUSTER_ID));
     assertEquals(ALERT_VALUE_SERVICE, r.getPropertyValue(AlertResourceProvider.ALERT_SERVICE));
 
     verify(m_dao);
@@ -270,7 +270,7 @@ public class AlertResourceProviderTest {
         AlertResourceProvider.ALERT_LABEL);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals("c1").and()
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals(1L).and()
         .property(AlertResourceProvider.ALERT_HOST).equals(ALERT_VALUE_HOSTNAME).toPredicate();
 
     AlertResourceProvider provider = createProvider();
@@ -279,7 +279,7 @@ public class AlertResourceProviderTest {
     assertEquals(1, results.size());
 
     Resource r = results.iterator().next();
-    assertEquals("c1", r.getPropertyValue(AlertResourceProvider.ALERT_CLUSTER_NAME));
+    assertEquals("c1", r.getPropertyValue(AlertResourceProvider.ALERT_CLUSTER_ID));
     assertEquals(ALERT_VALUE_HOSTNAME, r.getPropertyValue(AlertResourceProvider.ALERT_HOST));
 
     verify(m_dao);
@@ -326,7 +326,7 @@ public class AlertResourceProviderTest {
         AlertResourceProvider.ALERT_ORIGINAL_TIMESTAMP);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals("c1").toPredicate();
 
     AlertResourceProvider provider = createProvider();
     Set<Resource> results = provider.getResources(request, predicate);
@@ -400,7 +400,7 @@ public class AlertResourceProviderTest {
         AlertResourceProvider.ALERT_TEXT);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals(1L).toPredicate();
 
     AlertResourceProvider provider = createProvider();
     Set<Resource> results = provider.getResources(request, predicate);
@@ -524,7 +524,7 @@ public class AlertResourceProviderTest {
         AlertResourceProvider.ALERT_ORIGINAL_TIMESTAMP);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals(1L).toPredicate();
 
     AlertResourceProvider provider = createProvider();
     Set<Resource> results = provider.getResources(request, predicate);
@@ -572,7 +572,7 @@ public class AlertResourceProviderTest {
 
     Request request = PropertyHelper.getReadRequest(requestProperties);
 
-    Predicate predicate = new PredicateBuilder().property(AlertResourceProvider.ALERT_CLUSTER_NAME).equals(
+    Predicate predicate = new PredicateBuilder().property(AlertResourceProvider.ALERT_CLUSTER_ID).equals(
         "c1").toPredicate();
 
     AlertResourceProvider provider = createProvider();

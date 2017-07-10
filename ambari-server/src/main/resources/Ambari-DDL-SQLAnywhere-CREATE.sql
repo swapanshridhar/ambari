@@ -420,7 +420,7 @@ CREATE TABLE requestoperationlevel (
   operation_level_id NUMERIC(19) NOT NULL,
   request_id NUMERIC(19) NOT NULL,
   level_name VARCHAR(255),
-  cluster_name VARCHAR(255),
+  cluster_id BIGINT NOT NULL,
   service_name VARCHAR(255),
   host_component_name VARCHAR(255),
   host_id NUMERIC(19) NULL,      -- unlike most host_id columns, this one allows NULLs because the request can be at the service level

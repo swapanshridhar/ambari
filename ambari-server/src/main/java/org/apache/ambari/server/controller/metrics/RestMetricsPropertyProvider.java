@@ -94,7 +94,7 @@ public class RestMetricsPropertyProvider extends ThreadPoolEnabledPropertyProvid
 
   private final Map<String, String> metricsProperties;
   private final StreamProvider streamProvider;
-  private final String clusterNamePropertyId;
+  private final String clusterIdPropertyId;
   private final String componentNamePropertyId;
   private final String statePropertyId;
   private final String componentName;
@@ -130,8 +130,8 @@ public class RestMetricsPropertyProvider extends ThreadPoolEnabledPropertyProvid
    * @param metricsProperties       the map of per-component metrics properties
    * @param componentMetrics        the map of supported metrics for component
    * @param streamProvider          the stream provider
-   * @param metricHostProvider     metricsHostProvider instance
-   * @param clusterNamePropertyId   the cluster name property id
+   * @param metricHostProvider      metricsHostProvider instance
+   * @param clusterIdPropertyId     the cluster Id property id
    * @param hostNamePropertyId      the host name property id
    * @param componentNamePropertyId the component name property id
    * @param statePropertyId         the state property id
@@ -142,15 +142,15 @@ public class RestMetricsPropertyProvider extends ThreadPoolEnabledPropertyProvid
       @Assisted("componentMetrics") Map<String, Map<String, PropertyInfo>> componentMetrics,
       @Assisted("streamProvider") StreamProvider streamProvider,
       @Assisted("metricHostProvider") MetricHostProvider metricHostProvider,
-      @Assisted("clusterNamePropertyId") String clusterNamePropertyId,
+      @Assisted("clusterIdPropertyId") String clusterIdPropertyId,
       @Assisted("hostNamePropertyId") @Nullable String hostNamePropertyId,
       @Assisted("componentNamePropertyId") String componentNamePropertyId,
       @Assisted("statePropertyId") @Nullable String statePropertyId,
       @Assisted("componentName") @Nullable String componentName) {
-    super(componentMetrics, hostNamePropertyId, metricHostProvider, clusterNamePropertyId);
+    super(componentMetrics, hostNamePropertyId, metricHostProvider, clusterIdPropertyId);
     this.metricsProperties = metricsProperties;
     this.streamProvider = streamProvider;
-    this.clusterNamePropertyId = clusterNamePropertyId;
+    this.clusterIdPropertyId = clusterIdPropertyId;
     this.componentNamePropertyId = componentNamePropertyId;
     this.statePropertyId = statePropertyId;
     this.componentName = componentName;
@@ -213,9 +213,9 @@ public class RestMetricsPropertyProvider extends ThreadPoolEnabledPropertyProvid
     String port = "-1";
     String hostname = null;
     try {
-      String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
-      Cluster cluster = clusters.getCluster(clusterName);
-      hostname = getHost(resource, clusterName, resourceComponentName);
+      Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+      Cluster cluster = clusters.getCluster(clusterId);
+      hostname = getHost(resource, cluster.getClusterName(), resourceComponentName);
       if (hostname == null) {
         String msg = String.format("Unable to get component REST metrics. " +
             "No host name for %s.", resourceComponentName);

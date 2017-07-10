@@ -1,0 +1,84 @@
+***************
+*** 21,42 ****
+  
+  public class ServiceRequest {
+  
+-   private String clusterName; // REF
+    private String serviceName; // GET/CREATE/UPDATE/DELETE
+    private String desiredState; // CREATE/UPDATE
+    private String maintenanceState; // UPDATE
+    private String credentialStoreEnabled; // CREATE/UPDATE/GET
+    private String credentialStoreSupported; //GET
+  
+-   public ServiceRequest(String clusterName, String serviceName,
+                          String desiredState) {
+-     this(clusterName, serviceName, desiredState, null);
+    }
+  
+-   public ServiceRequest(String clusterName, String serviceName,
+                          String desiredState,
+                          String credentialStoreEnabled) {
+-     this.clusterName = clusterName;
+      this.serviceName = serviceName;
+      this.desiredState = desiredState;
+      this.credentialStoreEnabled = credentialStoreEnabled;
+--- 21,42 ----
+  
+  public class ServiceRequest {
+  
++   private Long clusterId; // REF
+    private String serviceName; // GET/CREATE/UPDATE/DELETE
+    private String desiredState; // CREATE/UPDATE
+    private String maintenanceState; // UPDATE
+    private String credentialStoreEnabled; // CREATE/UPDATE/GET
+    private String credentialStoreSupported; //GET
+  
++   public ServiceRequest(Long clusterId, String serviceName,
+                          String desiredState) {
++     this(clusterId, serviceName, desiredState, null);
+    }
+  
++   public ServiceRequest(Long clusterId, String serviceName,
+                          String desiredState,
+                          String credentialStoreEnabled) {
++     this.clusterId = clusterId;
+      this.serviceName = serviceName;
+      this.desiredState = desiredState;
+      this.credentialStoreEnabled = credentialStoreEnabled;
+***************
+*** 74,90 ****
+    }
+  
+    /**
+-    * @return the clusterName
+     */
+-   public String getClusterName() {
+-     return clusterName;
+    }
+  
+    /**
+-    * @param clusterName the clusterName to set
+     */
+-   public void setClusterName(String clusterName) {
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+--- 74,90 ----
+    }
+  
+    /**
++    * @return the clusterId
+     */
++   public Long getClusterId() {
++     return clusterId;
+    }
+  
+    /**
++    * @param clusterId the clusterId to set
+     */
++   public void setClusterId(Long clusterId) {
++     this.clusterId = clusterId;
+    }
+  
+    /**

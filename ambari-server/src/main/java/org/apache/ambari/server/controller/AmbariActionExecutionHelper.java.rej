@@ -1,0 +1,17 @@
+***************
+*** 529,535 ****
+      JsonObject rootJsonObject = new JsonObject();
+      JsonArray repositories = new JsonArray();
+      ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStateCurrent(
+-         cluster.getClusterName());
+      if (clusterVersionEntity != null && clusterVersionEntity.getRepositoryVersion() != null) {
+        String hostOsFamily = clusters.getHost(hostName).getOsFamily();
+        for (OperatingSystemEntity operatingSystemEntity : clusterVersionEntity.getRepositoryVersion().getOperatingSystems()) {
+--- 529,535 ----
+      JsonObject rootJsonObject = new JsonObject();
+      JsonArray repositories = new JsonArray();
+      ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStateCurrent(
++         cluster.getClusterId());
+      if (clusterVersionEntity != null && clusterVersionEntity.getRepositoryVersion() != null) {
+        String hostOsFamily = clusters.getHost(hostName).getOsFamily();
+        for (OperatingSystemEntity operatingSystemEntity : clusterVersionEntity.getRepositoryVersion().getOperatingSystems()) {

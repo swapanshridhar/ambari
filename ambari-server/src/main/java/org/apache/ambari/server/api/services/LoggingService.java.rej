@@ -1,0 +1,33 @@
+***************
+*** 74,88 ****
+    private LoggingRequestHelperFactory helperFactory;
+  
+  
+-   private final String clusterName;
+  
+-   public LoggingService(ApiVersion apiVersion, String clusterName) {
+-     this(apiVersion, clusterName, new DefaultControllerFactory());
+    }
+  
+-   public LoggingService(ApiVersion apiVersion, String clusterName, ControllerFactory controllerFactory) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+      this.controllerFactory = controllerFactory;
+    }
+  
+--- 73,87 ----
+    private LoggingRequestHelperFactory helperFactory;
+  
+  
++   private final Long clusterId;
+  
++   public LoggingService(ApiVersion apiVersion, Long clusterId) {
++     this(apiVersion, clusterId, new DefaultControllerFactory());
+    }
+  
++   public LoggingService(ApiVersion apiVersion, Long clusterId, ControllerFactory controllerFactory) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+      this.controllerFactory = controllerFactory;
+    }
+  

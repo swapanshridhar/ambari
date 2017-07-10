@@ -61,7 +61,7 @@ public class HostComponentProcessResourceProviderTest {
         }});
 
     PredicateBuilder pb = new PredicateBuilder().property(
-        HostComponentProcessResourceProvider.HC_PROCESS_CLUSTER_NAME_ID).equals("c1").and();
+        HostComponentProcessResourceProvider.HC_PROCESS_CLUSTER_ID_ID).equals(1L).and();
     pb = pb.property(
         HostComponentProcessResourceProvider.HC_PROCESS_HOST_NAME_ID).equals("h1").and();
     Predicate predicate = pb.property(
@@ -87,7 +87,7 @@ public class HostComponentProcessResourceProviderTest {
     ResourceProvider provider = init();
 
     PredicateBuilder pb = new PredicateBuilder().property(
-        HostComponentProcessResourceProvider.HC_PROCESS_CLUSTER_NAME_ID).equals("c1").and();
+        HostComponentProcessResourceProvider.HC_PROCESS_CLUSTER_ID_ID).equals(1L).and();
     pb = pb.property(
         HostComponentProcessResourceProvider.HC_PROCESS_HOST_NAME_ID).equals("h1").and();
     Predicate predicate = pb.property(
@@ -119,7 +119,7 @@ public class HostComponentProcessResourceProviderTest {
         }});        
 
     PredicateBuilder pb = new PredicateBuilder().property(
-        HostComponentProcessResourceProvider.HC_PROCESS_CLUSTER_NAME_ID).equals("c1").and();
+        HostComponentProcessResourceProvider.HC_PROCESS_CLUSTER_ID_ID).equals(1L).and();
     pb = pb.property(
         HostComponentProcessResourceProvider.HC_PROCESS_HOST_NAME_ID).equals("h1").and();
     Predicate predicate = pb.property(

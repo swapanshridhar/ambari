@@ -57,8 +57,8 @@ public class PreviousUpgradeCompleted extends AbstractCheckDescriptor {
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
 
     String errorMessage = null;
     UpgradeEntity upgradeInProgress = cluster.getUpgradeInProgress();

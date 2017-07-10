@@ -50,7 +50,6 @@ import org.apache.ambari.server.security.authorization.ResourceType;
 import org.apache.ambari.server.security.authorization.RoleAuthorization;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.utils.RetryHelper;
-import org.apache.commons.lang.StringUtils;
 
 import com.google.inject.Inject;
 
@@ -106,24 +105,24 @@ public class LoggingService extends BaseService {
   private Long getClusterResourceId() {
     Long clusterResourceId = null;
 
-    if(!StringUtils.isEmpty(clusterName)) {
+    if(clusterId != null) {
       try {
-        Cluster cluster = controllerFactory.getController().getClusters().getCluster(clusterName);
+        Cluster cluster = controllerFactory.getController().getClusters().getCluster(clusterId);
 
         if(cluster == null) {
-          LOG.warn("No cluster found with the name {}, assuming null resource id", clusterName);
+          LOG.warn("No cluster found with the name {}, assuming null resource id", clusterId);
         }
         else {
           clusterResourceId = cluster.getResourceId();
         }
 
       } catch (AmbariException e) {
-        LOG.warn("An exception occurred looking up the cluster named {}, assuming null resource id: {}",
-            clusterName, e.getLocalizedMessage());
+        LOG.warn("An exception occurred looking up the cluster Id {}, assuming null resource id: {}",
+          clusterId, e.getLocalizedMessage());
       }
     }
     else {
-      LOG.debug("The cluster name is not set, assuming null resource id");
+      LOG.debug("The cluster Id is not set, assuming null resource id");
     }
 
     return clusterResourceId;
@@ -160,7 +159,7 @@ public class LoggingService extends BaseService {
       controllerFactory.getController();
 
     LoggingRequestHelper requestHelper =
-      helperFactory.getHelper(controller, clusterName);
+      helperFactory.getHelper(controller, clusterId);
 
     if (requestHelper != null) {
       LogQueryResponse response =

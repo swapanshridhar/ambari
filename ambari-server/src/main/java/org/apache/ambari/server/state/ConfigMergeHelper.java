@@ -51,8 +51,8 @@ public class ConfigMergeHelper {
   private Provider<AmbariMetaInfo> m_ambariMetaInfo;
 
   @SuppressWarnings("unchecked")
-  public Map<String, Map<String, ThreeWayValue>> getConflicts(String clusterName, StackId targetStack) throws AmbariException {
-    Cluster cluster = m_clusters.get().getCluster(clusterName);
+  public Map<String, Map<String, ThreeWayValue>> getConflicts(Long clusterId, StackId targetStack) throws AmbariException {
+    Cluster cluster = m_clusters.get().getCluster(clusterId);
     StackId oldStack = cluster.getCurrentStackVersion();
 
     Map<String, Map<String, String>> oldMap = new HashMap<>();

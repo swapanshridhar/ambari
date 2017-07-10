@@ -1,0 +1,162 @@
+***************
+*** 120,125 ****
+  import org.apache.ambari.server.state.stack.upgrade.UpgradeScope;
+  import org.apache.ambari.server.state.stack.upgrade.UpgradeType;
+  import org.apache.ambari.server.state.svccomphost.ServiceComponentHostServerActionEvent;
+  import org.apache.commons.collections.CollectionUtils;
+  import org.apache.commons.lang.StringUtils;
+  import org.slf4j.Logger;
+--- 120,126 ----
+  import org.apache.ambari.server.state.stack.upgrade.UpgradeScope;
+  import org.apache.ambari.server.state.stack.upgrade.UpgradeType;
+  import org.apache.ambari.server.state.svccomphost.ServiceComponentHostServerActionEvent;
++ import org.apache.ambari.server.utils.MapUtils;
+  import org.apache.commons.collections.CollectionUtils;
+  import org.apache.commons.lang.StringUtils;
+  import org.slf4j.Logger;
+***************
+*** 141,147 ****
+  @StaticallyInject
+  public class UpgradeResourceProvider extends AbstractControllerResourceProvider {
+  
+-   public static final String UPGRADE_CLUSTER_NAME = "Upgrade/cluster_name";
+    public static final String UPGRADE_VERSION = "Upgrade/repository_version";
+    public static final String UPGRADE_TYPE = "Upgrade/upgrade_type";
+    public static final String UPGRADE_PACK = "Upgrade/pack";
+--- 142,148 ----
+  @StaticallyInject
+  public class UpgradeResourceProvider extends AbstractControllerResourceProvider {
+  
++   public static final String UPGRADE_CLUSTER_ID = "Upgrade/cluster_id";
+    public static final String UPGRADE_VERSION = "Upgrade/repository_version";
+    public static final String UPGRADE_TYPE = "Upgrade/upgrade_type";
+    public static final String UPGRADE_PACK = "Upgrade/pack";
+***************
+*** 218,224 ****
+    private static final String REQUEST_STATUS_PROPERTY_ID = "Upgrade/request_status";
+  
+    private static final Set<String> PK_PROPERTY_IDS = new HashSet<>(
+-       Arrays.asList(UPGRADE_REQUEST_ID, UPGRADE_CLUSTER_NAME));
+    private static final Set<String> PROPERTY_IDS = new HashSet<>();
+  
+    /**
+--- 219,225 ----
+    private static final String REQUEST_STATUS_PROPERTY_ID = "Upgrade/request_status";
+  
+    private static final Set<String> PK_PROPERTY_IDS = new HashSet<>(
++       Arrays.asList(UPGRADE_REQUEST_ID, UPGRADE_CLUSTER_ID));
+    private static final Set<String> PROPERTY_IDS = new HashSet<>();
+  
+    /**
+***************
+*** 281,287 ****
+  
+    static {
+      // properties
+-     PROPERTY_IDS.add(UPGRADE_CLUSTER_NAME);
+      PROPERTY_IDS.add(UPGRADE_VERSION);
+      PROPERTY_IDS.add(UPGRADE_TYPE);
+      PROPERTY_IDS.add(UPGRADE_PACK);
+--- 282,288 ----
+  
+    static {
+      // properties
++     PROPERTY_IDS.add(UPGRADE_CLUSTER_ID);
+      PROPERTY_IDS.add(UPGRADE_VERSION);
+      PROPERTY_IDS.add(UPGRADE_TYPE);
+      PROPERTY_IDS.add(UPGRADE_PACK);
+***************
+*** 556,562 ****
+    /**
+     * Validates a singular API request.
+     *
+-    * @param upgradeContext the map of properties
+     * @return the validated upgrade pack
+     * @throws AmbariException
+     */
+--- 557,563 ----
+    /**
+     * Validates a singular API request.
+     *
++    * @param upgradeContext the upgrade context
+     * @return the validated upgrade pack
+     * @throws AmbariException
+     */
+***************
+*** 575,581 ****
+      String version = (String) requestMap.get(UPGRADE_VERSION);
+      String versionForUpgradePack = (String) requestMap.get(UPGRADE_FROM_VERSION);
+  
+-     UpgradePack pack = s_upgradeHelper.suggestUpgradePack(cluster.getClusterName(),
+          versionForUpgradePack, version, direction, upgradeType, preferredUpgradePackName);
+  
+      // the validator will throw an exception if the upgrade request is not valid
+--- 576,582 ----
+      String version = (String) requestMap.get(UPGRADE_VERSION);
+      String versionForUpgradePack = (String) requestMap.get(UPGRADE_FROM_VERSION);
+  
++     UpgradePack pack = s_upgradeHelper.suggestUpgradePack(cluster.getClusterId(),
+          versionForUpgradePack, version, direction, upgradeType, preferredUpgradePackName);
+  
+      // the validator will throw an exception if the upgrade request is not valid
+***************
+*** 1299,1305 ****
+        params.put(HOOKS_FOLDER, stackInfo.getStackHooksFolder());
+      }
+  
+-     ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterName(),
+          "ru_execute_tasks", Collections.singletonList(filter), params);
+  
+      // hosts in maintenance mode are excluded from the upgrade
+--- 1300,1306 ----
+        params.put(HOOKS_FOLDER, stackInfo.getStackHooksFolder());
+      }
+  
++     ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterId(),
+          "ru_execute_tasks", Collections.singletonList(filter), params);
+  
+      // hosts in maintenance mode are excluded from the upgrade
+***************
+*** 1540,1551 ****
+          throws AmbariException {
+        Map<String, Object> requestMap = upgradeContext.getUpgradeRequest();
+  
+-       String clusterName = (String) requestMap.get(UPGRADE_CLUSTER_NAME);
+        String version = (String) requestMap.get(UPGRADE_VERSION);
+        String direction = (String) requestMap.get(UPGRADE_DIRECTION);
+  
+-       if (StringUtils.isBlank(clusterName)) {
+-         throw new AmbariException(String.format("%s is required", UPGRADE_CLUSTER_NAME));
+        }
+  
+        if (StringUtils.isBlank(version)) {
+--- 1541,1552 ----
+          throws AmbariException {
+        Map<String, Object> requestMap = upgradeContext.getUpgradeRequest();
+  
++       Long clusterId = MapUtils.parseLong(requestMap, UPGRADE_CLUSTER_ID);
+        String version = (String) requestMap.get(UPGRADE_VERSION);
+        String direction = (String) requestMap.get(UPGRADE_DIRECTION);
+  
++       if (null == clusterId) {
++         throw new AmbariException(String.format("%s is required", UPGRADE_CLUSTER_ID));
+        }
+  
+        if (StringUtils.isBlank(version)) {
+***************
+*** 1597,1603 ****
+            getResourceProvider(Resource.Type.PreUpgradeCheck);
+  
+        Predicate preUpgradeCheckPredicate = new PredicateBuilder().property(
+-           PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CLUSTER_NAME_PROPERTY_ID).equals(cluster.getClusterName()).and().property(
+            PreUpgradeCheckResourceProvider.UPGRADE_CHECK_REPOSITORY_VERSION_PROPERTY_ID).equals(version).and().property(
+            PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_TYPE_PROPERTY_ID).equals(upgradeType).and().property(
+            PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_PACK_PROPERTY_ID).equals(preferredUpgradePack).toPredicate();
+--- 1598,1604 ----
+            getResourceProvider(Resource.Type.PreUpgradeCheck);
+  
+        Predicate preUpgradeCheckPredicate = new PredicateBuilder().property(
++           PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CLUSTER_ID_PROPERTY_ID).equals(cluster.getClusterId()).and().property(
+            PreUpgradeCheckResourceProvider.UPGRADE_CHECK_REPOSITORY_VERSION_PROPERTY_ID).equals(version).and().property(
+            PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_TYPE_PROPERTY_ID).equals(upgradeType).and().property(
+            PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_PACK_PROPERTY_ID).equals(preferredUpgradePack).toPredicate();

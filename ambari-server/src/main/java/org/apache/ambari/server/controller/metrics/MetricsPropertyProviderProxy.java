@@ -48,7 +48,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
   private AMSPropertyProvider amsPropertyProvider;
   private GangliaPropertyProvider gangliaPropertyProvider;
   private TimelineMetricCacheProvider cacheProvider;
-  private String clusterNamePropertyId;
+  private String clusterIdPropertyId;
 
   public MetricsPropertyProviderProxy(
     InternalType type,
@@ -58,30 +58,30 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
     TimelineMetricCacheProvider cacheProvider,
     MetricHostProvider hostProvider,
     MetricsServiceProvider serviceProvider,
-    String clusterNamePropertyId,
+    String clusterIdPropertyId,
     String hostNamePropertyId,
     String componentNamePropertyId) {
 
     super(componentPropertyInfoMap);
     this.metricsServiceProvider = serviceProvider;
     this.cacheProvider = cacheProvider;
-    this.clusterNamePropertyId = clusterNamePropertyId;
+    this.clusterIdPropertyId = clusterIdPropertyId;
 
     switch (type) {
       case Host:
         createHostPropertyProviders(componentPropertyInfoMap, streamProvider,
-          configuration, hostProvider, clusterNamePropertyId, hostNamePropertyId);
+          configuration, hostProvider, clusterIdPropertyId, hostNamePropertyId);
         break;
 
       case HostComponent:
         createHostComponentPropertyProviders(componentPropertyInfoMap, streamProvider,
-          configuration, hostProvider, clusterNamePropertyId,
+          configuration, hostProvider, clusterIdPropertyId,
           hostNamePropertyId, componentNamePropertyId);
         break;
 
       case Component:
         createComponentPropertyProviders(componentPropertyInfoMap, streamProvider,
-          configuration, hostProvider, clusterNamePropertyId, componentNamePropertyId);
+          configuration, hostProvider, clusterIdPropertyId, componentNamePropertyId);
         break;
 
       default:
@@ -108,7 +108,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                            URLStreamProvider streamProvider,
                                            ComponentSSLConfiguration configuration,
                                            MetricHostProvider hostProvider,
-                                           String clusterNamePropertyId,
+                                           String clusterIdPropertyId,
                                            String hostNamePropertyId) {
 
     this.amsPropertyProvider = new AMSHostPropertyProvider(componentPropertyInfoMap,
@@ -116,14 +116,14 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                             configuration,
                                             cacheProvider,
                                             hostProvider,
-                                            clusterNamePropertyId,
+                                            clusterIdPropertyId,
                                             hostNamePropertyId);
 
     this.gangliaPropertyProvider = new GangliaHostPropertyProvider(componentPropertyInfoMap,
                                             streamProvider,
                                             configuration,
                                             hostProvider,
-                                            clusterNamePropertyId,
+                                            clusterIdPropertyId,
                                             hostNamePropertyId);
 }
 
@@ -131,7 +131,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                             URLStreamProvider streamProvider,
                                             ComponentSSLConfiguration configuration,
                                             MetricHostProvider hostProvider,
-                                            String clusterNamePropertyId,
+                                            String clusterIdPropertyId,
                                             String hostNamePropertyId,
                                             String componentNamePropertyId) {
 
@@ -141,7 +141,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                             configuration,
                                             cacheProvider,
                                             hostProvider,
-                                            clusterNamePropertyId,
+                                            clusterIdPropertyId,
                                             hostNamePropertyId,
                                             componentNamePropertyId);
 
@@ -150,7 +150,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                             streamProvider,
                                             configuration,
                                             hostProvider,
-                                            clusterNamePropertyId,
+                                            clusterIdPropertyId,
                                             hostNamePropertyId,
                                             componentNamePropertyId);
   }
@@ -159,7 +159,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                                 URLStreamProvider streamProvider,
                                                 ComponentSSLConfiguration configuration,
                                                 MetricHostProvider hostProvider,
-                                                String clusterNamePropertyId,
+                                                String clusterIdPropertyId,
                                                 String componentNamePropertyId) {
 
     this.amsPropertyProvider = new AMSComponentPropertyProvider(
@@ -168,7 +168,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                             configuration,
                                             cacheProvider,
                                             hostProvider,
-                                            clusterNamePropertyId,
+                                            clusterIdPropertyId,
                                             componentNamePropertyId);
 
     this.gangliaPropertyProvider = new GangliaComponentPropertyProvider(
@@ -176,7 +176,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
                                             streamProvider,
                                             configuration,
                                             hostProvider,
-                                            clusterNamePropertyId,
+                                            clusterIdPropertyId,
                                             componentNamePropertyId);
   }
 
@@ -184,7 +184,7 @@ public class MetricsPropertyProviderProxy extends AbstractPropertyProvider {
   public Set<Resource> populateResources(Set<Resource> resources, Request request,
                                          Predicate predicate) throws SystemException {
 
-    if(!checkAuthorizationForMetrics(resources, clusterNamePropertyId)) {
+    if(!checkAuthorizationForMetrics(resources, clusterIdPropertyId)) {
       return resources;
     }
 

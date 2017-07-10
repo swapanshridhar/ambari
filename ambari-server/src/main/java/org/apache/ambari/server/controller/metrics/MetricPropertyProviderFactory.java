@@ -46,7 +46,7 @@ public interface MetricPropertyProviderFactory {
    *          the JMX host mapping
    * @param metricHostProvider
    *          the host mapping
-   * @param clusterNamePropertyId
+   * @param clusterIdPropertyId
    *          the cluster name property id
    * @param hostNamePropertyId
    *          the host name property id
@@ -61,7 +61,7 @@ public interface MetricPropertyProviderFactory {
       @Assisted("streamProvider") StreamProvider streamProvider,
       @Assisted("jmxHostProvider") JMXHostProvider jmxHostProvider,
       @Assisted("metricHostProvider") MetricHostProvider metricHostProvider,
-      @Assisted("clusterNamePropertyId") String clusterNamePropertyId,
+      @Assisted("clusterIdPropertyId") String clusterIdPropertyId,
       @Assisted("hostNamePropertyId") @Nullable String hostNamePropertyId,
       @Assisted("componentNamePropertyId") String componentNamePropertyId,
       @Assisted("statePropertyId") @Nullable String statePropertyId);
@@ -77,8 +77,8 @@ public interface MetricPropertyProviderFactory {
    *          the stream provider
    * @param metricHostProvider
    *          metricsHostProvider instance
-   * @param clusterNamePropertyId
-   *          the cluster name property id
+   * @param clusterIdPropertyId
+   *          the cluster Id property id
    * @param hostNamePropertyId
    *          the host name property id, or {@code null} if none.
    * @param componentNamePropertyId
@@ -95,7 +95,7 @@ public interface MetricPropertyProviderFactory {
       @Assisted("componentMetrics") Map<String, Map<String, PropertyInfo>> componentMetrics,
       @Assisted("streamProvider") StreamProvider streamProvider,
       @Assisted("metricHostProvider") MetricHostProvider metricHostProvider,
-      @Assisted("clusterNamePropertyId") String clusterNamePropertyId,
+      @Assisted("clusterIdPropertyId") String clusterIdPropertyId,
       @Assisted("hostNamePropertyId") @Nullable String hostNamePropertyId,
       @Assisted("componentNamePropertyId") String componentNamePropertyId,
       @Assisted("statePropertyId") @Nullable String statePropertyId,

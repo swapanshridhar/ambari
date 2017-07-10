@@ -47,6 +47,7 @@ import org.apache.ambari.server.controller.utilities.PropertyHelper;
 import org.apache.ambari.server.orm.dao.ArtifactDAO;
 import org.apache.ambari.server.orm.entities.ArtifactEntity;
 import org.apache.ambari.server.state.Cluster;
+import org.apache.ambari.server.utils.MapUtils;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -571,7 +572,7 @@ public class ArtifactResourceProvider extends AbstractResourceProvider {
      * At this time, all foreign key properties should be in the "Artifacts" category.
      *
      * @return  the absolute foreign key property name.
-     *          For example: "Artifacts/cluster_name
+     *          For example: "Artifacts/cluster_id
      */
     //todo: use relative property names
     String getFKPropertyName();
@@ -581,7 +582,7 @@ public class ArtifactResourceProvider extends AbstractResourceProvider {
      * This name doesn't need to be in any category but must be unique
      * across all registrations.
      *
-     * @return short fk name.  For example: "cluster_name"
+     * @return short fk name.  For example: "cluster_id"
      */
     String getShortFKPropertyName();
 
@@ -592,7 +593,7 @@ public class ArtifactResourceProvider extends AbstractResourceProvider {
      * An example of when this will be different is when the fk value value needs
      * to be converted to the unique id for the resource.
      * <p>
-     * For example, the cluster_name to the cluster_id.
+     * For example, the cluster_id to the cluster_id.
      * <p>
      * This returned value will later be converted back to the normal form via
      * {@link #fromPersistId(String)}.
@@ -615,7 +616,7 @@ public class ArtifactResourceProvider extends AbstractResourceProvider {
      * An  example of this is the converting the cluster name to the cluster id in
      * {@link #toPersistId(String)} and then back to the cluster name by this method.  The
      * api always uses the cluster name so we wouldn't want to return the id back as the
-     * value for a cluster_name foreign key.
+     * value for a cluster_id foreign key.
      *
      * @param value  persist id form of the fk value
      *

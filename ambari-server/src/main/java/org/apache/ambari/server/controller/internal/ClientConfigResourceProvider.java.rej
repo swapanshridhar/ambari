@@ -1,0 +1,17 @@
+***************
+*** 440,446 ****
+          jsonContent.put("clusterHostInfo", clusterHostInfo);
+          jsonContent.put("hostLevelParams", hostLevelParams);
+          jsonContent.put("hostname", hostName);
+-         jsonContent.put("clusterName", cluster.getClusterName());
+          jsonConfigurations = gson.toJson(jsonContent);
+  
+          File tmpDirectory = new File(TMP_PATH);
+--- 441,447 ----
+          jsonContent.put("clusterHostInfo", clusterHostInfo);
+          jsonContent.put("hostLevelParams", hostLevelParams);
+          jsonContent.put("hostname", hostName);
++         jsonContent.put("clusterId", cluster.getClusterId());
+          jsonConfigurations = gson.toJson(jsonContent);
+  
+          File tmpDirectory = new File(TMP_PATH);

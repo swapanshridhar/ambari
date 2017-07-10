@@ -1,0 +1,17 @@
+***************
+*** 249,255 ****
+  
+        if (requestedIds.contains(HOST_COMPONENT_HDP_VERSION_PROPERTY_ID)) {
+          HostVersionEntity versionEntity = hostVersionDAO.
+-             findByHostAndStateCurrent(response.getClusterName(), response.getHostname());
+          if (versionEntity != null) {
+            setResourceProperty(resource, HOST_COMPONENT_HDP_VERSION_PROPERTY_ID,
+                versionEntity.getRepositoryVersion().getDisplayName(), requestedIds);
+--- 250,256 ----
+  
+        if (requestedIds.contains(HOST_COMPONENT_HDP_VERSION_PROPERTY_ID)) {
+          HostVersionEntity versionEntity = hostVersionDAO.
++             findByHostAndStateCurrent(response.getClusterId(), response.getHostname());
+          if (versionEntity != null) {
+            setResourceProperty(resource, HOST_COMPONENT_HDP_VERSION_PROPERTY_ID,
+                versionEntity.getRepositoryVersion().getDisplayName(), requestedIds);

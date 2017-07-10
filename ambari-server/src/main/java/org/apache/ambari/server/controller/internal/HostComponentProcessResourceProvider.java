@@ -38,6 +38,7 @@ import org.apache.ambari.server.controller.spi.UnsupportedPropertyException;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.Clusters;
 import org.apache.ambari.server.state.ServiceComponentHost;
+import org.apache.ambari.server.utils.MapUtils;
 
 /**
  * Resource Provider for HostComponent process resources.
@@ -50,14 +51,14 @@ public class HostComponentProcessResourceProvider extends ReadOnlyResourceProvid
   public static final String HC_PROCESS_NAME_ID = "HostComponentProcess/name";
   public static final String HC_PROCESS_STATUS_ID = "HostComponentProcess/status";
   
-  public static final String HC_PROCESS_CLUSTER_NAME_ID = "HostComponentProcess/cluster_name";
+  public static final String HC_PROCESS_CLUSTER_ID_ID = "HostComponentProcess/cluster_id";
   public static final String HC_PROCESS_HOST_NAME_ID = "HostComponentProcess/host_name";
   public static final String HC_PROCESS_COMPONENT_NAME_ID = "HostComponentProcess/component_name";
 
   // Primary Key Fields
   private static Set<String> pkPropertyIds =
     new HashSet<>(Arrays.asList(new String[]{
-      HC_PROCESS_CLUSTER_NAME_ID, HC_PROCESS_HOST_NAME_ID, HC_PROCESS_COMPONENT_NAME_ID, HC_PROCESS_NAME_ID}));
+      HC_PROCESS_CLUSTER_ID_ID, HC_PROCESS_HOST_NAME_ID, HC_PROCESS_COMPONENT_NAME_ID, HC_PROCESS_NAME_ID}));
 
   // ----- Constructors ----------------------------------------------------
 
@@ -102,7 +103,7 @@ public class HostComponentProcessResourceProvider extends ReadOnlyResourceProvid
     for (HostComponentProcessResponse response : responses) {
       Resource r = new ResourceImpl(Resource.Type.HostComponentProcess);
       
-      setResourceProperty(r, HC_PROCESS_CLUSTER_NAME_ID, response.getCluster(),
+      setResourceProperty(r, HC_PROCESS_CLUSTER_ID_ID, response.getClusterId(),
           requestedIds);
       setResourceProperty(r, HC_PROCESS_HOST_NAME_ID, response.getHost(),
           requestedIds);
@@ -141,12 +142,12 @@ public class HostComponentProcessResourceProvider extends ReadOnlyResourceProvid
     Clusters clusters = getManagementController().getClusters();
 
     for (Map<String, Object> requestMap : requestMaps) {
-      
-      String cluster = (String) requestMap.get(HC_PROCESS_CLUSTER_NAME_ID);
+
+      Long clusterId = MapUtils.parseLong(requestMap, HC_PROCESS_CLUSTER_ID_ID);
       String component = (String) requestMap.get(HC_PROCESS_COMPONENT_NAME_ID);
       String host = (String) requestMap.get(HC_PROCESS_HOST_NAME_ID);
 
-      Cluster c = clusters.getCluster(cluster);
+      Cluster c = clusters.getCluster(clusterId);
       
       Collection<ServiceComponentHost> schs = c.getServiceComponentHosts(host);
       
@@ -155,7 +156,7 @@ public class HostComponentProcessResourceProvider extends ReadOnlyResourceProvid
           continue;
         
         for (Map<String, String> proc : sch.getProcesses()) {
-          results.add(new HostComponentProcessResponse(cluster, sch.getHostName(),
+          results.add(new HostComponentProcessResponse(clusterId, sch.getHostName(),
               component, proc));
         }
       }

@@ -86,8 +86,8 @@ public class ServicesUpCheck extends AbstractCheckDescriptor {
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request)
       throws AmbariException {
 
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     List<String> errorMessages = new ArrayList<>();
     Set<String> failedServiceNames = new HashSet<>();
 

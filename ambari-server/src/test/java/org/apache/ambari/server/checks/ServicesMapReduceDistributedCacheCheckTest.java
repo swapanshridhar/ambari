@@ -71,9 +71,9 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     Mockito.when(clusters.getCluster("cluster")).thenReturn(cluster);
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
 
-    Assert.assertTrue(servicesMapReduceDistributedCacheCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertTrue(servicesMapReduceDistributedCacheCheck.isApplicable(new PrereqCheckRequest(1L)));
 
-    PrereqCheckRequest req = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest req = new PrereqCheckRequest(1L);
     req.addResult(CheckDescription.SERVICES_NAMENODE_HA, PrereqCheckStatus.FAIL);
     Assert.assertFalse(servicesMapReduceDistributedCacheCheck.isApplicable(req));
 
@@ -82,7 +82,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
 
 
     services.remove("YARN");
-    Assert.assertFalse(servicesMapReduceDistributedCacheCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertFalse(servicesMapReduceDistributedCacheCheck.isApplicable(new PrereqCheckRequest(1L)));
   }
 
   @Test
@@ -103,35 +103,35 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     Mockito.when(config.getProperties()).thenReturn(properties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "hdfs://some/path");
     properties.put("mapreduce.application.classpath", "anything");
     check = new PrerequisiteCheck(null, null);
-    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "dfs://some/path");
     properties.put("mapreduce.application.classpath", "anything");
     check = new PrerequisiteCheck(null, null);
-    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     properties.put("fs.defaultFS", "hdfs://ha");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
     check = new PrerequisiteCheck(null, null);
-    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     properties.put("fs.defaultFS", "dfs://ha");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
     check = new PrerequisiteCheck(null, null);
-    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Fail due to no dfs
@@ -139,7 +139,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
     check = new PrerequisiteCheck(null, null);
-    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMapReduceDistributedCacheCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
   }
 
@@ -166,7 +166,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     Mockito.when(prerequisiteCheckConfig.getCheckProperties(
         servicesMapReduceDistributedCacheCheck.getClass().getName())).thenReturn(checkProperties);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -175,7 +175,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "hdfs://some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -184,7 +184,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "dfs://some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -193,7 +193,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "wasb://some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -202,7 +202,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "ecs://some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -211,7 +211,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "hdfs://ha");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -220,7 +220,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "dfs://ha");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -229,7 +229,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "wasb://ha");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -238,7 +238,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "ecs://ha");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);
@@ -248,7 +248,7 @@ public class ServicesMapReduceDistributedCacheCheckTest {
     properties.put("fs.defaultFS", "anything");
     properties.put("mapreduce.application.framework.path", "/some/path");
     properties.put("mapreduce.application.classpath", "anything");
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
     check = new PrerequisiteCheck(null, null);
     servicesMapReduceDistributedCacheCheck.perform(check, request);

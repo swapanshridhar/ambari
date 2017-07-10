@@ -40,7 +40,7 @@ public class HostResponse {
 
   private String hostname;
 
-  private String clusterName;
+  private Long clusterId;
 
   /**
    * Host IP if ipv4 interface available
@@ -154,7 +154,7 @@ public class HostResponse {
                       Map<String, String> hostAttributes, AgentVersion agentVersion,
                       HostHealthStatus healthStatus, HostState hostState, String status) {
     this.hostname = hostname;
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.ipv4 = ipv4;
     this.cpuCount = cpuCount;
     this.phCpuCount = phCpuCount;

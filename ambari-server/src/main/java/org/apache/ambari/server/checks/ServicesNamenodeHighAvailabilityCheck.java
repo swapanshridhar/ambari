@@ -51,8 +51,8 @@ public class ServicesNamenodeHighAvailabilityCheck extends AbstractCheckDescript
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     final String configType = "hdfs-site";
     final Map<String, DesiredConfig> desiredConfigs = cluster.getDesiredConfigs();
     final DesiredConfig desiredConfig = desiredConfigs.get(configType);

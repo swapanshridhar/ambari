@@ -102,6 +102,7 @@ public class AmbariMetricSinkImpl extends AbstractTimelineMetricsSink implements
       String clusterName = kv.getKey();
       instanceId = clusterName;
       Cluster c = kv.getValue();
+      Long clusterId = c.getClusterId();
       Resource.Type type = Resource.Type.ServiceConfigVersion;
 
       //If Metrics Collector VIP settings are configured, use that.
@@ -131,7 +132,7 @@ public class AmbariMetricSinkImpl extends AbstractTimelineMetricsSink implements
       propertyIds.add(ServiceConfigVersionResourceProvider.SERVICE_CONFIG_VERSION_CONFIGURATIONS_PROPERTY_ID);
 
       Predicate predicate = new PredicateBuilder().property(
-        ServiceConfigVersionResourceProvider.SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID).equals(clusterName).and().property(
+        ServiceConfigVersionResourceProvider.SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID).equals(clusterId).and().property(
         ServiceConfigVersionResourceProvider.SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID).equals(ambariMetricsServiceName).and().property(
         ServiceConfigVersionResourceProvider.SERVICE_CONFIG_VERSION_IS_CURRENT_PROPERTY_ID).equals("true").toPredicate();
 

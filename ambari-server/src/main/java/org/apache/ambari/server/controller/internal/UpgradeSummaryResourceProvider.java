@@ -42,6 +42,7 @@ import org.apache.ambari.server.orm.dao.HostRoleCommandDAO;
 import org.apache.ambari.server.orm.dao.UpgradeDAO;
 import org.apache.ambari.server.orm.entities.HostRoleCommandEntity;
 import org.apache.ambari.server.orm.entities.UpgradeEntity;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.UpgradeHelper;
 import org.slf4j.Logger;
@@ -53,13 +54,13 @@ import com.google.inject.Inject;
  */
 @StaticallyInject
 public class UpgradeSummaryResourceProvider extends AbstractControllerResourceProvider {
-  protected static final String UPGRADE_SUMMARY_CLUSTER_NAME = "UpgradeSummary/cluster_name";
+  protected static final String UPGRADE_SUMMARY_CLUSTER_ID = "UpgradeSummary/cluster_id";
   protected static final String UPGRADE_SUMMARY_REQUEST_ID = "UpgradeSummary/request_id";
 
   protected static final String UPGRADE_SUMMARY_FAIL_REASON = PropertyHelper.getPropertyId("UpgradeSummary", "fail_reason");
 
   private static final Set<String> PK_PROPERTY_IDS = new HashSet<>(
-    Arrays.asList(UPGRADE_SUMMARY_REQUEST_ID, UPGRADE_SUMMARY_CLUSTER_NAME));
+    Arrays.asList(UPGRADE_SUMMARY_REQUEST_ID, UPGRADE_SUMMARY_CLUSTER_ID));
   private static final Set<String> PROPERTY_IDS = new HashSet<>();
   private static Map<String, String> TASK_MAPPED_IDS = new HashMap<>();
 
@@ -79,7 +80,7 @@ public class UpgradeSummaryResourceProvider extends AbstractControllerResourcePr
 
   static {
     // Properties
-    PROPERTY_IDS.add(UPGRADE_SUMMARY_CLUSTER_NAME);
+    PROPERTY_IDS.add(UPGRADE_SUMMARY_CLUSTER_ID);
     PROPERTY_IDS.add(UPGRADE_SUMMARY_REQUEST_ID);
     PROPERTY_IDS.add(UPGRADE_SUMMARY_FAIL_REASON);
 
@@ -91,7 +92,7 @@ public class UpgradeSummaryResourceProvider extends AbstractControllerResourcePr
 
     // Keys
     KEY_PROPERTY_IDS.put(Resource.Type.UpgradeSummary, UPGRADE_SUMMARY_REQUEST_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, UPGRADE_SUMMARY_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, UPGRADE_SUMMARY_CLUSTER_ID);
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(UpgradeSummaryResourceProvider.class);
@@ -119,19 +120,19 @@ public class UpgradeSummaryResourceProvider extends AbstractControllerResourcePr
     Set<String> requestPropertyIds = getRequestPropertyIds(request, predicate);
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = (String) propertyMap.get(UPGRADE_SUMMARY_CLUSTER_NAME);
+      Long clusterId = MapUtils.parseLong(propertyMap, UPGRADE_SUMMARY_CLUSTER_ID);
 
-      if (null == clusterName || clusterName.isEmpty()) {
+      if (null == clusterId) {
         throw new IllegalArgumentException(
-            "The cluster name is required when querying for upgrades");
+            "The cluster id is required when querying for upgrades");
       }
 
       Cluster cluster;
       try {
-        cluster = getManagementController().getClusters().getCluster(clusterName);
+        cluster = getManagementController().getClusters().getCluster(clusterId);
       } catch (AmbariException e) {
         throw new NoSuchResourceException(
-            String.format("Cluster %s could not be loaded", clusterName));
+            String.format("Cluster %s could not be loaded", clusterId));
       }
 
       List<UpgradeEntity> upgrades = new ArrayList<>();
@@ -150,7 +151,7 @@ public class UpgradeSummaryResourceProvider extends AbstractControllerResourcePr
         Resource resource = new ResourceImpl(Resource.Type.UpgradeSummary);
         Long upgradeRequestId = entity.getRequestId();
 
-        setResourceProperty(resource, UPGRADE_SUMMARY_CLUSTER_NAME, clusterName, requestPropertyIds);
+        setResourceProperty(resource, UPGRADE_SUMMARY_CLUSTER_ID, clusterId, requestPropertyIds);
         setResourceProperty(resource, UPGRADE_SUMMARY_REQUEST_ID, entity.getRequestId(), requestPropertyIds);
 
         HostRoleCommandEntity mostRecentFailure = s_hostRoleCommandDAO.findMostRecentFailure(upgradeRequestId);
@@ -162,7 +163,7 @@ public class UpgradeSummaryResourceProvider extends AbstractControllerResourcePr
           displayText = summary.getDisplayText();
           failedTask = summary.getFailedTask();
 
-          Resource taskResource = s_upgradeHelper.getTaskResource(clusterName, failedTask.getRequestId(),
+          Resource taskResource = s_upgradeHelper.getTaskResource(clusterId, failedTask.getRequestId(),
               failedTask.getStageId(), failedTask.getTaskId());
 
           // Include properties from the failed task.

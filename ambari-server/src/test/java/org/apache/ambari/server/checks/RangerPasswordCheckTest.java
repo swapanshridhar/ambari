@@ -148,11 +148,11 @@ public class RangerPasswordCheckTest {
 
     replay(cluster, service);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setSourceStackId(new StackId("HDP-2.3"));
     assertTrue(m_rpc.isApplicable(request));
 
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setSourceStackId(new StackId("HDP-2.2"));
     assertFalse(m_rpc.isApplicable(request));
 
@@ -162,7 +162,7 @@ public class RangerPasswordCheckTest {
     expect(service.getDesiredStackId()).andReturn(new StackId("WILDSTACK-2.0")).anyTimes();
     replay(cluster, service);
 
-    request = new PrereqCheckRequest("cluster");
+    request = new PrereqCheckRequest(1L);
     request.setSourceStackId(new StackId("HDP-2.2"));
     assertTrue(m_rpc.isApplicable(request));
 
@@ -177,32 +177,32 @@ public class RangerPasswordCheckTest {
     m_configMap.clear();
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not check credentials.  Missing property admin-properties/policymgr_external_url", check.getFailReason());
 
     m_configMap.put("policymgr_external_url", RANGER_URL);
     check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not check credentials.  Missing property ranger-env/admin_username", check.getFailReason());
 
     m_configMap.put("admin_username", "admin");
     check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not check credentials.  Missing property ranger-env/admin_password", check.getFailReason());
 
 
     m_configMap.put("admin_password", "pass");
     check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not check credentials.  Missing property ranger-env/ranger_admin_username", check.getFailReason());
 
     m_configMap.put("ranger_admin_username", "r_admin");
     check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not check credentials.  Missing property ranger-env/ranger_admin_password", check.getFailReason());
 
@@ -219,7 +219,7 @@ public class RangerPasswordCheckTest {
 
     m_configMap.put("ranger_admin_password", "r_pass");
     check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
     assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
   }
@@ -243,7 +243,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
@@ -267,7 +267,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
@@ -292,7 +292,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     String error = "The response from Ranger was malformed. ";
     error += "com.google.gson.stream.MalformedJsonException: Expected EOF at line 1 column 6. ";
@@ -322,7 +322,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     String error = "The response from Ranger was malformed. ";
     error += "java.lang.String cannot be cast to java.util.List. ";
@@ -349,7 +349,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.SERVICES_RANGER_PASSWORD_VERIFY, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     assertEquals("Credentials for user 'admin' in Ambari do not match Ranger.", check.getFailReason());
@@ -372,7 +372,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.SERVICES_RANGER_PASSWORD_VERIFY, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     assertEquals("Credentials for user 'admin' in Ambari do not match Ranger.", check.getFailReason());
@@ -394,7 +394,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.SERVICES_RANGER_PASSWORD_VERIFY, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not access Ranger to verify user 'admin' against " + RANGER_URL + "service/public/api/repository/count. whoops", check.getFailReason());
@@ -416,7 +416,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.SERVICES_RANGER_PASSWORD_VERIFY, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not verify credentials for user 'admin'.  Response code 404 received from " + RANGER_URL + "service/public/api/repository/count", check.getFailReason());
@@ -442,7 +442,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     assertEquals("Credentials for user 'r_admin' in Ambari do not match Ranger.", check.getFailReason());
@@ -469,7 +469,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     assertEquals("Credentials for user 'r_admin' in Ambari do not match Ranger.", check.getFailReason());
@@ -495,7 +495,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not access Ranger to verify user 'r_admin' against " + RANGER_URL + "service/public/api/repository/count. again!", check.getFailReason());
@@ -522,7 +522,7 @@ public class RangerPasswordCheckTest {
     replay(conn, m_streamProvider);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_rpc.perform(check, new PrereqCheckRequest("cluster"));
+    m_rpc.perform(check, new PrereqCheckRequest(1L));
 
     assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
     assertEquals("Could not verify credentials for user 'r_admin'.  Response code 500 received from " + RANGER_URL + "service/public/api/repository/count", check.getFailReason());

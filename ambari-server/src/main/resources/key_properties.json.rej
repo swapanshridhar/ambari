@@ -1,0 +1,50 @@
+***************
+*** 1,23 ****
+  {
+    "Cluster": {
+      "Cluster": "Clusters/cluster_name"
+    },
+    "Service": {
+-     "Cluster": "ServiceInfo/cluster_name",
+      "Service": "ServiceInfo/service_name"
+    },
+    "Host": {
+-     "Cluster": "Hosts/cluster_name",
+      "Host": "Hosts/host_name"
+    },
+    "Component": {
+-     "Cluster": "ServiceComponentInfo/cluster_name",
+      "Service": "ServiceComponentInfo/service_name",
+      "Component": "ServiceComponentInfo/component_name",
+      "HostComponent": "ServiceComponentInfo/component_name"
+    },
+    "HostComponent": {
+-     "Cluster": "HostRoles/cluster_name",
+      "Host": "HostRoles/host_name",
+      "HostComponent": "HostRoles/component_name",
+      "Component": "HostRoles/component_name"
+--- 1,24 ----
+  {
+    "Cluster": {
++     "Cluster": "Clusters/cluster_id",
+      "Cluster": "Clusters/cluster_name"
+    },
+    "Service": {
++     "Cluster": "ServiceInfo/cluster_id",
+      "Service": "ServiceInfo/service_name"
+    },
+    "Host": {
++     "Cluster": "Hosts/cluster_id",
+      "Host": "Hosts/host_name"
+    },
+    "Component": {
++     "Cluster": "ServiceComponentInfo/cluster_id",
+      "Service": "ServiceComponentInfo/service_name",
+      "Component": "ServiceComponentInfo/component_name",
+      "HostComponent": "ServiceComponentInfo/component_name"
+    },
+    "HostComponent": {
++     "Cluster": "HostRoles/cluster_id",
+      "Host": "HostRoles/host_name",
+      "HostComponent": "HostRoles/component_name",
+      "Component": "HostRoles/component_name"

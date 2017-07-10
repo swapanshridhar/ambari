@@ -168,7 +168,7 @@ public class AlertNoticeResourceProviderTest {
    */
   protected void testGetResourcesClusterPredicate(Authentication authentication) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_NAME,
+        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_ID,
         AlertNoticeResourceProvider.ALERT_NOTICE_ID,
         AlertNoticeResourceProvider.ALERT_NOTICE_HISTORY_ID,
         AlertNoticeResourceProvider.ALERT_NOTICE_SERVICE_NAME,
@@ -177,7 +177,7 @@ public class AlertNoticeResourceProviderTest {
         AlertNoticeResourceProvider.ALERT_NOTICE_STATE);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_ID).equals("c1").toPredicate();
 
     expect(m_dao.findAllNotices(EasyMock.anyObject(AlertNoticeRequest.class))).andReturn(
         getMockEntities());
@@ -243,7 +243,7 @@ public class AlertNoticeResourceProviderTest {
    */
   protected void testGetSingleResource(Authentication authentication) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_NAME,
+        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_ID,
         AlertNoticeResourceProvider.ALERT_NOTICE_ID,
         AlertNoticeResourceProvider.ALERT_NOTICE_HISTORY_ID,
         AlertNoticeResourceProvider.ALERT_NOTICE_SERVICE_NAME,
@@ -252,7 +252,7 @@ public class AlertNoticeResourceProviderTest {
         AlertNoticeResourceProvider.ALERT_NOTICE_STATE);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_NAME).equals("c1").and().property(
+        AlertNoticeResourceProvider.ALERT_NOTICE_CLUSTER_ID).equals("c1").and().property(
         AlertNoticeResourceProvider.ALERT_NOTICE_ID).equals("1").toPredicate();
 
     expect(m_dao.findAllNotices(EasyMock.anyObject(AlertNoticeRequest.class))).andReturn(

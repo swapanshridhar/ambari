@@ -1,0 +1,82 @@
+***************
+*** 41,57 ****
+   */
+  public class RequestScheduleService extends BaseService {
+    /**
+-    * Parent cluster name.
+     */
+-   private String m_clusterName;
+  
+    /**
+     * Constructor
+-    * @param m_clusterName
+     */
+-   public RequestScheduleService(ApiVersion apiVersion, String m_clusterName) {
+      super(apiVersion);
+-     this.m_clusterName = m_clusterName;
+    }
+  
+    /**
+--- 41,57 ----
+   */
+  public class RequestScheduleService extends BaseService {
+    /**
++    * Parent cluster Id.
+     */
++   private Long m_clusterId;
+  
+    /**
+     * Constructor
++    * @param m_clusterId
+     */
++   public RequestScheduleService(ApiVersion apiVersion, Long m_clusterId) {
+      super(apiVersion);
++     this.m_clusterId = m_clusterId;
+    }
+  
+    /**
+***************
+*** 121,141 ****
+                                          @Context UriInfo ui,
+                                          @PathParam("requestScheduleId") String requestScheduleId) {
+      return handleRequest(headers, null, ui, Request.Type.DELETE,
+-       createRequestSchedule(m_clusterName, requestScheduleId));
+    }
+  
+  
+  
+    /**
+     * Create a request schedule resource instance
+-    * @param clusterName
+     * @param requestScheduleId
+     * @return
+     */
+-   private ResourceInstance createRequestSchedule(String clusterName,
+                                                   String requestScheduleId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.RequestSchedule, requestScheduleId);
+  
+      return createResource(Resource.Type.RequestSchedule, mapIds);
+--- 121,141 ----
+                                          @Context UriInfo ui,
+                                          @PathParam("requestScheduleId") String requestScheduleId) {
+      return handleRequest(headers, null, ui, Request.Type.DELETE,
++       createRequestSchedule(m_clusterId, requestScheduleId));
+    }
+  
+  
+  
+    /**
+     * Create a request schedule resource instance
++    * @param clusterId
+     * @param requestScheduleId
+     * @return
+     */
++   private ResourceInstance createRequestSchedule(Long clusterId,
+                                                   String requestScheduleId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.RequestSchedule, requestScheduleId);
+  
+      return createResource(Resource.Type.RequestSchedule, mapIds);

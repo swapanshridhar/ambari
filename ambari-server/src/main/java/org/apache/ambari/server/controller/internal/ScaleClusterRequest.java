@@ -29,6 +29,7 @@ import org.apache.ambari.server.topology.Blueprint;
 import org.apache.ambari.server.topology.Configuration;
 import org.apache.ambari.server.topology.HostGroupInfo;
 import org.apache.ambari.server.topology.InvalidTopologyTemplateException;
+import org.apache.ambari.server.utils.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,8 +55,9 @@ public class ScaleClusterRequest extends BaseClusterRequest {
   public ScaleClusterRequest(Set<Map<String, Object>> propertySet) throws InvalidTopologyTemplateException {
     for (Map<String, Object> properties : propertySet) {
       // can only operate on a single cluster per logical request
-      if (getClusterName() == null) {
-        setClusterName(String.valueOf(properties.get(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID)));
+      if (getClusterId() == null) {
+        Long clusterId = MapUtils.parseLong(properties, HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
+        setClusterId(clusterId);
       }
       // currently don't allow cluster scoped configuration in scaling operation
       setConfiguration(new Configuration(Collections.<String, Map<String, String>>emptyMap(),

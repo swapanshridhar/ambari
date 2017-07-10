@@ -33,7 +33,7 @@ import org.apache.ambari.server.state.StackId;
  * The context required to create tasks and stages for a custom action
  */
 public class ActionExecutionContext {
-  private final String clusterName;
+  private final Long clusterId;
   private final String actionName;
   private List<RequestResourceFilter> resourceFilters;
   private RequestOperationLevel operationLevel;
@@ -58,13 +58,13 @@ public class ActionExecutionContext {
   /**
    * Create an ActionExecutionContext to execute an action from a request
    */
-  public ActionExecutionContext(String clusterName, String actionName,
+  public ActionExecutionContext(Long clusterId, String actionName,
       List<RequestResourceFilter> resourceFilters,
       Map<String, String> parameters, TargetHostType targetType,
       Short timeout, String expectedServiceName,
       String expectedComponentName) {
 
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.actionName = actionName;
     this.resourceFilters = resourceFilters;
     this.parameters = parameters;
@@ -74,24 +74,24 @@ public class ActionExecutionContext {
     this.expectedComponentName = expectedComponentName;
   }
 
-  public ActionExecutionContext(String clusterName, String actionName,
+  public ActionExecutionContext(Long clusterId, String actionName,
                                 List<RequestResourceFilter> resourceFilters) {
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.actionName = actionName;
     this.resourceFilters = resourceFilters;
   }
 
-  public ActionExecutionContext(String clusterName, String commandName,
+  public ActionExecutionContext(Long clusterId, String commandName,
                                 List<RequestResourceFilter> resourceFilters,
                                 Map<String, String> parameters) {
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     actionName = commandName;
     this.resourceFilters = resourceFilters;
     this.parameters = parameters;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   public String getActionName() {
@@ -211,7 +211,7 @@ public class ActionExecutionContext {
   @Override
   public String toString() {
     return "ActionExecutionContext{" +
-      "clusterName='" + clusterName + '\'' +
+      "clusterId='" + clusterId + '\'' +
       ", actionName='" + actionName + '\'' +
       ", resourceFilters=" + resourceFilters +
       ", operationLevel=" + operationLevel +

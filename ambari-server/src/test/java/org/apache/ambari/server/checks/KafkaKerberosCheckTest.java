@@ -62,10 +62,10 @@ public class KafkaKerberosCheckTest {
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
     Mockito.when(clusters.getCluster("cluster")).thenReturn(cluster);
 
-    Assert.assertTrue(kafkaKerberosCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertTrue(kafkaKerberosCheck.isApplicable(new PrereqCheckRequest(1L)));
 
     services.remove("KAFKA");
-    Assert.assertFalse(kafkaKerberosCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertFalse(kafkaKerberosCheck.isApplicable(new PrereqCheckRequest(1L)));
   }
 
   @Test
@@ -83,13 +83,13 @@ public class KafkaKerberosCheckTest {
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
 
-    kafkaKerberosCheck.perform(check, new PrereqCheckRequest("cluster"));
+    kafkaKerberosCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
 
     check = new PrerequisiteCheck(null, null);
     Mockito.when(cluster.getSecurityType()).thenReturn(SecurityType.NONE);
 
-    kafkaKerberosCheck.perform(check, new PrereqCheckRequest("cluster"));
+    kafkaKerberosCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 }

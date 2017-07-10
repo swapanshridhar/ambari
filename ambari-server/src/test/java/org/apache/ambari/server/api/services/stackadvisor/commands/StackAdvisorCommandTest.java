@@ -76,7 +76,7 @@ public class StackAdvisorCommandTest {
   }
 
   @Test(expected = StackAdvisorException.class)
-  public void testInvoke_invalidRequest_throwsException() throws StackAdvisorException {
+  public void testInvoke_invalidRequest_throwsException() throws StackAdvisorException, IOException {
     File recommendationsDir = temp.newFolder("recommendationDir");
     String recommendationsArtifactsLifetime = "1w";
     int requestId = 0;
@@ -96,7 +96,7 @@ public class StackAdvisorCommandTest {
   }
 
   @Test(expected = StackAdvisorException.class)
-  public void testInvoke_saRunnerNotSucceed_throwsException() throws StackAdvisorException {
+  public void testInvoke_saRunnerNotSucceed_throwsException() throws StackAdvisorException, IOException {
     File recommendationsDir = temp.newFolder("recommendationDir");
     String recommendationsArtifactsLifetime = "1w";
     int requestId = 0;
@@ -124,7 +124,7 @@ public class StackAdvisorCommandTest {
   }
 
   @Test(expected = WebApplicationException.class)
-  public void testInvoke_adjustThrowsException_throwsException() throws StackAdvisorException {
+  public void testInvoke_adjustThrowsException_throwsException() throws StackAdvisorException, IOException {
     File recommendationsDir = temp.newFolder("recommendationDir");
     String recommendationsArtifactsLifetime = "1w";
     int requestId = 0;
@@ -151,7 +151,7 @@ public class StackAdvisorCommandTest {
   }
 
   @Test
-  public void testInvoke_success() throws StackAdvisorException {
+  public void testInvoke_success() throws StackAdvisorException, IOException {
     String expected = "success";
     final String testResourceString = String.format("{\"type\": \"%s\"}", expected);
     final File recommendationsDir = temp.newFolder("recommendationDir");

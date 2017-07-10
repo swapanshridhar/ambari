@@ -53,15 +53,15 @@ public class WorkflowResourceProviderTest {
       UnsupportedPropertyException, NoSuchResourceException,
       NoSuchParentResourceException {
     Set<Resource> expected = new HashSet<>();
-    expected.add(createWorkflowResponse("Cluster100", "workflow1"));
-    expected.add(createWorkflowResponse("Cluster100", "workflow2"));
-    expected.add(createWorkflowResponse("Cluster100", "workflow3"));
+    expected.add(createWorkflowResponse(1L, "workflow1"));
+    expected.add(createWorkflowResponse(1L, "workflow2"));
+    expected.add(createWorkflowResponse(1L, "workflow3"));
 
     Resource.Type type = Resource.Type.Workflow;
     Set<String> propertyIds = PropertyHelper.getPropertyIds(type);
 
     WorkflowFetcher workflowFetcher = createMock(WorkflowFetcher.class);
-    expect(workflowFetcher.fetchWorkflows(propertyIds, "Cluster100", null))
+    expect(workflowFetcher.fetchWorkflows(propertyIds, 1L, null))
         .andReturn(expected).once();
     replay(workflowFetcher);
 
@@ -72,16 +72,16 @@ public class WorkflowResourceProviderTest {
 
     Request request = PropertyHelper.getReadRequest(propertyIds);
     Predicate predicate = new PredicateBuilder()
-        .property(WorkflowResourceProvider.WORKFLOW_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100").toPredicate();
+        .property(WorkflowResourceProvider.WORKFLOW_CLUSTER_ID_PROPERTY_ID)
+        .equals(1L).toPredicate();
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Assert.assertEquals(3, resources.size());
     Set<String> names = new HashSet<>();
     for (Resource resource : resources) {
       String clusterName = (String) resource
-          .getPropertyValue(WorkflowResourceProvider.WORKFLOW_CLUSTER_NAME_PROPERTY_ID);
-      Assert.assertEquals("Cluster100", clusterName);
+          .getPropertyValue(WorkflowResourceProvider.WORKFLOW_CLUSTER_ID_PROPERTY_ID);
+      Assert.assertEquals(1L, clusterName);
       names.add((String) resource
           .getPropertyValue(WorkflowResourceProvider.WORKFLOW_ID_PROPERTY_ID));
     }
@@ -120,11 +120,11 @@ public class WorkflowResourceProviderTest {
     }
   }
 
-  private static Resource createWorkflowResponse(String clusterName,
+  private static Resource createWorkflowResponse(Long clusterId,
       String workflowId) {
     Resource r = new ResourceImpl(Resource.Type.Workflow);
-    r.setProperty(WorkflowResourceProvider.WORKFLOW_CLUSTER_NAME_PROPERTY_ID,
-        clusterName);
+    r.setProperty(WorkflowResourceProvider.WORKFLOW_CLUSTER_ID_PROPERTY_ID,
+        clusterId);
     r.setProperty(WorkflowResourceProvider.WORKFLOW_ID_PROPERTY_ID, workflowId);
     return r;
   }

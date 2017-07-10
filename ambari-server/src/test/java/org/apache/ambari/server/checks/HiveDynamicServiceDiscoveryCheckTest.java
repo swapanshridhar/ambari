@@ -85,7 +85,7 @@ public class HiveDynamicServiceDiscoveryCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     // Check HDP-2.2.x => HDP-2.2.y

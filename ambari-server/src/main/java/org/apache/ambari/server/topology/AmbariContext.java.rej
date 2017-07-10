@@ -1,0 +1,62 @@
+***************
+*** 199,218 ****
+    public void createAmbariServiceAndComponentResources(ClusterTopology topology, String clusterName) {
+      Collection<String> services = topology.getBlueprint().getServices();
+  
+      try {
+-       Cluster cluster = getController().getClusters().getCluster(clusterName);
+        services.removeAll(cluster.getServices().keySet());
+      } catch (AmbariException e) {
+        throw new RuntimeException("Failed to persist service and component resources: " + e, e);
+      }
+      Set<ServiceRequest> serviceRequests = new HashSet<>();
+      Set<ServiceComponentRequest> componentRequests = new HashSet<>();
+      for (String service : services) {
+        String credentialStoreEnabled = topology.getBlueprint().getCredentialStoreEnabled(service);
+-       serviceRequests.add(new ServiceRequest(clusterName, service, null, credentialStoreEnabled));
+        for (String component : topology.getBlueprint().getComponents(service)) {
+          String recoveryEnabled = topology.getBlueprint().getRecoveryEnabled(service, component);
+-         componentRequests.add(new ServiceComponentRequest(clusterName, service, component, null, recoveryEnabled));
+        }
+      }
+      try {
+--- 199,220 ----
+    public void createAmbariServiceAndComponentResources(ClusterTopology topology, String clusterName) {
+      Collection<String> services = topology.getBlueprint().getServices();
+  
++     Cluster cluster = null;
+      try {
++       cluster = getController().getClusters().getCluster(clusterName);
+        services.removeAll(cluster.getServices().keySet());
+      } catch (AmbariException e) {
+        throw new RuntimeException("Failed to persist service and component resources: " + e, e);
+      }
++     Long clusterId = cluster.getClusterId();
+      Set<ServiceRequest> serviceRequests = new HashSet<>();
+      Set<ServiceComponentRequest> componentRequests = new HashSet<>();
+      for (String service : services) {
+        String credentialStoreEnabled = topology.getBlueprint().getCredentialStoreEnabled(service);
++       serviceRequests.add(new ServiceRequest(clusterId, service, null, credentialStoreEnabled));
+        for (String component : topology.getBlueprint().getComponents(service)) {
+          String recoveryEnabled = topology.getBlueprint().getRecoveryEnabled(service, component);
++         componentRequests.add(new ServiceComponentRequest(clusterId, service, component, null, recoveryEnabled));
+        }
+      }
+      try {
+***************
+*** 288,294 ****
+      String clusterName = cluster.getClusterName();
+  
+      Map<String, Object> properties = new HashMap<>();
+-     properties.put(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID, clusterName);
+      properties.put(HostResourceProvider.HOST_NAME_PROPERTY_ID, hostName);
+      properties.put(HostResourceProvider.HOST_RACK_INFO_PROPERTY_ID, host.getRackInfo());
+  
+--- 290,296 ----
+      String clusterName = cluster.getClusterName();
+  
+      Map<String, Object> properties = new HashMap<>();
++     properties.put(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID, clusterId);
+      properties.put(HostResourceProvider.HOST_NAME_PROPERTY_ID, hostName);
+      properties.put(HostResourceProvider.HOST_RACK_INFO_PROPERTY_ID, host.getRackInfo());
+  

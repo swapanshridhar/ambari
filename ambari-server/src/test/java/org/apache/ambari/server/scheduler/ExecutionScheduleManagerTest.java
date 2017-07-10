@@ -352,6 +352,7 @@ public class ExecutionScheduleManagerTest {
     long batchId = 1L;
     long requestId = 5L;
     String clusterName = "mycluster";
+    Long clusterId = 1L;
     String uri = "clusters";
     String type = "post";
     String body = "body";
@@ -385,7 +386,7 @@ public class ExecutionScheduleManagerTest {
 
     expect(scheduleManager.performApiRequest(eq(uri), eq(body), eq(type), eq(userId))).andReturn(batchRequestResponse).once();
 
-    scheduleManager.updateBatchRequest(eq(executionId), eq(batchId), eq(clusterName), eq(batchRequestResponse), eq(false));
+    scheduleManager.updateBatchRequest(eq(executionId), eq(batchId), eq(clusterId), eq(batchRequestResponse), eq(false));
     expectLastCall().once();
 
     actionDBAccessorMock.setSourceScheduleForRequest(eq(requestId), eq(executionId));
@@ -394,7 +395,7 @@ public class ExecutionScheduleManagerTest {
     replay(clusterMock, clustersMock, requestExecutionMock, executionSchedulerMock,
         tokenStorageMock, batchRequestMock, scheduleManager, actionDBAccessorMock);
 
-    scheduleManager.executeBatchRequest(executionId, batchId, clusterName);
+    scheduleManager.executeBatchRequest(executionId, batchId, clusterId);
 
     verify(clusterMock, clustersMock, configurationMock, requestExecutionMock, executionSchedulerMock,
         tokenStorageMock, batchRequestMock, scheduleManager, actionDBAccessorMock);
@@ -417,6 +418,7 @@ public class ExecutionScheduleManagerTest {
     long batchId = 1L;
     long requestId = 5L;
     String clusterName = "mycluster";
+    Long clusterId = 1L;
 
     Map<Long, RequestExecution> executionMap = new HashMap<>();
     executionMap.put(executionId, requestExecutionMock);
@@ -444,7 +446,7 @@ public class ExecutionScheduleManagerTest {
     replay(clusterMock, clustersMock, requestExecutionMock, executionSchedulerMock,
         tokenStorageMock, batchRequestMock, scheduleManager);
 
-    scheduleManager.updateBatchRequest(executionId, batchId, clusterName, batchRequestResponse, true);
+    scheduleManager.updateBatchRequest(executionId, batchId, clusterId, batchRequestResponse, true);
 
     verify(clusterMock, clustersMock, configurationMock, requestExecutionMock, executionSchedulerMock,
         tokenStorageMock, batchRequestMock, scheduleManager);
@@ -463,6 +465,7 @@ public class ExecutionScheduleManagerTest {
 
     long requestId = 5L;
     String clusterName = "mycluster";
+    Long clusterId = 1L;
     String apiUri = "api/v1/clusters/mycluster/requests/5";
     Capture<String> uriCapture = EasyMock.newCapture();
 
@@ -484,7 +487,7 @@ public class ExecutionScheduleManagerTest {
     replay(clusterMock, clustersMock, executionSchedulerMock,
         tokenStorageMock, scheduleManager);
 
-    scheduleManager.getBatchRequestResponse(requestId, clusterName);
+    scheduleManager.getBatchRequestResponse(requestId, clusterId);
 
     verify(clusterMock, clustersMock, configurationMock, executionSchedulerMock,
         tokenStorageMock, scheduleManager);
@@ -506,6 +509,7 @@ public class ExecutionScheduleManagerTest {
 
     long executionId = 11L;
     String clusterName = "c1";
+    Long clusterId = 1L;
 
     BatchSettings batchSettings = new BatchSettings();
     batchSettings.setTaskFailureToleranceLimit(1);
@@ -531,7 +535,7 @@ public class ExecutionScheduleManagerTest {
     }};
 
     boolean exceeded = scheduleManager.hasToleranceThresholdExceeded
-      (executionId, clusterName, taskCounts);
+      (executionId, clusterId, taskCounts);
 
     Assert.assertTrue(exceeded);
 
@@ -558,6 +562,7 @@ public class ExecutionScheduleManagerTest {
 
     long executionId = 11L;
     String clusterName = "c1";
+    Long clusterId = 1L;
     Date pastDate = new Date(new Date().getTime() - 2);
 
     Map<Long, RequestExecution> executionMap = new HashMap<>();
@@ -593,7 +598,7 @@ public class ExecutionScheduleManagerTest {
         executionSchedulerMock, scheduleManager, batchMock, batchRequestMock,
         triggerMock, jobDetailMock, actionDBAccessorMock);
 
-    scheduleManager.finalizeBatch(executionId, clusterName);
+    scheduleManager.finalizeBatch(executionId, clusterId);
 
     verify(clustersMock, clusterMock, configurationMock, requestExecutionMock,
         executionSchedulerMock, scheduleManager, batchMock, batchRequestMock,

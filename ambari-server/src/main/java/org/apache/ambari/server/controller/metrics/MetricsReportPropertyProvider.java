@@ -34,7 +34,7 @@ public abstract class MetricsReportPropertyProvider extends AbstractPropertyProv
 
   protected final MetricHostProvider hostProvider;
 
-  protected final String clusterNamePropertyId;
+  protected final String clusterIdPropertyId;
 
   protected final ComponentSSLConfiguration configuration;
 
@@ -53,12 +53,12 @@ public abstract class MetricsReportPropertyProvider extends AbstractPropertyProv
                                        StreamProvider streamProvider,
                                        ComponentSSLConfiguration configuration,
                                        MetricHostProvider hostProvider,
-                                       String clusterNamePropertyId) {
+                                       String clusterIdPropertyId) {
     super(componentPropertyInfoMap);
 
     this.streamProvider = streamProvider;
     this.hostProvider = hostProvider;
-    this.clusterNamePropertyId = clusterNamePropertyId;
+    this.clusterIdPropertyId = clusterIdPropertyId;
     this.configuration = configuration;
   }
 
@@ -69,7 +69,7 @@ public abstract class MetricsReportPropertyProvider extends AbstractPropertyProv
           TimelineMetricCacheProvider cacheProvider,
           MetricHostProvider hostProvider,
           MetricsServiceProvider serviceProvider,
-          String clusterNamePropertyId) {
+          String clusterIdPropertyId) {
 
     return new MetricsReportPropertyProviderProxy(componentPropertyInfoMap,
                                                   streamProvider,
@@ -77,6 +77,6 @@ public abstract class MetricsReportPropertyProvider extends AbstractPropertyProv
                                                   cacheProvider,
                                                   hostProvider,
                                                   serviceProvider,
-                                                  clusterNamePropertyId);
+                                                  clusterIdPropertyId);
   }
 }

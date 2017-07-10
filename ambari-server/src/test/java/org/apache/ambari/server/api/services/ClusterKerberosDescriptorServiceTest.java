@@ -50,12 +50,14 @@ public class ClusterKerberosDescriptorServiceTest extends BaseServiceTest {
     args = new Object[]{getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
+    //SWAP
+    /*
     //get Kerberos descriptor
     service = new TestService("STACK");
     m = service.getClass().getMethod("getKerberosDescriptor", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[]{getHttpHeaders(), getUriInfo(), "STACK"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
-
+    */
     return listInvocations;
   }
 

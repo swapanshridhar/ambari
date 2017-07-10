@@ -31,7 +31,7 @@ public class AtlasPresenceCheckTest {
   @Test
   public void perform() throws Exception {
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.5.0.0");
     m_check.perform(check, request);
 

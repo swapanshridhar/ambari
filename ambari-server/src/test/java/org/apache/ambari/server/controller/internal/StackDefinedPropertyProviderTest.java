@@ -164,7 +164,7 @@ public class StackDefinedPropertyProviderTest {
     hostAttributes.put("os_release_version", "6.3");
     host.setHostAttributes(hostAttributes);
 
-    clusters.mapHostToCluster("h1", "c2");
+    clusters.mapHostToCluster("h1", (clusters.getCluster("c2")).getClusterId());
 
     // Setting up Mocks for Controller, Clusters etc, queried as part of user's Role context
     // while fetching Metrics.

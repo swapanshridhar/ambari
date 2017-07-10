@@ -67,7 +67,7 @@ public class WorkflowService extends BaseService {
   public Response getWorkflow(String body, @Context HttpHeaders headers,
       @Context UriInfo ui, @PathParam("workflowId") String workflowId) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createWorkflowResource(clusterName, workflowId));
+        createWorkflowResource(clusterId, workflowId));
   }
 
   /**
@@ -83,7 +83,7 @@ public class WorkflowService extends BaseService {
   @Produces("text/plain")
   public Response getWorkflows(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createWorkflowResource(clusterName, null));
+        createWorkflowResource(clusterId, null));
   }
 
   /**

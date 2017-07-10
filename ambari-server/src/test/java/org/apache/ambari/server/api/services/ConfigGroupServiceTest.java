@@ -38,7 +38,7 @@ public class ConfigGroupServiceTest extends BaseServiceTest {
 
     // Get Config Groups
     ConfigGroupService configGroupService = new TestConfigGroupService
-      ("clusterName", null);
+      (1L, null);
     Method m = configGroupService.getClass().getMethod("getConfigGroups",
       String.class, HttpHeaders.class, UriInfo.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo()};
@@ -46,7 +46,7 @@ public class ConfigGroupServiceTest extends BaseServiceTest {
       configGroupService, m, args, null));
 
     // Get Config Group
-    configGroupService = new TestConfigGroupService("clusterName", "groupId");
+    configGroupService = new TestConfigGroupService(1L, "groupId");
     m = configGroupService.getClass().getMethod("getConfigGroup",
       String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo(), "groupId"};
@@ -54,7 +54,7 @@ public class ConfigGroupServiceTest extends BaseServiceTest {
       configGroupService, m, args, null));
 
     // Create Config group
-    configGroupService = new TestConfigGroupService("clusterName", null);
+    configGroupService = new TestConfigGroupService(1L, null);
     m = configGroupService.getClass().getMethod("createConfigGroup",
       String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
@@ -62,7 +62,7 @@ public class ConfigGroupServiceTest extends BaseServiceTest {
       configGroupService, m, args, "body"));
 
     // Delete Config group
-    configGroupService = new TestConfigGroupService("clusterName", "groupId");
+    configGroupService = new TestConfigGroupService(1L, "groupId");
     m = configGroupService.getClass().getMethod("deleteConfigGroup",
       HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "groupId"};
@@ -70,7 +70,7 @@ public class ConfigGroupServiceTest extends BaseServiceTest {
       configGroupService, m, args, null));
 
     // Update Config group
-    configGroupService = new TestConfigGroupService("clusterName", "groupId");
+    configGroupService = new TestConfigGroupService(1L, "groupId");
     m = configGroupService.getClass().getMethod("updateConfigGroup",
       String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "groupId"};

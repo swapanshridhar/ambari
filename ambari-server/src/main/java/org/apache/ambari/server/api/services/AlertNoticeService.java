@@ -56,7 +56,7 @@ public class AlertNoticeService extends BaseService {
       @Context HttpHeaders headers,
       @Context UriInfo ui) {
     return handleRequest(headers, null, ui, Request.Type.GET,
-        createResourceInstance(clusterName, null));
+        createResourceInstance(clusterId, null));
   }
 
   @GET @ApiIgnore // until documented
@@ -66,19 +66,19 @@ public class AlertNoticeService extends BaseService {
       @Context HttpHeaders headers,
       @Context UriInfo ui, @PathParam("alertNoticeId") Long id) {
     return handleRequest(headers, null, ui, Request.Type.GET,
-        createResourceInstance(clusterName, id));
+        createResourceInstance(clusterId, id));
   }
 
   /**
    * Create an alert history resource instance
    *
-   * @param clusterName
+   * @param clusterId
    * @return
    */
-  private ResourceInstance createResourceInstance(String clusterName,
+  private ResourceInstance createResourceInstance(Long clusterId,
       Long alertNoticeId) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
 
     if (null != alertNoticeId) {
       mapIds.put(Resource.Type.AlertNotice, alertNoticeId.toString());

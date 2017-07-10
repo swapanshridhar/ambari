@@ -77,8 +77,8 @@ public class HostVersionDAO extends CrudDAO<HostVersionEntity, Long> {
    * Retrieve all of the host versions for the given cluster name, stack name,
    * and stack version.
    *
-   * @param clusterName
-   *          Cluster name
+   * @param clusterId
+   *          Cluster Id
    * @param stackId
    *          Stack (e.g., HDP-2.2)
    * @param version
@@ -87,9 +87,9 @@ public class HostVersionDAO extends CrudDAO<HostVersionEntity, Long> {
    */
   @RequiresSession
   public List<HostVersionEntity> findByClusterStackAndVersion(
-      String clusterName, StackId stackId, String version) {
+      Long clusterId, StackId stackId, String version) {
     final TypedQuery<HostVersionEntity> query = entityManagerProvider.get().createNamedQuery("hostVersionByClusterAndStackAndVersion", HostVersionEntity.class);
-    query.setParameter("clusterName", clusterName);
+    query.setParameter("clusterId", clusterId);
     query.setParameter("stackName", stackId.getStackName());
     query.setParameter("stackVersion", stackId.getStackVersion());
     query.setParameter("version", version);
@@ -115,15 +115,15 @@ public class HostVersionDAO extends CrudDAO<HostVersionEntity, Long> {
   /**
    * Retrieve all of the host versions for the given cluster name and host name.
    *
-   * @param clusterName Cluster name
+   * @param clusterId Cluster Id
    * @param hostName FQDN of host
    * @return Return all of the host versions that match the criteria.
    */
   @RequiresSession
-  public List<HostVersionEntity> findByClusterAndHost(String  clusterName, String hostName) {
+  public List<HostVersionEntity> findByClusterAndHost(Long clusterId, String hostName) {
     final TypedQuery<HostVersionEntity> query = entityManagerProvider.get()
         .createNamedQuery("hostVersionByClusterAndHostname", HostVersionEntity.class);
-    query.setParameter("clusterName", clusterName);
+    query.setParameter("clusterId", clusterId);
     query.setParameter("hostName", hostName);
 
     return daoUtils.selectList(query);
@@ -168,8 +168,8 @@ public class HostVersionDAO extends CrudDAO<HostVersionEntity, Long> {
    * version, and host name. <br/>
    * This query is slow and not suitable for frequent use.
    *
-   * @param clusterName
-   *          Cluster name
+   * @param clusterId
+   *          Cluster Id
    * @param stackId
    *          Stack ID (e.g., HDP-2.2)
    * @param version
@@ -179,12 +179,12 @@ public class HostVersionDAO extends CrudDAO<HostVersionEntity, Long> {
    * @return Returns the single host version that matches the criteria.
    */
   @RequiresSession
-  public HostVersionEntity findByClusterStackVersionAndHost(String clusterName,
+  public HostVersionEntity findByClusterStackVersionAndHost(Long clusterId,
       StackId stackId, String version, String hostName) {
 
     final TypedQuery<HostVersionEntity> query = entityManagerProvider.get()
         .createNamedQuery("hostVersionByClusterStackVersionAndHostname", HostVersionEntity.class);
-    query.setParameter("clusterName", clusterName);
+    query.setParameter("clusterId", clusterId);
     query.setParameter("stackName", stackId.getStackName());
     query.setParameter("stackVersion", stackId.getStackVersion());
     query.setParameter("version", version);

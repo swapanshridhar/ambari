@@ -130,7 +130,7 @@ public class ServiceComponentHostConcurrentWriteDeadlockTest {
     String hostName = "c6401";
     clusters.addHost(hostName);
     setOsFamily(clusters.getHost(hostName), "redhat", "6.4");
-    clusters.mapHostToCluster(hostName, "c1");
+    clusters.mapHostToCluster(hostName, (clusters.getCluster("c1").getClusterId()));
 
     Service service = installService("HDFS");
     addServiceComponent(service, "NAMENODE");

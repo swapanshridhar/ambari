@@ -1,0 +1,51 @@
+***************
+*** 3918,3924 ****
+      ambariMetaInfo.init();
+  
+      CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
+-     credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+          new PrincipalKeyCredential("principal", "password"), CredentialStoreType.TEMPORARY);
+  
+      KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
+--- 3918,3924 ----
+      ambariMetaInfo.init();
+  
+      CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
++     credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+          new PrincipalKeyCredential("principal", "password"), CredentialStoreType.TEMPORARY);
+  
+      KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
+***************
+*** 4019,4025 ****
+      ambariMetaInfo.init();
+  
+      CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
+-     credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+          new PrincipalKeyCredential("principal", "password"), CredentialStoreType.TEMPORARY);
+  
+      KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
+--- 4019,4025 ----
+      ambariMetaInfo.init();
+  
+      CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
++     credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+          new PrincipalKeyCredential("principal", "password"), CredentialStoreType.TEMPORARY);
+  
+      KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
+***************
+*** 3678,3684 ****
+      commandParamsStage.put("keytab_file", "${keytab_dir}/kerberos.service_check.keytab");
+  
+      CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
+-     credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+          PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
+      kerberosHelper.deleteTestIdentity(cluster, commandParamsStage, requestStageContainer);
+  
+--- 3678,3684 ----
+      commandParamsStage.put("keytab_file", "${keytab_dir}/kerberos.service_check.keytab");
+  
+      CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
++     credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+          PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
+      kerberosHelper.deleteTestIdentity(cluster, commandParamsStage, requestStageContainer);
+  

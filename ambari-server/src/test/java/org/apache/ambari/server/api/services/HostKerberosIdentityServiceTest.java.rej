@@ -1,0 +1,25 @@
+***************
+*** 57,67 ****
+    }
+  
+    private class TestHostKerberosIdentityService extends HostKerberosIdentityService {
+-     private String clusterId;
+      private String hostId;
+      private String identityId;
+  
+-     private TestHostKerberosIdentityService(String clusterId, String hostId, String identityId) {
+        super(ApiVersion.Default, clusterId, hostId);
+        this.clusterId = clusterId;
+        this.hostId = hostId;
+--- 57,67 ----
+    }
+  
+    private class TestHostKerberosIdentityService extends HostKerberosIdentityService {
++     private Long clusterId;
+      private String hostId;
+      private String identityId;
+  
++     private TestHostKerberosIdentityService(Long clusterId, String hostId, String identityId) {
+        super(ApiVersion.Default, clusterId, hostId);
+        this.clusterId = clusterId;
+        this.hostId = hostId;

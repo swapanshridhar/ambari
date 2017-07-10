@@ -435,7 +435,7 @@ public class OrmTestHelper {
     host.setHostAttributes(hostAttributes);
     host.setState(HostState.HEALTHY);
 
-    clusters.mapAndPublishHostsToCluster(Collections.singleton(hostName), cluster.getClusterName());
+    clusters.mapAndPublishHostsToCluster(Collections.singleton(hostName), cluster.getClusterId());
   }
 
   public void addHostComponent(Cluster cluster, String hostName, String serviceName, String componentName) throws AmbariException {

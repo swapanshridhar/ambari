@@ -1,0 +1,23 @@
+***************
+*** 330,339 ****
+        setServiceNameIfAbsent(request, cluster, ambariMetaInfo);
+        debug("Received a createComponent request: {}", request);
+  
+-       if (!componentNames.containsKey(request.getClusterName())) {
+-         componentNames.put(request.getClusterName(), new HashMap<String, Set<String>>());
+        }
+-       Map<String, Set<String>> serviceComponents = componentNames.get(request.getClusterName());
+        if (!serviceComponents.containsKey(request.getServiceName())) {
+          serviceComponents.put(request.getServiceName(), new HashSet<String>());
+        }
+--- 332,341 ----
+        setServiceNameIfAbsent(request, cluster, ambariMetaInfo);
+        debug("Received a createComponent request: {}", request);
+  
++       if (!componentNames.containsKey(request.getClusterId())) {
++         componentNames.put(request.getClusterId(), new HashMap<String, Set<String>>());
+        }
++       Map<String, Set<String>> serviceComponents = componentNames.get(request.getClusterId());
+        if (!serviceComponents.containsKey(request.getServiceName())) {
+          serviceComponents.put(request.getServiceName(), new HashSet<String>());
+        }

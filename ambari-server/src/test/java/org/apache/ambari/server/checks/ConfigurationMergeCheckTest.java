@@ -85,7 +85,7 @@ public class ConfigurationMergeCheckTest {
   @Test
   public void testApplicable() throws Exception {
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setTargetStackId(stackId_1_0);
 
     ConfigurationMergeCheck cmc = new ConfigurationMergeCheck();
@@ -158,15 +158,15 @@ public class ConfigurationMergeCheckTest {
 
     replay(ami);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setTargetStackId(stackId_1_0);
     request.setRepositoryVersion("1.1");
 
-    PrerequisiteCheck check = new PrerequisiteCheck(null, "cluster");
+    PrerequisiteCheck check = new PrerequisiteCheck(null, 1L);
     cmc.perform(check, request);
     Assert.assertEquals("Expect no warnings", 0, check.getFailedOn().size());
 
-    check = new PrerequisiteCheck(null, "cluster");
+    check = new PrerequisiteCheck(null, 1L);
     m_configMap.put(CONFIG_PROPERTY, "1025m");
     pi11.setValue("1026");
     cmc.perform(check, request);
@@ -180,14 +180,14 @@ public class ConfigurationMergeCheckTest {
     Assert.assertEquals(CONFIG_TYPE, detail.type);
     Assert.assertEquals(CONFIG_PROPERTY, detail.property);
 
-    check = new PrerequisiteCheck(null, "cluster");
+    check = new PrerequisiteCheck(null, 1L);
     pi11.setName(CONFIG_PROPERTY + ".foo");
     cmc.perform(check, request);
     Assert.assertEquals("Expect no warning when user new stack is empty",
         0, check.getFailedOn().size());
     Assert.assertEquals(0, check.getFailedDetail().size());
 
-    check = new PrerequisiteCheck(null, "cluster");
+    check = new PrerequisiteCheck(null, 1L);
     pi11.setName(CONFIG_PROPERTY);
     pi10.setName(CONFIG_PROPERTY + ".foo");
     cmc.perform(check, request);

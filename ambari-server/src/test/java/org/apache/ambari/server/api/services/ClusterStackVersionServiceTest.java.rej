@@ -1,0 +1,33 @@
+***************
+*** 64,78 ****
+  
+    @Test
+    public void testGetRepositoryVersionService() {
+-     ClusterStackVersionService clusterStackVersionService = new TestClusterStackVersionService("cluster");
+      RepositoryVersionService rvs =
+              clusterStackVersionService.getRepositoryVersionService(EasyMock.createMock(javax.ws.rs.core.Request.class), "1");
+      TestCase.assertNotNull(rvs);
+    }
+  
+    private class TestClusterStackVersionService extends ClusterStackVersionService {
+-     public TestClusterStackVersionService(String clusterName) {
+-       super(ApiVersion.Default, clusterName);
+      }
+  
+      @Override
+--- 64,78 ----
+  
+    @Test
+    public void testGetRepositoryVersionService() {
++     ClusterStackVersionService clusterStackVersionService = new TestClusterStackVersionService(1L);
+      RepositoryVersionService rvs =
+              clusterStackVersionService.getRepositoryVersionService(EasyMock.createMock(javax.ws.rs.core.Request.class), "1");
+      TestCase.assertNotNull(rvs);
+    }
+  
+    private class TestClusterStackVersionService extends ClusterStackVersionService {
++     public TestClusterStackVersionService(Long clusterId) {
++       super(ApiVersion.Default, clusterId);
+      }
+  
+      @Override

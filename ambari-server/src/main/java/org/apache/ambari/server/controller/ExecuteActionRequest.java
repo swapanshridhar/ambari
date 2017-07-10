@@ -29,7 +29,7 @@ import org.apache.ambari.server.controller.internal.RequestResourceFilter;
  * Helper class to capture details used to create action or custom commands
  */
 public class ExecuteActionRequest {
-  private final String clusterName;
+  private final Long clusterId;
   private final String commandName;
   private final List<RequestResourceFilter> resourceFilters;
   private RequestOperationLevel operationLevel = null;
@@ -37,13 +37,13 @@ public class ExecuteActionRequest {
   private Map<String, String> parameters;
   private boolean exclusive;
 
-  public ExecuteActionRequest(String clusterName, String commandName,
+  public ExecuteActionRequest(Long clusterId, String commandName,
                               String actionName,
                               List<RequestResourceFilter> resourceFilters,
                               RequestOperationLevel operationLevel,
                               Map<String, String> parameters,
                               boolean exclusive) {
-    this(clusterName, commandName, parameters, exclusive);
+    this(clusterId, commandName, parameters, exclusive);
     this.actionName = actionName;
     if (resourceFilters != null) {
       this.resourceFilters.addAll(resourceFilters);
@@ -55,10 +55,10 @@ public class ExecuteActionRequest {
    * Create an ExecuteActionRequest to execute a command.
    * No filters.
    */
-  public ExecuteActionRequest(String clusterName, String commandName,
+  public ExecuteActionRequest(Long clusterId, String commandName,
                               Map<String, String> parameters,
                               boolean exclusive) {
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.commandName = commandName;
     this.actionName = null;
     this.parameters = new HashMap<>();
@@ -69,8 +69,8 @@ public class ExecuteActionRequest {
     this.exclusive = exclusive;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   public String getCommandName() {
@@ -114,6 +114,6 @@ public class ExecuteActionRequest {
       .append(", inputs :").append(parameters)
       .append(", resourceFilters: ").append(resourceFilters)
       .append(", exclusive: ").append(exclusive)
-      .append(", clusterName :").append(clusterName).toString();
+      .append(", clusterId :").append(clusterId).toString();
   }
 }

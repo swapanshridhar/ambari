@@ -207,11 +207,11 @@ public class AlertGroupResourceProviderTest {
     Request request = PropertyHelper.getReadRequest(
         AlertGroupResourceProvider.ALERT_GROUP_ID,
         AlertGroupResourceProvider.ALERT_GROUP_NAME,
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME,
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID,
         AlertGroupResourceProvider.ALERT_GROUP_DEFAULT);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals("c1").toPredicate();
 
     expect(m_dao.findAllGroups(ALERT_GROUP_CLUSTER_ID)).andReturn(
         getMockEntities());
@@ -235,7 +235,7 @@ public class AlertGroupResourceProviderTest {
           r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_ID));
 
       assertEquals(ALERT_GROUP_CLUSTER_NAME,
-          r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME));
+          r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID));
 
       // verify definitions do not come back when not requested
       assertNull(r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_DEFINITIONS));
@@ -279,7 +279,7 @@ public class AlertGroupResourceProviderTest {
     Request request = PropertyHelper.getReadRequest();
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals("c1").toPredicate();
 
     expect(m_dao.findAllGroups(ALERT_GROUP_CLUSTER_ID)).andReturn(
         getMockEntities());
@@ -303,7 +303,7 @@ public class AlertGroupResourceProviderTest {
           r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_ID));
 
       assertEquals(ALERT_GROUP_CLUSTER_NAME,
-          r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME));
+          r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID));
 
 
       // verify definitions and targets come back when requested
@@ -355,7 +355,7 @@ public class AlertGroupResourceProviderTest {
     AmbariManagementController amc = createMock(AmbariManagementController.class);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals(
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals(
         ALERT_GROUP_CLUSTER_NAME).and().property(
         AlertGroupResourceProvider.ALERT_GROUP_ID).equals(
         ALERT_GROUP_ID.toString()).toPredicate();
@@ -384,7 +384,7 @@ public class AlertGroupResourceProviderTest {
           r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_ID));
 
       assertEquals(ALERT_GROUP_CLUSTER_NAME,
-          r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME));
+          r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID));
 
       // verify definitions and targets are returned on single instances
       List<AlertDefinitionResponse> definitions = (List<AlertDefinitionResponse>) r.getPropertyValue(AlertGroupResourceProvider.ALERT_GROUP_DEFINITIONS);
@@ -473,7 +473,7 @@ public class AlertGroupResourceProviderTest {
     requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_NAME,
         ALERT_GROUP_NAME);
 
-    requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME,
+    requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID,
         ALERT_GROUP_CLUSTER_NAME);
 
     requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_DEFINITIONS,
@@ -569,7 +569,7 @@ public class AlertGroupResourceProviderTest {
     requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_NAME,
         ALERT_GROUP_NAME);
 
-    requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME,
+    requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID,
         ALERT_GROUP_CLUSTER_NAME);
 
     Request request = PropertyHelper.getCreateRequest(
@@ -592,7 +592,7 @@ public class AlertGroupResourceProviderTest {
     requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_TARGETS, targetIds);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals(
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals(
         ALERT_GROUP_CLUSTER_NAME).and().property(
         AlertGroupResourceProvider.ALERT_GROUP_ID).equals(
         ALERT_GROUP_ID.toString()).toPredicate();
@@ -703,7 +703,7 @@ public class AlertGroupResourceProviderTest {
         newTargets);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals(
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals(
         ALERT_GROUP_CLUSTER_NAME).and().property(
         AlertGroupResourceProvider.ALERT_GROUP_ID).equals(
         ALERT_GROUP_ID.toString()).toPredicate();
@@ -766,7 +766,7 @@ public class AlertGroupResourceProviderTest {
     requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_NAME,
         ALERT_GROUP_NAME);
 
-    requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME,
+    requestProps.put(AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID,
         ALERT_GROUP_CLUSTER_NAME);
 
     Request request = PropertyHelper.getCreateRequest(Collections.singleton(requestProps), null);
@@ -777,7 +777,7 @@ public class AlertGroupResourceProviderTest {
     assertNotNull(entity);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals(
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals(
         ALERT_GROUP_CLUSTER_NAME).and().property(
         AlertGroupResourceProvider.ALERT_GROUP_ID).equals(
         ALERT_GROUP_ID.toString()).toPredicate();
@@ -847,7 +847,7 @@ public class AlertGroupResourceProviderTest {
     AlertGroupResourceProvider provider = createProvider(m_amc);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_NAME).equals(
+        AlertGroupResourceProvider.ALERT_GROUP_CLUSTER_ID).equals(
         ALERT_GROUP_CLUSTER_NAME).and().property(
         AlertGroupResourceProvider.ALERT_GROUP_ID).equals(
         ALERT_GROUP_ID.toString()).toPredicate();

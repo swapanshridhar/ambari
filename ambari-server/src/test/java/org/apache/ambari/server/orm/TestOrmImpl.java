@@ -166,20 +166,20 @@ public class TestOrmImpl extends Assert {
   public void testAutoIncrementedField() {
     Date currentTime = new Date();
     String serviceName = "MapReduce1";
-    String clusterName = "test_cluster1";
+    Long clusterId = 1L;
 
-    createService(currentTime, serviceName, clusterName);
+    createService(currentTime, serviceName, clusterId);
 
-    ClusterServiceEntity clusterServiceEntity = clusterServiceDAO.findByClusterAndServiceNames(clusterName, serviceName);
+    ClusterServiceEntity clusterServiceEntity = clusterServiceDAO.findByClusterAndServiceNames(clusterId, serviceName);
 
     clusterServiceDAO.remove(clusterServiceEntity);
 
-    assertNull(clusterServiceDAO.findByClusterAndServiceNames(clusterName, serviceName));
+    assertNull(clusterServiceDAO.findByClusterAndServiceNames(clusterId, serviceName));
 
   }
 
-  private void createService(Date currentTime, String serviceName, String clusterName) {
-    ClusterEntity cluster = clusterDAO.findByName(clusterName);
+  private void createService(Date currentTime, String serviceName, Long clusterId) {
+    ClusterEntity cluster = clusterDAO.findById(clusterId);
 
     ClusterServiceEntity clusterServiceEntity = new ClusterServiceEntity();
     clusterServiceEntity.setClusterEntity(cluster);
@@ -190,7 +190,7 @@ public class TestOrmImpl extends Assert {
     clusterServiceDAO.create(clusterServiceEntity);
     clusterDAO.merge(cluster);
 
-    clusterServiceEntity = clusterServiceDAO.findByClusterAndServiceNames(clusterName, serviceName);
+    clusterServiceEntity = clusterServiceDAO.findByClusterAndServiceNames(clusterId, serviceName);
     assertNotNull(clusterServiceEntity);
 
     clusterServiceDAO.merge(clusterServiceEntity);
@@ -204,15 +204,15 @@ public class TestOrmImpl extends Assert {
     Date currentTime = new Date();
     String serviceName = "MapReduce2";
     String clusterName = "test_cluster1";
+    Long clusterId = 1L;
 
-    createService(currentTime, serviceName, clusterName);
+    createService(currentTime, serviceName, clusterId);
 
-    ClusterServiceEntity clusterServiceEntity = clusterServiceDAO.findByClusterAndServiceNames(clusterName, serviceName);
+    ClusterServiceEntity clusterServiceEntity = clusterServiceDAO.findByClusterAndServiceNames(clusterId, serviceName);
     clusterServiceDAO.remove(clusterServiceEntity);
 
     Assert.assertNull(
-        clusterServiceDAO.findByClusterAndServiceNames(clusterName,
-            serviceName));
+        clusterServiceDAO.findByClusterAndServiceNames(clusterId, serviceName));
   }
 
   @Test

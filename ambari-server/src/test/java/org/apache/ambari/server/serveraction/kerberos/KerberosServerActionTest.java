@@ -190,7 +190,7 @@ public class KerberosServerActionTest {
   @Test
   public void testProcessIdentitiesSuccess() throws Exception {
     KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
-    expect(kerberosHelper.getKDCAdministratorCredentials(EasyMock.anyObject(String.class)))
+    expect(kerberosHelper.getKDCAdministratorCredentials(EasyMock.anyObject(Long.class)))
         .andReturn(new PrincipalKeyCredential("principal", "password"))
         .anyTimes();
 
@@ -212,7 +212,7 @@ public class KerberosServerActionTest {
   @Test
   public void testProcessIdentitiesFail() throws Exception {
     KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
-    expect(kerberosHelper.getKDCAdministratorCredentials(EasyMock.anyObject(String.class)))
+    expect(kerberosHelper.getKDCAdministratorCredentials(EasyMock.anyObject(Long.class)))
         .andReturn(new PrincipalKeyCredential("principal", "password"))
         .anyTimes();
 

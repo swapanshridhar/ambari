@@ -66,7 +66,7 @@ public class ConfigGroupService extends BaseService {
   public Response getConfigGroups(String body, @Context HttpHeaders headers,
                                   @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-      createConfigGroupResource(m_clusterName, null));
+      createConfigGroupResource(m_clusterId, null));
   }
 
   /**
@@ -81,7 +81,7 @@ public class ConfigGroupService extends BaseService {
   public Response getConfigGroup(String body, @Context HttpHeaders headers,
           @Context UriInfo ui, @PathParam("groupId") String groupId) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createConfigGroupResource(m_clusterName, groupId));
+        createConfigGroupResource(m_clusterId, groupId));
   }
 
   /**
@@ -98,7 +98,7 @@ public class ConfigGroupService extends BaseService {
   public Response createConfigGroup(String body, @Context HttpHeaders headers,
                                     @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.POST,
-      createConfigGroupResource(m_clusterName, null));
+      createConfigGroupResource(m_clusterId, null));
   }
 
   /**
@@ -117,7 +117,7 @@ public class ConfigGroupService extends BaseService {
   public Response updateConfigGroup(String body, @Context HttpHeaders
     headers, @Context UriInfo ui, @PathParam("groupId") String groupId) {
     return handleRequest(headers, body, ui, Request.Type.PUT,
-      createConfigGroupResource(m_clusterName, groupId));
+      createConfigGroupResource(m_clusterId, groupId));
   }
 
   /**

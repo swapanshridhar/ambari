@@ -1,0 +1,17 @@
+***************
+*** 75,81 ****
+      }
+  
+      final ClusterVersionEntity clusterVersion = clusterVersionDAOProvider.get().findByClusterAndStackAndVersion(
+-         clusterName, targetStackId, repoVersion);
+      final Set<String> failedHosts = new HashSet<>();
+  
+      for (Host host : cluster.getHosts()) {
+--- 75,81 ----
+      }
+  
+      final ClusterVersionEntity clusterVersion = clusterVersionDAOProvider.get().findByClusterAndStackAndVersion(
++       clusterId, targetStackId, repoVersion);
+      final Set<String> failedHosts = new HashSet<>();
+  
+      for (Host host : cluster.getHosts()) {

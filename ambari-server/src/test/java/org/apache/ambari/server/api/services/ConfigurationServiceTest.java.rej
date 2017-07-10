@@ -1,0 +1,35 @@
+***************
+*** 53,68 ****
+  
+  
+    private class TestConfigurationService extends ConfigurationService {
+-     private String m_clusterId;
+  
+-     private TestConfigurationService(String clusterId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+      }
+  
+      @Override
+-     ResourceInstance createConfigurationResource(String clusterName) {
+-       assertEquals(m_clusterId, clusterName);
+        return getTestResource();
+      }
+  
+--- 53,68 ----
+  
+  
+    private class TestConfigurationService extends ConfigurationService {
++     private Long m_clusterId;
+  
++     private TestConfigurationService(Long clusterId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+      }
+  
+      @Override
++     ResourceInstance createConfigurationResource(Long clusterId) {
++       assertEquals(m_clusterId, clusterId);
+        return getTestResource();
+      }
+  

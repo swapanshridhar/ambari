@@ -50,10 +50,10 @@ public interface ConfigGroup {
   void setName(String name);
 
   /**
-   * Cluster name to which config group belongs
+   * Cluster Id to which config group belongs
    * @return
    */
-  String getClusterName();
+  public Long getClusterId();
 
   /**
    * Tag which associates config group to service

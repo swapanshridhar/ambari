@@ -975,10 +975,11 @@ App.WizardStep8Controller = Em.Controller.extend(App.AddSecurityConfigs, App.wiz
     if (!this.get('isInstaller')) return;
     var stackVersion = this.get('content.installOptions.localRepo') ? App.currentStackVersion.replace(/(-\d+(\.\d)*)/ig, "Local$&") : App.currentStackVersion;
     var selectedStack = App.Stack.find().findProperty('isSelected', true);
+    var clusterName = this.get('clusterName');
     this.addRequestToAjaxQueue({
       name: 'wizard.step8.create_cluster',
       data: {
-        data: JSON.stringify({ "Clusters": {"version": stackVersion, "repository_version": selectedStack.get('repositoryVersion')}})
+        data: JSON.stringify({ "Clusters": {"cluster_name" : clusterName, "version": stackVersion, "repository_version": selectedStack.get('repositoryVersion')}})
       },
       success: 'createClusterSuccess'
     });
@@ -986,6 +987,7 @@ App.WizardStep8Controller = Em.Controller.extend(App.AddSecurityConfigs, App.wiz
 
   createClusterSuccess: function (data, xhr, params) {
     App.set('clusterName', params.cluster);
+    App.set('clusterId', JSON.parse(data).resources[0].Clusters.cluster_id);
   },
 
   /**

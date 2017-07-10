@@ -114,7 +114,7 @@ public class HostComponentResourceProviderTest {
 
     managementController.createHostComponents(
         AbstractResourceProviderTest.Matcher.getHostComponentRequestSet(
-            "Cluster100", "Service100", "Component100", "Host100", null, null));
+            1L, "Service100", "Component100", "Host100", null, null));
 
     expect(resourceProviderFactory.getHostComponentResourceProvider(EasyMock.<Set<String>>anyObject(),
         EasyMock.<Map<Type,String>>anyObject(),
@@ -140,7 +140,7 @@ public class HostComponentResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID, "Service100");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "Component100");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "Host100");
@@ -226,7 +226,7 @@ public class HostComponentResourceProviderTest {
 
     Set<String> propertyIds = new HashSet<>();
 
-    propertyIds.add(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID);
     propertyIds.add(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID);
     propertyIds.add(HostComponentResourceProvider.HOST_COMPONENT_VERSION_PROPERTY_ID);
@@ -235,13 +235,13 @@ public class HostComponentResourceProviderTest {
     propertyIds.add(HostComponentResourceProvider.HOST_COMPONENT_DESIRED_STACK_ID_PROPERTY_ID);
 
     Predicate predicate = new PredicateBuilder().property(
-        HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").toPredicate();
+        HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID).equals(1L).toPredicate();
     Request request = PropertyHelper.getReadRequest(propertyIds);
 
     Set<Resource> hostsComponentResources = new HashSet<>();
 
     Resource hostsComponentResource1 = new ResourceImpl(Resource.Type.HostComponent);
-    hostsComponentResource1.setProperty(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    hostsComponentResource1.setProperty(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     hostsComponentResource1.setProperty(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "Host100");
     hostsComponentResource1.setProperty(HostComponentResourceProvider.HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID, "Service100");
     hostsComponentResource1.setProperty(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "Component100");
@@ -254,7 +254,7 @@ public class HostComponentResourceProviderTest {
     hostsComponentResource1.setProperty(HostComponentResourceProvider.HOST_COMPONENT_DESIRED_REPOSITORY_VERSION, repositoryVersion2);
 
     Resource hostsComponentResource2 = new ResourceImpl(Resource.Type.HostComponent);
-    hostsComponentResource2.setProperty(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    hostsComponentResource2.setProperty(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     hostsComponentResource2.setProperty(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "Host100");
     hostsComponentResource2.setProperty(HostComponentResourceProvider.HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID, "Service100");
     hostsComponentResource2.setProperty(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "Component101");
@@ -267,7 +267,7 @@ public class HostComponentResourceProviderTest {
     hostsComponentResource2.setProperty(HostComponentResourceProvider.HOST_COMPONENT_DESIRED_REPOSITORY_VERSION, repositoryVersion2);
 
     Resource hostsComponentResource3 = new ResourceImpl(Resource.Type.HostComponent);
-    hostsComponentResource3.setProperty(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    hostsComponentResource3.setProperty(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     hostsComponentResource3.setProperty(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "Host100");
     hostsComponentResource3.setProperty(HostComponentResourceProvider.HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID, "Service100");
     hostsComponentResource3.setProperty(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "Component102");
@@ -414,7 +414,7 @@ public class HostComponentResourceProviderTest {
 
     // update the cluster named Cluster102
     Predicate predicate = new PredicateBuilder().property(
-        HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID).equals("Cluster102").and().
+        HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID).equals(102L).and().
         property(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID).equals("INSTALLED").and().
         property(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals("Component100").toPredicate();
     RequestStatus requestStatus = provider.updateResources(request, predicate);
@@ -608,7 +608,7 @@ public class HostComponentResourceProviderTest {
 
     // update the cluster named Cluster102
     Predicate predicate = new PredicateBuilder().property(
-        HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID).equals("Cluster102").and().
+        HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID).equals(102L).and().
         property(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID).equals("INSTALLED").and().
         property(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals("Component100").toPredicate();
 

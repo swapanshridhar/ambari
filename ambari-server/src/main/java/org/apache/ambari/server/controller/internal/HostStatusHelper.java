@@ -47,8 +47,9 @@ public class HostStatusHelper {
     ServiceComponentHostResponse componentHostResponse;
 
     try {
+      Long clusterId = managementController.getClusters().getCluster(clusterName).getClusterId();
       ServiceComponentHostRequest componentRequest =
-        new ServiceComponentHostRequest(clusterName, serviceName,
+        new ServiceComponentHostRequest(clusterId, serviceName,
           componentName, hostName, null);
 
       Set<ServiceComponentHostResponse> hostComponents =

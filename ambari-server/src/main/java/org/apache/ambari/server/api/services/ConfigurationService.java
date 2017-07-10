@@ -68,7 +68,7 @@ public class ConfigurationService extends BaseService {
   @GET @ApiIgnore // until documented
   @Produces("text/plain")
   public Response getConfigurations(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
-    return handleRequest(headers, body, ui, Request.Type.GET, createConfigurationResource(m_clusterName));
+    return handleRequest(headers, body, ui, Request.Type.GET, createConfigurationResource(m_clusterId));
   }
 
   /**
@@ -97,19 +97,19 @@ public class ConfigurationService extends BaseService {
   @Produces("text/plain")
   public Response createConfigurations(String body,@Context HttpHeaders headers, @Context UriInfo ui) {
 
-    return handleRequest(headers, body, ui, Request.Type.POST, createConfigurationResource(m_clusterName));
+    return handleRequest(headers, body, ui, Request.Type.POST, createConfigurationResource(m_clusterId));
   }
 
   /**
    * Create a service resource instance.
    *
-   * @param clusterName cluster name
+   * @param m_clusterId cluster Id
    *
    * @return a service resource instance
    */
-  ResourceInstance createConfigurationResource(String clusterName) {
+  ResourceInstance createConfigurationResource(Long clusterId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Configuration, null);
 
     return createResource(Resource.Type.Configuration, mapIds);

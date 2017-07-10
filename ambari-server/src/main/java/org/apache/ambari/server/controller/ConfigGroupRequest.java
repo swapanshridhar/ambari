@@ -24,7 +24,7 @@ import org.apache.ambari.server.state.Config;
 
 public class ConfigGroupRequest {
   private Long id;
-  private String clusterName;
+  private Long clusterId;
   private String groupName;
   private String tag;
   private String description;
@@ -32,11 +32,11 @@ public class ConfigGroupRequest {
   private Set<String> hosts;
   private Map<String, Config> configs;
 
-  public ConfigGroupRequest(Long id, String clusterName, String groupName,
+  public ConfigGroupRequest(Long id, Long clusterId, String groupName,
                             String tag, String description, Set<String> hosts,
                             Map<String, Config> configs) {
     this.id = id;
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.groupName = groupName;
     this.tag = tag;
     this.description = description;
@@ -44,12 +44,12 @@ public class ConfigGroupRequest {
     this.configs = configs;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   public String getGroupName() {

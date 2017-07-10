@@ -90,6 +90,7 @@ import org.apache.ambari.server.state.ServiceComponent;
 import org.apache.ambari.server.state.ServiceInfo;
 import org.apache.ambari.server.state.ServiceOsSpecific;
 import org.apache.ambari.server.state.StackId;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.ambari.server.utils.SecretReference;
 import org.apache.ambari.server.utils.StageUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -115,7 +116,7 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
 
   // ----- Property ID constants ---------------------------------------------
 
-  protected static final String COMPONENT_CLUSTER_NAME_PROPERTY_ID = "ServiceComponentInfo/cluster_name";
+  protected static final String COMPONENT_CLUSTER_ID_PROPERTY_ID = "ServiceComponentInfo/cluster_id";
   protected static final String COMPONENT_SERVICE_NAME_PROPERTY_ID = "ServiceComponentInfo/service_name";
   protected static final String COMPONENT_COMPONENT_NAME_PROPERTY_ID = "ServiceComponentInfo/component_name";
   protected static final String HOST_COMPONENT_HOST_NAME_PROPERTY_ID =
@@ -125,7 +126,7 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
 
   private static Set<String> pkPropertyIds =
     new HashSet<>(Arrays.asList(new String[]{
-      COMPONENT_CLUSTER_NAME_PROPERTY_ID,
+      COMPONENT_CLUSTER_ID_PROPERTY_ID,
       COMPONENT_SERVICE_NAME_PROPERTY_ID,
       COMPONENT_COMPONENT_NAME_PROPERTY_ID}));
 
@@ -220,7 +221,7 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
       Cluster cluster = null;
       Clusters clusters = managementController.getClusters();
       try {
-        cluster = clusters.getCluster(response.getClusterName());
+        cluster = clusters.getCluster(response.getClusterId());
 
         String serviceName = response.getServiceName();
         String componentName = response.getComponentName();
@@ -515,7 +516,7 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
         fileName = requestServiceName + "(" + Resource.InternalType.Service.toString().toUpperCase()+")";
         schToTarConfigFiles = serviceToComponentMap.get(requestServiceName);
       } else {
-        fileName = schRequest.getClusterName() + "(" + Resource.InternalType.Cluster.toString().toUpperCase()+")";
+        fileName = schRequest.getClusterId() + "(" + Resource.InternalType.Cluster.toString().toUpperCase()+")";
       }
       tarUtils = new TarUtils(TMP_PATH, fileName, schToTarConfigFiles);
       tarUtils.tarConfigFiles();
@@ -901,8 +902,10 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
    */
 
   private ServiceComponentHostRequest getRequest(Map<String, Object> properties) {
+    Long clusterId = MapUtils.parseLong(properties, COMPONENT_CLUSTER_ID_PROPERTY_ID);
+
     return new ServiceComponentHostRequest(
-            (String) properties.get(COMPONENT_CLUSTER_NAME_PROPERTY_ID),
+            clusterId,
             (String) properties.get(COMPONENT_SERVICE_NAME_PROPERTY_ID),
             (String) properties.get(COMPONENT_COMPONENT_NAME_PROPERTY_ID),
             (String) properties.get(HOST_COMPONENT_HOST_NAME_PROPERTY_ID),

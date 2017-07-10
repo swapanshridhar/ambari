@@ -1,0 +1,17 @@
+***************
+*** 35,41 ****
+   */
+  public abstract class AbstractUpgradeServerAction extends AbstractServerAction {
+  
+-   public static final String CLUSTER_NAME_KEY = UpgradeContext.COMMAND_PARAM_CLUSTER_NAME;
+    public static final String UPGRADE_DIRECTION_KEY = UpgradeContext.COMMAND_PARAM_DIRECTION;
+    public static final String VERSION_KEY = UpgradeContext.COMMAND_PARAM_VERSION;
+    protected static final String REQUEST_ID = UpgradeContext.COMMAND_PARAM_REQUEST_ID;
+--- 35,41 ----
+   */
+  public abstract class AbstractUpgradeServerAction extends AbstractServerAction {
+  
++   public static final String CLUSTER_ID_KEY = UpgradeContext.COMMAND_PARAM_CLUSTER_ID;
+    public static final String UPGRADE_DIRECTION_KEY = UpgradeContext.COMMAND_PARAM_DIRECTION;
+    public static final String VERSION_KEY = UpgradeContext.COMMAND_PARAM_VERSION;
+    protected static final String REQUEST_ID = UpgradeContext.COMMAND_PARAM_REQUEST_ID;

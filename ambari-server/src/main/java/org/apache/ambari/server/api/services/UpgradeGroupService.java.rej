@@ -1,0 +1,44 @@
+***************
+*** 38,49 ****
+   */
+  public class UpgradeGroupService extends BaseService {
+  
+-   private String m_clusterName = null;
+    private String m_upgradeId = null;
+  
+-   UpgradeGroupService(ApiVersion apiVersion, String clusterName, String upgradeId) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+      m_upgradeId = upgradeId;
+    }
+  
+--- 38,49 ----
+   */
+  public class UpgradeGroupService extends BaseService {
+  
++   private Long m_clusterId = null;
+    private String m_upgradeId = null;
+  
++   UpgradeGroupService(ApiVersion apiVersion, Long clusterId, String upgradeId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+      m_upgradeId = upgradeId;
+    }
+  
+***************
+*** 70,76 ****
+    public UpgradeItemService getUpgradeItemService(
+        @Context HttpHeaders headers,
+        @PathParam("upgradeGroupId") Long groupId) {
+-     return new UpgradeItemService(m_apiVersion, m_clusterName, m_upgradeId, groupId.toString());
+    }
+  
+    /**
+--- 70,76 ----
+    public UpgradeItemService getUpgradeItemService(
+        @Context HttpHeaders headers,
+        @PathParam("upgradeGroupId") Long groupId) {
++     return new UpgradeItemService(m_apiVersion, m_clusterId, m_upgradeId, groupId.toString());
+    }
+  
+    /**

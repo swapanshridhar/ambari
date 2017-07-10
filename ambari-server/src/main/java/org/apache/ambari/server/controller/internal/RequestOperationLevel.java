@@ -45,7 +45,7 @@ public class RequestOperationLevel {
 
   // Identifiers of properties as they appear at request properties
   public static final String OPERATION_LEVEL_ID = "operation_level/level";
-  public static final String OPERATION_CLUSTER_ID = "operation_level/cluster_name";
+  public static final String OPERATION_CLUSTER_ID = "operation_level/cluster_id";
   public static final String OPERATION_SERVICE_ID = "operation_level/service_name";
   public static final String OPERATION_HOSTCOMPONENT_ID = "operation_level/hostcomponent_name";
   public static final String OPERATION_HOST_NAME = "operation_level/host_name";
@@ -80,11 +80,11 @@ public class RequestOperationLevel {
     throw new IllegalArgumentException(message);
   }
 
-  public RequestOperationLevel(Resource.Type level, String clusterName,
+  public RequestOperationLevel(Resource.Type level, Long clusterId,
                                String serviceName, String hostComponentName,
                                String hostName) {
     this.level = level;
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.serviceName = serviceName;
     this.hostComponentName = hostComponentName;
     this.hostName = hostName;
@@ -113,7 +113,7 @@ public class RequestOperationLevel {
               OPERATION_CLUSTER_ID);
       throw new IllegalArgumentException(message);
     }
-    this.clusterName = requestInfoProperties.get(OPERATION_CLUSTER_ID);
+    this.clusterId = Long.parseLong(requestInfoProperties.get(OPERATION_CLUSTER_ID));
     this.serviceName = requestInfoProperties.get(OPERATION_SERVICE_ID);
     this.hostComponentName =
             requestInfoProperties.get(OPERATION_HOSTCOMPONENT_ID);
@@ -132,7 +132,7 @@ public class RequestOperationLevel {
   /**
    * Source cluster for request. Specified for all requests
    */
-  private String clusterName;
+  private Long clusterId;
 
   /**
    * Source service for request. Specified for Service-level
@@ -157,8 +157,7 @@ public class RequestOperationLevel {
     return level;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() { return clusterId;
   }
 
   public String getServiceName() {
@@ -177,7 +176,7 @@ public class RequestOperationLevel {
   public String toString() {
     return "RequestOperationLevel{" +
             "level=" + level +
-            ", clusterName='" + clusterName + '\'' +
+            ", clusterId='" + clusterId + '\'' +
             ", serviceName='" + serviceName + '\'' +
             ", hostComponentName='" + hostComponentName + '\'' +
             ", hostName='" + hostName + '\'' +

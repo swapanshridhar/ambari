@@ -42,7 +42,7 @@ public class UpgradeEventCreatorTest extends AuditEventCreatorTestBase{
     Map<String,Object> properties = new HashMap<>();
     properties.put(UpgradeResourceProvider.UPGRADE_REPO_VERSION_ID, "1234");
     properties.put(UpgradeResourceProvider.UPGRADE_TYPE, "ROLLING");
-    properties.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "mycluster");
+    properties.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
 
     Request request = AuditEventCreatorTestHelper.createRequest(Request.Type.POST, Resource.Type.Upgrade, properties, null);
     Result result = AuditEventCreatorTestHelper.createResult(new ResultStatus(ResultStatus.STATUS.OK));

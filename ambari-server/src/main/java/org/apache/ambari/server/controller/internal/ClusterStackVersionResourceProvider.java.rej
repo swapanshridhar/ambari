@@ -1,0 +1,261 @@
+***************
+*** 83,88 ****
+  import org.apache.ambari.server.state.ServiceOsSpecific;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.ambari.server.state.repository.VersionDefinitionXml;
+  import org.apache.ambari.server.utils.StageUtils;
+  import org.apache.ambari.server.utils.VersionUtils;
+  import org.apache.commons.lang.StringUtils;
+--- 83,89 ----
+  import org.apache.ambari.server.state.ServiceOsSpecific;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.ambari.server.state.repository.VersionDefinitionXml;
++ import org.apache.ambari.server.utils.MapUtils;
+  import org.apache.ambari.server.utils.StageUtils;
+  import org.apache.ambari.server.utils.VersionUtils;
+  import org.apache.commons.lang.StringUtils;
+***************
+*** 214,223 ****
+  
+      List<ClusterVersionEntity> requestedEntities = new ArrayList<>();
+      for (Map<String, Object> propertyMap: propertyMaps) {
+-       final String clusterName = propertyMap.get(CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID).toString();
+        final Long id;
+        if (propertyMap.get(CLUSTER_STACK_VERSION_ID_PROPERTY_ID) == null && propertyMaps.size() == 1) {
+-         requestedEntities = clusterVersionDAO.findByCluster(clusterName);
+        } else {
+          try {
+            id = Long.parseLong(propertyMap.get(CLUSTER_STACK_VERSION_ID_PROPERTY_ID).toString());
+--- 215,224 ----
+  
+      List<ClusterVersionEntity> requestedEntities = new ArrayList<>();
+      for (Map<String, Object> propertyMap: propertyMaps) {
++       Long clusterId = MapUtils.parseLong(propertyMap, CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
+        final Long id;
+        if (propertyMap.get(CLUSTER_STACK_VERSION_ID_PROPERTY_ID) == null && propertyMaps.size() == 1) {
++         requestedEntities = clusterVersionDAO.findByCluster(clusterId);
+        } else {
+          try {
+            id = Long.parseLong(propertyMap.get(CLUSTER_STACK_VERSION_ID_PROPERTY_ID).toString());
+***************
+*** 245,251 ****
+        StackId repoVersionStackId = new StackId(repoVersionStackEntity);
+  
+        for (HostVersionEntity hostVersionEntity : hostVersionDAO.findByClusterStackAndVersion(
+-           entity.getClusterEntity().getClusterName(), repoVersionStackId,
+            entity.getRepositoryVersion().getVersion())) {
+  
+          hostStates.get(hostVersionEntity.getState().name()).add(hostVersionEntity.getHostName());
+--- 246,252 ----
+        StackId repoVersionStackId = new StackId(repoVersionStackEntity);
+  
+        for (HostVersionEntity hostVersionEntity : hostVersionDAO.findByClusterStackAndVersion(
++           entity.getClusterEntity().getClusterId(), repoVersionStackId,
+            entity.getRepositoryVersion().getVersion())) {
+  
+          hostStates.get(hostVersionEntity.getState().name()).add(hostVersionEntity.getHostName());
+***************
+*** 255,261 ****
+        RepositoryVersionEntity repoVerEntity = repositoryVersionDAO.findByStackAndVersion(
+            stackId, entity.getRepositoryVersion().getVersion());
+  
+-       setResourceProperty(resource, CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, entity.getClusterEntity().getClusterName(), requestedIds);
+        setResourceProperty(resource, CLUSTER_STACK_VERSION_HOST_STATES_PROPERTY_ID, hostStates, requestedIds);
+        setResourceProperty(resource, CLUSTER_STACK_VERSION_ID_PROPERTY_ID, entity.getId(), requestedIds);
+        setResourceProperty(resource, CLUSTER_STACK_VERSION_STACK_PROPERTY_ID, stackId.getStackName(), requestedIds);
+--- 256,262 ----
+        RepositoryVersionEntity repoVerEntity = repositoryVersionDAO.findByStackAndVersion(
+            stackId, entity.getRepositoryVersion().getVersion());
+  
++       setResourceProperty(resource, CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, entity.getClusterEntity().getClusterId(), requestedIds);
+        setResourceProperty(resource, CLUSTER_STACK_VERSION_HOST_STATES_PROPERTY_ID, hostStates, requestedIds);
+        setResourceProperty(resource, CLUSTER_STACK_VERSION_ID_PROPERTY_ID, entity.getId(), requestedIds);
+        setResourceProperty(resource, CLUSTER_STACK_VERSION_STACK_PROPERTY_ID, stackId.getStackName(), requestedIds);
+***************
+*** 387,398 ****
+        StackId stackId, boolean forceInstalled, Map<String, Object> propertyMap)
+        throws AmbariException, SystemException {
+  
+-     final String clusterName = cluster.getClusterName();
+      final String authName = getManagementController().getAuthName();
+      final String desiredRepoVersion = repoVersionEntity.getVersion();
+  
+      ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStackAndVersion(
+-         clusterName, stackId, desiredRepoVersion);
+  
+      // get all of the hosts eligible for stack distribution
+      List<Host> hosts = Lists.newArrayList(cluster.getHosts());
+--- 388,399 ----
+        StackId stackId, boolean forceInstalled, Map<String, Object> propertyMap)
+        throws AmbariException, SystemException {
+  
++     final Long clusterId = cluster.getClusterId();
+      final String authName = getManagementController().getAuthName();
+      final String desiredRepoVersion = repoVersionEntity.getVersion();
+  
+      ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStackAndVersion(
++              clusterId, stackId, desiredRepoVersion);
+  
+      // get all of the hosts eligible for stack distribution
+      List<Host> hosts = Lists.newArrayList(cluster.getHosts());
+***************
+*** 411,417 ****
+      install by name.  if the package-version is not known, then the 'newest' is ALWAYS installed.
+      In this case, 2.5.0.0.  2.4 is never picked up.
+      */
+-     for (ClusterVersionEntity clusterVersion : clusterVersionDAO.findByCluster(cluster.getClusterName())) {
+        RepositoryVersionEntity clusterRepoVersion = clusterVersion.getRepositoryVersion();
+  
+        int compare = compareVersions(clusterRepoVersion.getVersion(), desiredRepoVersion);
+--- 412,418 ----
+      install by name.  if the package-version is not known, then the 'newest' is ALWAYS installed.
+      In this case, 2.5.0.0.  2.4 is never picked up.
+      */
++     for (ClusterVersionEntity clusterVersion : clusterVersionDAO.findByCluster(clusterId)) {
+        RepositoryVersionEntity clusterRepoVersion = clusterVersion.getRepositoryVersion();
+  
+        int compare = compareVersions(clusterRepoVersion.getVersion(), desiredRepoVersion);
+***************
+*** 450,464 ****
+  
+      // if there is no cluster version entity, then create one
+      if (clusterVersionEntity == null) {
+-       try {
+-         // Create/persist new cluster stack version
+-         clusterVersionEntity = cluster.createClusterVersion(stackId, desiredRepoVersion, authName,
+-             repositoryVersionState);
+-       } catch (AmbariException e) {
+-         throw new SystemException(
+-             String.format("Can not create cluster stack version %s for cluster %s",
+-                 desiredRepoVersion, clusterName), e);
+-       }
+      } else {
+        // Move cluster version into the specified state (retry installation)
+        cluster.transitionClusterVersion(stackId, desiredRepoVersion, repositoryVersionState);
+--- 451,459 ----
+  
+      // if there is no cluster version entity, then create one
+      if (clusterVersionEntity == null) {
++       // Create/persist new cluster stack version
++       clusterVersionEntity = clusterVersionDAO.findByClusterAndStackAndVersion(clusterId,
++         stackId, desiredRepoVersion);
+      } else {
+        // Move cluster version into the specified state (retry installation)
+        cluster.transitionClusterVersion(stackId, desiredRepoVersion, repositoryVersionState);
+***************
+*** 695,701 ****
+              Collections.singletonList(host.getHostName()));
+  
+      ActionExecutionContext actionContext = new ActionExecutionContext(
+-             cluster.getClusterName(), INSTALL_PACKAGES_ACTION,
+              Collections.singletonList(filter),
+              params);
+      actionContext.setTimeout(Short.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
+--- 690,696 ----
+              Collections.singletonList(host.getHostName()));
+  
+      ActionExecutionContext actionContext = new ActionExecutionContext(
++             cluster.getClusterId(), INSTALL_PACKAGES_ACTION,
+              Collections.singletonList(filter),
+              params);
+      actionContext.setTimeout(Short.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
+***************
+*** 780,786 ****
+        NoSuchResourceException, NoSuchParentResourceException {
+      try {
+        Iterator<Map<String, Object>> iterator = request.getProperties().iterator();
+-       String clName;
+        final String desiredRepoVersion;
+        if (request.getProperties().size() != 1) {
+          throw new UnsupportedOperationException("Multiple requests cannot be executed at the same time.");
+--- 775,780 ----
+        NoSuchResourceException, NoSuchParentResourceException {
+      try {
+        Iterator<Map<String, Object>> iterator = request.getProperties().iterator();
+        final String desiredRepoVersion;
+        if (request.getProperties().size() != 1) {
+          throw new UnsupportedOperationException("Multiple requests cannot be executed at the same time.");
+***************
+*** 788,794 ****
+        Map<String, Object> propertyMap = iterator.next();
+  
+        Set<String> requiredProperties = new HashSet<>();
+-       requiredProperties.add(CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID);
+        requiredProperties.add(CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
+        requiredProperties.add(CLUSTER_STACK_VERSION_STATE_PROPERTY_ID);
+  
+--- 782,788 ----
+        Map<String, Object> propertyMap = iterator.next();
+  
+        Set<String> requiredProperties = new HashSet<>();
++       requiredProperties.add(CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
+        requiredProperties.add(CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
+        requiredProperties.add(CLUSTER_STACK_VERSION_STATE_PROPERTY_ID);
+  
+***************
+*** 800,806 ****
+          }
+        }
+  
+-       clName = (String) propertyMap.get(CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID);
+        String desiredDisplayRepoVersion = (String) propertyMap.get(CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
+        RepositoryVersionEntity rve = repositoryVersionDAO.findByDisplayName(desiredDisplayRepoVersion);
+        if (rve == null) {
+--- 794,800 ----
+          }
+        }
+  
++       Long clusterId = MapUtils.parseLong(propertyMap, CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
+        String desiredDisplayRepoVersion = (String) propertyMap.get(CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
+        RepositoryVersionEntity rve = repositoryVersionDAO.findByDisplayName(desiredDisplayRepoVersion);
+        if (rve == null) {
+***************
+*** 812,822 ****
+        String newStateStr = (String) propertyMap.get(CLUSTER_STACK_VERSION_STATE_PROPERTY_ID);
+  
+        LOG.info("Initiating finalization for manual upgrade to version {} for cluster {}",
+-               desiredRepoVersion, clName);
+  
+        // First, set desired cluster stack version to enable cross-stack upgrade
+        StackId stackId = rve.getStackId();
+-       Cluster cluster = getManagementController().getClusters().getCluster(clName);
+        cluster.setDesiredStackVersion(stackId);
+  
+        String forceCurrent = (String) propertyMap.get(CLUSTER_STACK_VERSION_FORCE);
+--- 806,816 ----
+        String newStateStr = (String) propertyMap.get(CLUSTER_STACK_VERSION_STATE_PROPERTY_ID);
+  
+        LOG.info("Initiating finalization for manual upgrade to version {} for cluster {}",
++               desiredRepoVersion, clusterId);
+  
+        // First, set desired cluster stack version to enable cross-stack upgrade
+        StackId stackId = rve.getStackId();
++       Cluster cluster = getManagementController().getClusters().getCluster(clusterId);
+        cluster.setDesiredStackVersion(stackId);
+  
+        String forceCurrent = (String) propertyMap.get(CLUSTER_STACK_VERSION_FORCE);
+***************
+*** 850,860 ****
+          }
+  
+          args.put(FinalizeUpgradeAction.VERSION_KEY, desiredRepoVersion);
+-         args.put(FinalizeUpgradeAction.CLUSTER_NAME_KEY, clName);
+  
+          ExecutionCommand command = new ExecutionCommand();
+          command.setCommandParams(args);
+-         command.setClusterName(clName);
+          finalizeUpgradeAction.setExecutionCommand(command);
+  
+          HostRoleCommand hostRoleCommand = hostRoleCommandFactory.create(defaultHostName,
+--- 844,854 ----
+          }
+  
+          args.put(FinalizeUpgradeAction.VERSION_KEY, desiredRepoVersion);
++         args.put(FinalizeUpgradeAction.CLUSTER_ID_KEY, clusterId.toString());
+  
+          ExecutionCommand command = new ExecutionCommand();
+          command.setCommandParams(args);
++         command.setClusterName(cluster.getClusterName());
+          finalizeUpgradeAction.setExecutionCommand(command);
+  
+          HostRoleCommand hostRoleCommand = hostRoleCommandFactory.create(defaultHostName,

@@ -72,7 +72,7 @@ public class StageTest {
     stage.addServerActionCommand(ConfigureAction.class.getName(),
         "user1", Role.AMBARI_SERVER_ACTION,
         RoleCommand.EXECUTE,
-        "cluster1",
+        1L,
         new ServiceComponentHostServerActionEvent(StageUtils.getHostName(), System.currentTimeMillis()),
         Collections.<String, String> emptyMap(), null, null, 1200, false, false);
 

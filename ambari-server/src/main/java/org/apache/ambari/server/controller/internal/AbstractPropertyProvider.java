@@ -136,36 +136,36 @@ public abstract class AbstractPropertyProvider extends BaseProvider implements P
    * @param resources Set of Resources.
    * @return Cluster's Name
    */
-  protected Set<String> getClustersNameFromResources(Set<Resource> resources, String clusterNamePropertyId) {
-    Set<String> clusNames = new HashSet<>();
+  protected Set<Long> getClustersIdFromResources(Set<Resource> resources, String clusterIdPropertyId) {
+    Set<Long> clusIds = new HashSet<>();
     if (resources != null) {
       Iterator<Resource> itr = resources.iterator();
       while (itr.hasNext()) {
         Resource res = itr.next();
         if (res != null) {
-          clusNames.add((String) res.getPropertyValue(clusterNamePropertyId));
+          clusIds.add((Long) res.getPropertyValue(clusterIdPropertyId));
         }
       }
     }
-    return clusNames;
+    return clusIds;
   }
 
   /**
    * Retrieves all the 'Cluster's Resource Ids' from the passed-in Resources.
    *
    * @param resources Set of Resources.
-   * @param clusterNamePropertyId ClusterName PropertyId.
-   * @return cluster Id.
+   * @param clusterIdPropertyId ClusterId PropertyId.
+   * @return cluster Resource Id.
    */
-  protected Set<Long> getClustersResourceId(Set<Resource> resources, String clusterNamePropertyId) {
+  protected Set<Long> getClustersResourceId(Set<Resource> resources, String clusterIdPropertyId) {
     Set<Long> clusterResId = new HashSet<>();
-    if (clusterNamePropertyId != null) {
+    if (clusterIdPropertyId != null) {
       try {
         AmbariManagementController amc = AmbariServer.getController();
-        Set<String> clusterNames = getClustersNameFromResources(resources, clusterNamePropertyId);
-        Iterator<String> clusNameItr = clusterNames.iterator();
-        while (clusNameItr.hasNext()) {
-          clusterResId.add(amc.getClusters().getCluster(clusNameItr.next()).getResourceId());
+        Set<Long> clusterIds = getClustersIdFromResources(resources, clusterIdPropertyId);
+        Iterator<Long> clusIdItr = clusterIds.iterator();
+        while (clusIdItr.hasNext()) {
+          clusterResId.add(amc.getClusters().getCluster(clusIdItr.next()).getResourceId());
         }
       } catch (AmbariException e) {
         LOG.error("Cluster Id couldn't be retrieved.");
@@ -184,11 +184,11 @@ public abstract class AbstractPropertyProvider extends BaseProvider implements P
    * Check the User's authorization for retrieving the Metrics.
    *
    * @param resources Set of Resources.
-   * @param clusterNamePropertyId ClusterName PropertyId.
+   * @param clusterIdPropertyId ClusterId PropertyId.
    * @return boolean
    * @throws AuthorizationException
    */
-  protected boolean checkAuthorizationForMetrics(Set<Resource> resources, String clusterNamePropertyId) throws AuthorizationException {
+  protected boolean checkAuthorizationForMetrics(Set<Resource> resources, String clusterIdPropertyId) throws AuthorizationException {
     String resType = null;
 
     // Get the Type
@@ -198,7 +198,7 @@ public abstract class AbstractPropertyProvider extends BaseProvider implements P
     }
 
     // Get the cluster Id.
-    Set<Long> clusterResIds = getClustersResourceId(resources, clusterNamePropertyId);
+    Set<Long> clusterResIds = getClustersResourceId(resources, clusterIdPropertyId);
     if (clusterResIds.size() == 0) {
       return false;
     }

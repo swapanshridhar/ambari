@@ -71,7 +71,7 @@ public class JobService extends BaseService {
   public Response getJob(String body, @Context HttpHeaders headers, @Context UriInfo ui,
       @PathParam("jobId") String jobId) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createJobResource(clusterName, workflowId, jobId));
+        createJobResource(clusterId, workflowId, jobId));
   }
 
   /**
@@ -87,7 +87,7 @@ public class JobService extends BaseService {
   @Produces("text/plain")
   public Response getJobs(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createJobResource(clusterName, workflowId, null));
+        createJobResource(clusterId, workflowId, null));
   }
 
   /**
@@ -111,10 +111,10 @@ public class JobService extends BaseService {
    * 
    * @return a job resource instance
    */
-  ResourceInstance createJobResource(String clusterName, String workflowId,
+  ResourceInstance createJobResource(Long clusterId, String workflowId,
       String jobId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Workflow, workflowId);
     mapIds.put(Resource.Type.Job, jobId);
     return createResource(Resource.Type.Job, mapIds);

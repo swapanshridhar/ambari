@@ -1,0 +1,23 @@
+***************
+*** 158,167 ****
+  
+      try {
+        for (Resource r : resources) {
+-         String clusterName = r.getPropertyValue(clusterNamePropertyId).toString();
+          String componentName = r.getPropertyValue(componentNamePropertyId).toString();
+  
+-         Cluster cluster = clusters.getCluster(clusterName);
+          StackId stack = cluster.getDesiredStackVersion();
+          String svc = metaInfo.getComponentToService(stack.getStackName(),
+              stack.getStackVersion(), componentName);
+--- 158,167 ----
+  
+      try {
+        for (Resource r : resources) {
++         Long clusterId = (Long) r.getPropertyValue(clusterIdPropertyId);
+          String componentName = r.getPropertyValue(componentNamePropertyId).toString();
+  
++         Cluster cluster = clusters.getCluster(clusterId);
+          StackId stack = cluster.getDesiredStackVersion();
+          String svc = metaInfo.getComponentToService(stack.getStackName(),
+              stack.getStackVersion(), componentName);

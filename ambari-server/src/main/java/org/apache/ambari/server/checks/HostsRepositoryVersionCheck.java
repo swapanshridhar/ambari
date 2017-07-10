@@ -108,7 +108,7 @@ public class HostsRepositoryVersionCheck extends AbstractCheckDescriptor {
             repositoryStackEntity.getStackVersion());
 
         final HostVersionEntity hostVersion = hostVersionDaoProvider.get().findByClusterStackVersionAndHost(
-            clusterName, repositoryStackId, repositoryVersion.getVersion(), host.getHostName());
+          clusterId, repositoryStackId, repositoryVersion.getVersion(), host.getHostName());
 
         if (hostVersion == null || hostVersion.getState() != RepositoryVersionState.INSTALLED) {
           prerequisiteCheck.getFailedOn().add(host.getHostName());

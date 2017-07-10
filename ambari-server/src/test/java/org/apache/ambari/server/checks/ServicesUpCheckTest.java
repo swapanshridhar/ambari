@@ -63,7 +63,7 @@ public class ServicesUpCheckTest {
 
   @Test
   public void testIsApplicable() throws Exception {
-    PrereqCheckRequest checkRequest = new PrereqCheckRequest("c1");
+    PrereqCheckRequest checkRequest = new PrereqCheckRequest(1L);
     checkRequest.setRepositoryVersion("HDP-2.2.0.0");
     checkRequest.setSourceStackId(new StackId("HDP", "2.2"));
     checkRequest.setTargetStackId(new StackId("HDP", "2.2"));
@@ -252,7 +252,7 @@ public class ServicesUpCheckTest {
     }
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Case 2. Change some desired states to STARTED, should still pass
@@ -260,7 +260,7 @@ public class ServicesUpCheckTest {
     Mockito.when(hcsDataNode1.getDesiredState()).thenReturn(State.STARTED);
 
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Case 3. Ensure that ZKFC and AMS are ignored even if their current state is not STARTED
@@ -269,7 +269,7 @@ public class ServicesUpCheckTest {
     Mockito.when(hcsMetricsMonitor.getCurrentState()).thenReturn(State.INSTALLED);
 
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Case 4. Change HDFS current states to INSTALLED, should fail.
@@ -277,14 +277,14 @@ public class ServicesUpCheckTest {
     Mockito.when(hcsDataNode1.getCurrentState()).thenReturn(State.INSTALLED);
 
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     // Case 5. Change HDFS master to STARTED, but one slave to INSTALLED, should pass (2/3 are up).
     Mockito.when(hcsNameNode.getCurrentState()).thenReturn(State.STARTED);
     Mockito.when(hcsDataNode1.getCurrentState()).thenReturn(State.INSTALLED);
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // Case 6. Change HDFS master to STARTED, but 2 slaves to INSTALLED, should fail (2/3 are down)
@@ -292,7 +292,7 @@ public class ServicesUpCheckTest {
     Mockito.when(hcsDataNode1.getCurrentState()).thenReturn(State.INSTALLED);
     Mockito.when(hcsDataNode2.getCurrentState()).thenReturn(State.INSTALLED);
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     Assert.assertTrue(check.getFailReason().indexOf("50%") > -1);
 
@@ -300,7 +300,7 @@ public class ServicesUpCheckTest {
     Mockito.when(host1.getMaintenanceState(Mockito.anyLong())).thenReturn(MaintenanceState.ON);
     Mockito.when(host3.getMaintenanceState(Mockito.anyLong())).thenReturn(MaintenanceState.ON);
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // put everything back to normal, then fail NN
@@ -311,13 +311,13 @@ public class ServicesUpCheckTest {
     Mockito.when(host3.getMaintenanceState(Mockito.anyLong())).thenReturn(MaintenanceState.OFF);
 
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     // put NN into MM; should still fail since it's a master
     Mockito.when(host1.getMaintenanceState(Mockito.anyLong())).thenReturn(MaintenanceState.ON);
     check = new PrerequisiteCheck(null, null);
-    servicesUpCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesUpCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
   }
 }

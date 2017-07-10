@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ambari.server.AmbariException;
 import org.apache.ambari.server.configuration.ComponentSSLConfiguration;
+import org.apache.ambari.server.controller.AmbariManagementController;
+import org.apache.ambari.server.controller.AmbariServer;
 import org.apache.ambari.server.controller.internal.PropertyInfo;
 import org.apache.ambari.server.controller.metrics.MetricHostProvider;
 import org.apache.ambari.server.controller.metrics.MetricsReportPropertyProvider;
@@ -37,6 +40,7 @@ import org.apache.ambari.server.controller.spi.Resource;
 import org.apache.ambari.server.controller.spi.SystemException;
 import org.apache.ambari.server.controller.spi.TemporalInfo;
 import org.apache.ambari.server.controller.utilities.StreamProvider;
+import org.apache.ambari.server.state.Cluster;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -59,9 +63,9 @@ public class GangliaReportPropertyProvider extends MetricsReportPropertyProvider
                                        StreamProvider streamProvider,
                                        ComponentSSLConfiguration configuration,
                                        MetricHostProvider hostProvider,
-                                       String clusterNamePropertyId) {
+                                       String clusterIdPropertyId) {
     super(componentPropertyInfoMap, streamProvider, configuration,
-      hostProvider, clusterNamePropertyId);
+      hostProvider, clusterIdPropertyId);
   }
 
 
@@ -102,8 +106,15 @@ public class GangliaReportPropertyProvider extends MetricsReportPropertyProvider
     if (propertyIds.isEmpty()) {
       return true;
     }
-    String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
-
+    Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+    AmbariManagementController amc = AmbariServer.getController();
+    Cluster cluster = null;
+    try {
+      cluster = amc.getClusters().getCluster(clusterId);
+    } catch (AmbariException e) {
+      return true;
+    }
+    String clusterName = cluster.getClusterName();
     if (hostProvider.getCollectorHostName(clusterName, GANGLIA) == null) {
       if (LOG.isWarnEnabled()) {
         LOG.warn("Attempting to get metrics but the Ganglia server is unknown. Resource=" + resource +

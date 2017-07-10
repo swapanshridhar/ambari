@@ -62,6 +62,7 @@ import org.apache.ambari.server.state.ConfigFactory;
 import org.apache.ambari.server.state.Host;
 import org.apache.ambari.server.state.configgroup.ConfigGroup;
 import org.apache.ambari.server.state.configgroup.ConfigGroupFactory;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +77,8 @@ public class ConfigGroupResourceProvider extends
   private static final Logger LOG = LoggerFactory.getLogger
     (ConfigGroupResourceProvider.class);
 
-  protected static final String CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID =
-    PropertyHelper.getPropertyId("ConfigGroup", "cluster_name");
+  protected static final String CONFIGGROUP_CLUSTER_ID_PROPERTY_ID =
+    PropertyHelper.getPropertyId("ConfigGroup", "cluster_id");
   protected static final String CONFIGGROUP_ID_PROPERTY_ID = PropertyHelper
     .getPropertyId("ConfigGroup", "id");
   protected static final String CONFIGGROUP_NAME_PROPERTY_ID = PropertyHelper
@@ -184,8 +185,8 @@ public class ConfigGroupResourceProvider extends
 
       setResourceProperty(resource, CONFIGGROUP_ID_PROPERTY_ID,
         response.getId(), requestedIds);
-      setResourceProperty(resource, CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID,
-        response.getClusterName(), requestedIds);
+      setResourceProperty(resource, CONFIGGROUP_CLUSTER_ID_PROPERTY_ID,
+        response.getClusterId(), requestedIds);
       setResourceProperty(resource, CONFIGGROUP_NAME_PROPERTY_ID,
         response.getGroupName(), requestedIds);
       setResourceProperty(resource, CONFIGGROUP_TAG_PROPERTY_ID,
@@ -411,16 +412,16 @@ public class ConfigGroupResourceProvider extends
     return responses;
   }
 
-  private void verifyConfigs(Map<String, Config> configs, String clusterName) throws AmbariException {
+  private void verifyConfigs(Map<String, Config> configs, Long clusterId) throws AmbariException {
     if (configs == null) {
       return;
     }
     Clusters clusters = getManagementController().getClusters();
     for (String key : configs.keySet()) {
-      if(!clusters.getCluster(clusterName).isConfigTypeExists(key)){
+      if(!clusters.getCluster(clusterId).isConfigTypeExists(key)){
         throw new AmbariException("Trying to add not existent config type to config group:"+
         " configType = "+ key +
-        " cluster = " + clusterName);
+        " cluster = " + clusterId);
       }
     }
   }
@@ -439,7 +440,7 @@ public class ConfigGroupResourceProvider extends
             if (configGroup.getHosts().containsKey(host.getHostId())) {
               throw new DuplicateResourceException("Host is already " +
                 "associated with a config group"
-                + ", clusterName = " + configGroup.getClusterName()
+                + ", clusterId = " + configGroup.getClusterId()
                 + ", configGroupName = " + configGroup.getName()
                 + ", tag = " + configGroup.getTag()
                 + ", hostname = " + host.getHostName());
@@ -525,7 +526,7 @@ public class ConfigGroupResourceProvider extends
 
       Cluster cluster;
       try {
-        cluster = clusters.getCluster(request.getClusterName());
+        cluster = clusters.getCluster(request.getClusterId());
       } catch (ClusterNotFoundException e) {
         throw new ParentObjectNotFoundException(
           "Attempted to add a config group to a cluster which doesn't exist", e);
@@ -540,7 +541,7 @@ public class ConfigGroupResourceProvider extends
               configGroup.getTag().equals(request.getTag())) {
             throw new DuplicateResourceException("Config group already " +
               "exists with the same name and tag"
-              + ", clusterName = " + request.getClusterName()
+              + ", clusterId = " + request.getClusterId()
               + ", groupName = " + request.getGroupName()
               + ", tag = " + request.getTag());
           }
@@ -587,7 +588,7 @@ public class ConfigGroupResourceProvider extends
       configLogger.info("(configchange) Creating new configuration group. cluster: '{}', changed by: '{}', config group: '{}', tag: '{}'",
           cluster.getClusterName(), getManagementController().getAuthName(), request.getGroupName(), request.getTag());
 
-      verifyConfigs(request.getConfigs(), cluster.getClusterName());
+      verifyConfigs(request.getConfigs(), cluster.getClusterId());
 
       ConfigGroup configGroup = configGroupFactory.createNew(cluster, serviceName,
         request.getGroupName(),
@@ -604,7 +605,7 @@ public class ConfigGroupResourceProvider extends
       }
 
       ConfigGroupResponse response = new ConfigGroupResponse(configGroup
-        .getId(), configGroup.getClusterName(), configGroup.getName(),
+        .getId(), configGroup.getClusterId(), configGroup.getName(),
         configGroup.getTag(), configGroup.getDescription(), null, null);
 
       configGroupResponses.add(response);
@@ -625,7 +626,7 @@ public class ConfigGroupResourceProvider extends
 
       Cluster cluster;
       try {
-        cluster = clusters.getCluster(request.getClusterName());
+        cluster = clusters.getCluster(request.getClusterId());
       } catch (ClusterNotFoundException e) {
         throw new ParentObjectNotFoundException(
           "Attempted to add a config group to a cluster which doesn't exist", e);
@@ -641,7 +642,7 @@ public class ConfigGroupResourceProvider extends
       ConfigGroup configGroup = cluster.getConfigGroups().get(request.getId());
       if (configGroup == null) {
         throw new AmbariException("Config group not found"
-                                 + ", clusterName = " + request.getClusterName()
+                                 + ", clusterId = " + request.getClusterId()
                                  + ", groupId = " + request.getId());
       }
 
@@ -707,7 +708,7 @@ public class ConfigGroupResourceProvider extends
       configGroup.setHosts(hosts);
 
       // Update Configs
-      verifyConfigs(request.getConfigs(), request.getClusterName());
+      verifyConfigs(request.getConfigs(), request.getClusterId());
       configGroup.setConfigurations(request.getConfigs());
 
       // Save
@@ -739,21 +740,17 @@ public class ConfigGroupResourceProvider extends
 
   @SuppressWarnings("unchecked")
   ConfigGroupRequest getConfigGroupRequest(Map<String, Object> properties) {
-    Object groupIdObj = properties.get(CONFIGGROUP_ID_PROPERTY_ID);
-    Long groupId = null;
-    if (groupIdObj != null)  {
-      groupId = groupIdObj instanceof Long ? (Long) groupIdObj :
-        Long.parseLong((String) groupIdObj);
-    }
+    Long groupId = MapUtils.parseLong(properties, CONFIGGROUP_ID_PROPERTY_ID);
+    Long clusterId = MapUtils.parseLong(properties, CONFIGGROUP_CLUSTER_ID_PROPERTY_ID);
 
     ConfigGroupRequest request = new ConfigGroupRequest(
-      groupId,
-      (String) properties.get(CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID),
-      (String) properties.get(CONFIGGROUP_NAME_PROPERTY_ID),
-      (String) properties.get(CONFIGGROUP_TAG_PROPERTY_ID),
-      (String) properties.get(CONFIGGROUP_DESC_PROPERTY_ID),
-      null,
-      null);
+        groupId,
+        clusterId,
+        (String) properties.get(CONFIGGROUP_NAME_PROPERTY_ID),
+        (String) properties.get(CONFIGGROUP_TAG_PROPERTY_ID),
+        (String) properties.get(CONFIGGROUP_DESC_PROPERTY_ID),
+        null,
+        null);
 
     request.setServiceConfigVersionNote((String) properties.get(CONFIGGROUP_SCV_NOTE_ID));
 

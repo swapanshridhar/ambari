@@ -105,7 +105,7 @@ public class StageDAOTest {
   public void testStagePredicate() throws Exception {
 
     Predicate predicate = new PredicateBuilder().property(
-        StageResourceProvider.STAGE_CLUSTER_NAME).equals("c1").toPredicate();
+        StageResourceProvider.STAGE_CLUSTER_ID).equals("c1").toPredicate();
 
     List<StageEntity> entities = stageDao.findAll(PropertyHelper.getReadRequest(), predicate);
     assertEquals(5, entities.size());
@@ -128,7 +128,7 @@ public class StageDAOTest {
     SortRequest sortRequest = new SortRequestImpl(sortProperties);
 
     Predicate predicate = new PredicateBuilder().property(
-        StageResourceProvider.STAGE_CLUSTER_NAME).equals("c1").toPredicate();
+        StageResourceProvider.STAGE_CLUSTER_ID).equals("c1").toPredicate();
 
 
     sortProperties.add(new SortRequestProperty(

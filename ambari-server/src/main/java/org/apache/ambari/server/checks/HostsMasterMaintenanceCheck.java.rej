@@ -1,0 +1,20 @@
+***************
+*** 64,71 ****
+  
+    @Override
+    public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
+-     final String clusterName = request.getClusterName();
+-     final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+      final StackId stackId = cluster.getDesiredStackVersion();
+      final Set<String> hostsWithMasterComponent = new HashSet<>();
+  
+--- 64,72 ----
+  
+    @Override
+    public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
++     final Long clusterId = request.getClusterId();
++     final Cluster cluster = clustersProvider.get().getCluster(clusterId);
++     final String clusterName = cluster.getClusterName();
+      final StackId stackId = cluster.getDesiredStackVersion();
+      final Set<String> hostsWithMasterComponent = new HashSet<>();
+  

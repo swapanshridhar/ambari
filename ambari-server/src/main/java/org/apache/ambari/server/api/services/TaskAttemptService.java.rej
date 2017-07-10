@@ -1,0 +1,45 @@
+***************
+*** 40,60 ****
+  public class TaskAttemptService extends BaseService {
+    private String jobId;
+    private String workflowId;
+-   private String clusterName;
+  
+    /**
+     * Constructor.
+     * 
+-    * @param clusterName
+-    *          cluster name
+     * @param workflowId
+     *          workflow id
+     * @param jobId
+     *          job id
+     */
+-   public TaskAttemptService(ApiVersion apiVersion, String clusterName, String workflowId, String jobId) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+      this.workflowId = workflowId;
+      this.jobId = jobId;
+    }
+--- 40,60 ----
+  public class TaskAttemptService extends BaseService {
+    private String jobId;
+    private String workflowId;
++   private Long clusterId;
+  
+    /**
+     * Constructor.
+     * 
++    * @param clusterId
++    *          cluster Id
+     * @param workflowId
+     *          workflow id
+     * @param jobId
+     *          job id
+     */
++   public TaskAttemptService(ApiVersion apiVersion, Long clusterId, String workflowId, String jobId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+      this.workflowId = workflowId;
+      this.jobId = jobId;
+    }

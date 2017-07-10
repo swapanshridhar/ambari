@@ -66,8 +66,8 @@ public class ClusterServiceTest extends BaseServiceTest {
     Object[] args;
 
     //getCluster
-    clusterService = new TestClusterService(clusters, "clusterName");
-    m = clusterService.getClass().getMethod("getCluster", String.class, HttpHeaders.class, UriInfo.class, String.class);
+    clusterService = new TestClusterService(clusters, 1L);
+    m = clusterService.getClass().getMethod("getCluster", String.class, HttpHeaders.class, UriInfo.class, Long.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo(), "clusterName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, clusterService, m, args, null));
 

@@ -67,7 +67,7 @@ public class RequestScheduleService extends BaseService {
                                       @Context HttpHeaders headers,
                                       @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-      createRequestSchedule(m_clusterName, null));
+      createRequestSchedule(m_clusterId, null));
   }
 
   /**
@@ -84,7 +84,7 @@ public class RequestScheduleService extends BaseService {
                                      @Context UriInfo ui,
                                      @PathParam("requestScheduleId") String requestScheduleId) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-      createRequestSchedule(m_clusterName, requestScheduleId));
+      createRequestSchedule(m_clusterId, requestScheduleId));
   }
 
   /**
@@ -102,7 +102,7 @@ public class RequestScheduleService extends BaseService {
                                         @Context HttpHeaders headers,
                                         @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.POST,
-      createRequestSchedule(m_clusterName, null));
+      createRequestSchedule(m_clusterId, null));
   }
 
   /**

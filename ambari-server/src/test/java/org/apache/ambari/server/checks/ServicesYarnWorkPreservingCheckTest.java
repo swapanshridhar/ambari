@@ -71,10 +71,10 @@ public class ServicesYarnWorkPreservingCheckTest {
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
     Mockito.when(clusters.getCluster("cluster")).thenReturn(cluster);
 
-    Assert.assertTrue(servicesYarnWorkPreservingCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertTrue(servicesYarnWorkPreservingCheck.isApplicable(new PrereqCheckRequest(1L)));
 
    services.remove("YARN");
-    Assert.assertFalse(servicesYarnWorkPreservingCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertFalse(servicesYarnWorkPreservingCheck.isApplicable(new PrereqCheckRequest(1L)));
   }
 
   @Test
@@ -92,12 +92,12 @@ public class ServicesYarnWorkPreservingCheckTest {
     Mockito.when(config.getProperties()).thenReturn(properties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    servicesYarnWorkPreservingCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesYarnWorkPreservingCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     properties.put("yarn.resourcemanager.work-preserving-recovery.enabled", "true");
     check = new PrerequisiteCheck(null, null);
-    servicesYarnWorkPreservingCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesYarnWorkPreservingCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 }

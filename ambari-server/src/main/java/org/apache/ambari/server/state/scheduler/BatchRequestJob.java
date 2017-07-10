@@ -41,8 +41,8 @@ public class BatchRequestJob extends AbstractLinearExecutionJob {
     "BatchRequestJob.ExecutionId";
   public static final String BATCH_REQUEST_BATCH_ID_KEY =
     "BatchRequestJob.BatchId";
-  public static final String BATCH_REQUEST_CLUSTER_NAME_KEY =
-    "BatchRequestJob.ClusterName";
+  public static final String BATCH_REQUEST_CLUSTER_ID_KEY =
+    "BatchRequestJob.ClusterId";
   public static final String BATCH_REQUEST_FAILED_TASKS_KEY =
     "BatchRequestJob.FailedTaskCount";
   public static final String BATCH_REQUEST_TOTAL_TASKS_KEY =
@@ -64,7 +64,7 @@ public class BatchRequestJob extends AbstractLinearExecutionJob {
       (Long) properties.get(BATCH_REQUEST_EXECUTION_ID_KEY) : null;
     Long batchId = properties.get(BATCH_REQUEST_BATCH_ID_KEY) != null ?
       (Long) properties.get(BATCH_REQUEST_BATCH_ID_KEY) : null;
-    String clusterName = (String) properties.get(BATCH_REQUEST_CLUSTER_NAME_KEY);
+    Long clusterId = (Long) properties.get(BATCH_REQUEST_CLUSTER_ID_KEY);
 
 
     if (executionId == null || batchId == null) {
@@ -77,19 +77,19 @@ public class BatchRequestJob extends AbstractLinearExecutionJob {
     Map<String, Integer> taskCounts = getTaskCountProperties(properties);
 
     Long requestId = executionScheduleManager.executeBatchRequest
-      (executionId, batchId, clusterName);
+      (executionId, batchId, clusterId);
 
     if (requestId != null) {
       HostRoleStatus status;
       BatchRequestResponse batchRequestResponse;
       do {
         batchRequestResponse = executionScheduleManager
-          .getBatchRequestResponse(requestId, clusterName);
+          .getBatchRequestResponse(requestId, clusterId);
 
         status = HostRoleStatus.valueOf(batchRequestResponse.getStatus());
 
         executionScheduleManager.updateBatchRequest(executionId, batchId,
-          clusterName, batchRequestResponse, true);
+            clusterId, batchRequestResponse, true);
 
         try {
           Thread.sleep(statusCheckInterval);
@@ -105,7 +105,7 @@ public class BatchRequestJob extends AbstractLinearExecutionJob {
         (properties, taskCounts, batchRequestResponse);
 
       if (executionScheduleManager.hasToleranceThresholdExceeded
-          (executionId, clusterName, aggregateCounts)) {
+          (executionId, clusterId, aggregateCounts)) {
 
         throw new AmbariException("Task failure tolerance limit exceeded"
             + ", execution_id = " + executionId
@@ -124,7 +124,7 @@ public class BatchRequestJob extends AbstractLinearExecutionJob {
       (Long) properties.get(BATCH_REQUEST_EXECUTION_ID_KEY) : null;
     Long batchId = properties.get(BATCH_REQUEST_BATCH_ID_KEY) != null ?
       (Long) properties.get(BATCH_REQUEST_BATCH_ID_KEY) : null;
-    String clusterName = (String) properties.get(BATCH_REQUEST_CLUSTER_NAME_KEY);
+    Long clusterId = (Long) properties.get(BATCH_REQUEST_CLUSTER_ID_KEY);
 
     if (executionId == null || batchId == null) {
       throw new AmbariException("Unable to retrieve persisted batch request"
@@ -133,7 +133,7 @@ public class BatchRequestJob extends AbstractLinearExecutionJob {
     }
 
     // Check if this job has a future and update status if it doesn't
-    executionScheduleManager.finalizeBatch(executionId, clusterName);
+    executionScheduleManager.finalizeBatch(executionId, clusterId);
 
   }
 

@@ -158,7 +158,7 @@ public class ConfigMergeHelperTest {
     ConfigMergeHelper configMergeHelper = injector.getInstance(ConfigMergeHelper.class);
 
     Map<String, Map<String, ThreeWayValue>> conflicts = configMergeHelper.getConflicts(
-      "clustername", newStackId);
+      1L, newStackId);
 
     assertNotNull(conflicts);
     assertEquals(2, conflicts.size());

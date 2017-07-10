@@ -1,0 +1,29 @@
+***************
+*** 38,50 ****
+   */
+  public class AlertService extends BaseService {
+  
+-   private String clusterName = null;
+    private String serviceName = null;
+    private String hostName = null;
+  
+-   AlertService(ApiVersion apiVersion, String clusterName, String serviceName, String hostName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+      this.serviceName = serviceName;
+      this.hostName = hostName;
+    }
+--- 38,50 ----
+   */
+  public class AlertService extends BaseService {
+  
++   private Long clusterId = null;
+    private String serviceName = null;
+    private String hostName = null;
+  
++   AlertService(ApiVersion apiVersion, Long clusterId, String serviceName, String hostName) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+      this.serviceName = serviceName;
+      this.hostName = hostName;
+    }

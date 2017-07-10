@@ -1,0 +1,17 @@
+***************
+*** 257,263 ****
+          AmbariMetaInfo metaInfo = ambariMetaInfo.get();
+  
+          try {
+-           Cluster c = clusters.getCluster(request.getClusterName());
+            Map<String, ServiceInfo> services = metaInfo.getServices(
+                c.getDesiredStackVersion().getStackName(),
+                c.getDesiredStackVersion().getStackVersion());
+--- 257,263 ----
+          AmbariMetaInfo metaInfo = ambariMetaInfo.get();
+  
+          try {
++           Cluster c = clusters.getCluster(request.getClusterId());
+            Map<String, ServiceInfo> services = metaInfo.getServices(
+                c.getDesiredStackVersion().getStackName(),
+                c.getDesiredStackVersion().getStackVersion());

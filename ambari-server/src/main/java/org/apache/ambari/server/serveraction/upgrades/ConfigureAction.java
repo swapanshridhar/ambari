@@ -377,7 +377,7 @@ public class ConfigureAction extends AbstractUpgradeServerAction {
             // the stack-defined and keep them - also keep values that exist in
             // the config but not on the stack
             if (transfer.preserveEdits) {
-              List<String> edited = findValuesToPreserve(clusterName, config);
+              List<String> edited = findValuesToPreserve(clusterId, config);
               for (String changed : edited) {
                 newValues.put(changed, base.get(changed));
 
@@ -561,19 +561,19 @@ public class ConfigureAction extends AbstractUpgradeServerAction {
    * <li>Properties that do not exist on the stack</li>
    * </ul>
    *
-   * @param clusterName
-   *          the cluster name
+   * @param clusterId
+   *          the cluster Id
    * @param config
    *          the config with the tag to find conflicts
    * @return the list of changed property keys
    * @throws AmbariException
    */
-  private List<String> findValuesToPreserve(String clusterName, Config config)
+  private List<String> findValuesToPreserve(Long clusterId, Config config)
       throws AmbariException {
     List<String> result = new ArrayList<>();
 
     Map<String, Map<String, ThreeWayValue>> conflicts =
-        m_mergeHelper.getConflicts(clusterName, config.getStackId());
+        m_mergeHelper.getConflicts(clusterId, config.getStackId());
 
     Map<String, ThreeWayValue> conflictMap = conflicts.get(config.getType());
 
@@ -591,7 +591,7 @@ public class ConfigureAction extends AbstractUpgradeServerAction {
 
 
     String configType = config.getType();
-    Cluster cluster = m_clusters.getCluster(clusterName);
+    Cluster cluster = m_clusters.getCluster(clusterId);
     StackId oldStack = cluster.getCurrentStackVersion();
 
     // iterate over all properties for every cluster service; if the property

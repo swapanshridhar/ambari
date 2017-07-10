@@ -51,7 +51,7 @@ public class BatchRequestJobTest {
   public void testDoWork() throws Exception {
     ExecutionScheduleManager scheduleManagerMock = createMock(ExecutionScheduleManager.class);
     BatchRequestJob batchRequestJob = new BatchRequestJob(scheduleManagerMock, 100L);
-    String clusterName = "mycluster";
+    Long clusterId = 1L;
     long requestId = 11L;
     long executionId = 31L;
     long batchId = 1L;
@@ -59,7 +59,7 @@ public class BatchRequestJobTest {
     Map<String, Object> properties = new HashMap<>();
     properties.put(BatchRequestJob.BATCH_REQUEST_EXECUTION_ID_KEY, executionId);
     properties.put(BatchRequestJob.BATCH_REQUEST_BATCH_ID_KEY, batchId);
-    properties.put(BatchRequestJob.BATCH_REQUEST_CLUSTER_NAME_KEY, clusterName);
+    properties.put(BatchRequestJob.BATCH_REQUEST_CLUSTER_ID_KEY, clusterId);
 
     HashMap<String, Integer> taskCounts = new HashMap<String, Integer>()
     {{ put(BatchRequestJob.BATCH_REQUEST_FAILED_TASKS_KEY, 0);
@@ -75,23 +75,23 @@ public class BatchRequestJobTest {
 
     Capture<Long> executionIdCapture = EasyMock.newCapture();
     Capture<Long> batchIdCapture = EasyMock.newCapture();
-    Capture<String> clusterNameCapture = EasyMock.newCapture();
+    Capture<Long> clusterIdCapture = EasyMock.newCapture();
 
 
     expect(scheduleManagerMock.executeBatchRequest(captureLong(executionIdCapture),
       captureLong(batchIdCapture),
-      capture(clusterNameCapture))).andReturn(requestId);
+      capture(clusterIdCapture))).andReturn(requestId);
 
-    expect(scheduleManagerMock.getBatchRequestResponse(requestId, clusterName)).
+    expect(scheduleManagerMock.getBatchRequestResponse(requestId, clusterId)).
       andReturn(pendingResponse).times(2);
-    expect(scheduleManagerMock.getBatchRequestResponse(requestId, clusterName)).
+    expect(scheduleManagerMock.getBatchRequestResponse(requestId, clusterId)).
       andReturn(inProgressResponse).times(4);
-    expect(scheduleManagerMock.getBatchRequestResponse(requestId, clusterName)).
+    expect(scheduleManagerMock.getBatchRequestResponse(requestId, clusterId)).
       andReturn(completedResponse).once();
     expect(scheduleManagerMock.hasToleranceThresholdExceeded(executionId,
-      clusterName, taskCounts)).andReturn(false);
+      clusterId, taskCounts)).andReturn(false);
 
-    scheduleManagerMock.updateBatchRequest(eq(executionId), eq(batchId), eq(clusterName),
+    scheduleManagerMock.updateBatchRequest(eq(executionId), eq(batchId), eq(clusterId),
         anyObject(BatchRequestResponse.class), eq(true));
     expectLastCall().anyTimes();
 
@@ -103,7 +103,7 @@ public class BatchRequestJobTest {
 
     Assert.assertEquals(executionId, executionIdCapture.getValue().longValue());
     Assert.assertEquals(batchId, batchIdCapture.getValue().longValue());
-    Assert.assertEquals(clusterName, clusterNameCapture.getValue());
+    Assert.assertEquals(clusterId, clusterIdCapture.getValue());
   }
 
   @Test

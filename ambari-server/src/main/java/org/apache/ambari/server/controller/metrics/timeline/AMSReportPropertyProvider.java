@@ -29,7 +29,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.ambari.server.AmbariException;
 import org.apache.ambari.server.configuration.ComponentSSLConfiguration;
+import org.apache.ambari.server.controller.AmbariManagementController;
 import org.apache.ambari.server.controller.AmbariServer;
 import org.apache.ambari.server.controller.internal.PropertyInfo;
 import org.apache.ambari.server.controller.internal.URLStreamProvider;
@@ -48,6 +50,7 @@ import org.apache.ambari.server.controller.spi.TemporalInfo;
 import org.apache.ambari.server.controller.utilities.PropertyHelper;
 import org.apache.ambari.server.events.MetricsCollectorHostDownEvent;
 import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
+import org.apache.ambari.server.state.Cluster;
 import org.apache.hadoop.metrics2.sink.timeline.TimelineMetric;
 import org.apache.hadoop.metrics2.sink.timeline.TimelineMetrics;
 import org.apache.http.client.utils.URIBuilder;
@@ -65,10 +68,10 @@ public class AMSReportPropertyProvider extends MetricsReportPropertyProvider {
                                  ComponentSSLConfiguration configuration,
                                  TimelineMetricCacheProvider cacheProvider,
                                  MetricHostProvider hostProvider,
-                                 String clusterNamePropertyId) {
+                                 String clusterIdPropertyId) {
 
     super(componentPropertyInfoMap, streamProvider, configuration,
-      hostProvider, clusterNamePropertyId);
+      hostProvider, clusterIdPropertyId);
 
     this.metricCache = cacheProvider.getTimelineMetricsCache();
     this.requestHelper = new MetricsRequestHelper(streamProvider);
@@ -139,7 +142,15 @@ public class AMSReportPropertyProvider extends MetricsReportPropertyProvider {
       }
     }
 
-    String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+    Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+    AmbariManagementController amc = AmbariServer.getController();
+    Cluster cluster = null;
+    try {
+      cluster = amc.getClusters().getCluster(clusterId);
+    } catch (AmbariException e) {
+      return true;
+    }
+    String clusterName = cluster.getClusterName();
 
     // Check liveliness of host
     if (!hostProvider.isCollectorHostLive(clusterName, TIMELINE_METRICS)) {

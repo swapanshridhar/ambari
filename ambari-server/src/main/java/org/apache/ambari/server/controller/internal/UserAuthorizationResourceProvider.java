@@ -65,7 +65,7 @@ public class UserAuthorizationResourceProvider extends ReadOnlyResourceProvider 
   public static final String USERNAME_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "user_name");
   public static final String AUTHORIZATION_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "authorization_name");
   public static final String AUTHORIZATION_RESOURCE_TYPE_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "resource_type");
-  public static final String AUTHORIZATION_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "cluster_name");
+  public static final String AUTHORIZATION_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "cluster_id");
   public static final String AUTHORIZATION_VIEW_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "view_name");
   public static final String AUTHORIZATION_VIEW_VERSION_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "view_version");
   public static final String AUTHORIZATION_VIEW_INSTANCE_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("AuthorizationInfo", "view_instance_name");
@@ -87,7 +87,7 @@ public class UserAuthorizationResourceProvider extends ReadOnlyResourceProvider 
     set.add(USERNAME_PROPERTY_ID);
     set.add(AUTHORIZATION_NAME_PROPERTY_ID);
     set.add(AUTHORIZATION_RESOURCE_TYPE_PROPERTY_ID);
-    set.add(AUTHORIZATION_CLUSTER_NAME_PROPERTY_ID);
+    set.add(AUTHORIZATION_CLUSTER_ID_PROPERTY_ID);
     set.add(AUTHORIZATION_VIEW_NAME_PROPERTY_ID);
     set.add(AUTHORIZATION_VIEW_VERSION_PROPERTY_ID);
     set.add(AUTHORIZATION_VIEW_INSTANCE_NAME_PROPERTY_ID);
@@ -217,7 +217,7 @@ public class UserAuthorizationResourceProvider extends ReadOnlyResourceProvider 
     propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_PRIVILEGE_ID_PROPERTY_ID);
     propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_PERMISSION_NAME_PROPERTY_ID);
     propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID);
-    propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_VIEW_NAME_PROPERTY_ID);
     propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_VIEW_VERSION_PROPERTY_ID);
     propertyIds.add(UserPrivilegeResourceProvider.PRIVILEGE_INSTANCE_NAME_PROPERTY_ID);
@@ -233,7 +233,7 @@ public class UserAuthorizationResourceProvider extends ReadOnlyResourceProvider 
    * <ul>
    * <li>authorization_id</li>
    * <li>authorization_name</li>
-   * <li>cluster_name</li>
+   * <li>cluster_id</li>
    * <li>resource_type</li>
    * <li>user_name</li>
    * </ul>
@@ -259,8 +259,8 @@ public class UserAuthorizationResourceProvider extends ReadOnlyResourceProvider 
       setResourceProperty(resource, USERNAME_PROPERTY_ID, username, requestedIds);
       setResourceProperty(resource, AUTHORIZATION_NAME_PROPERTY_ID, entity.getAuthorizationName(), requestedIds);
       setResourceProperty(resource, AUTHORIZATION_RESOURCE_TYPE_PROPERTY_ID, resourceType, requestedIds);
-      setResourceProperty(resource, AUTHORIZATION_CLUSTER_NAME_PROPERTY_ID,
-          privilegeResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID),
+      setResourceProperty(resource, AUTHORIZATION_CLUSTER_ID_PROPERTY_ID,
+          privilegeResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID),
           requestedIds);
 
       resources.add(resource);

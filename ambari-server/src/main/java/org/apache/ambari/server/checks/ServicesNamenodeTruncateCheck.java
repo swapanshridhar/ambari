@@ -58,10 +58,9 @@ public class ServicesNamenodeTruncateCheck extends AbstractCheckDescriptor {
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     Config config = cluster.getDesiredConfigByType("hdfs-site");
-
     String truncateEnabled = config.getProperties().get("dfs.allow.truncate");
 
     if (Boolean.valueOf(truncateEnabled)) {

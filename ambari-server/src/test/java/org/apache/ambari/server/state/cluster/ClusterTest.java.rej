@@ -1,0 +1,235 @@
+***************
+*** 171,179 ****
+  
+      @Override
+      @Transactional
+-     public List<ClusterVersionEntity> findByCluster(String clusterName) {
+        if (mockedClusterVersions == null) {
+-         return super.findByCluster(clusterName);
+        } else {
+          return mockedClusterVersions;
+        }
+--- 171,179 ----
+  
+      @Override
+      @Transactional
++     public List<ClusterVersionEntity> findByCluster(Long clusterId) {
+        if (mockedClusterVersions == null) {
++         return super.findByCluster(clusterId);
+        } else {
+          return mockedClusterVersions;
+        }
+***************
+*** 1648,1661 ****
+  
+      assertNotNull(entityHDP2);
+  
+-     List<HostVersionEntity> hostVersionsH1Before = hostVersionDAO.findByClusterAndHost("c1", "h1");
+      assertEquals(1, hostVersionsH1Before.size());
+  
+      // this should move both to NOT_REQUIRED since they have no versionable
+      // components
+      c1.transitionHostsToInstalling(entityHDP2, entityHDP2.getRepositoryVersion(), null, false);
+  
+-     List<HostVersionEntity> hostVersionsH1After = hostVersionDAO.findByClusterAndHost("c1", "h1");
+      assertEquals(2, hostVersionsH1After.size());
+  
+      boolean checked = false;
+--- 1649,1662 ----
+  
+      assertNotNull(entityHDP2);
+  
++     List<HostVersionEntity> hostVersionsH1Before = hostVersionDAO.findByClusterAndHost(1L, "h1");
+      assertEquals(1, hostVersionsH1Before.size());
+  
+      // this should move both to NOT_REQUIRED since they have no versionable
+      // components
+      c1.transitionHostsToInstalling(entityHDP2, entityHDP2.getRepositoryVersion(), null, false);
+  
++     List<HostVersionEntity> hostVersionsH1After = hostVersionDAO.findByClusterAndHost(1L, "h1");
+      assertEquals(2, hostVersionsH1After.size());
+  
+      boolean checked = false;
+***************
+*** 1764,1770 ****
+      HostVersionEntity hv3 = helper.createHostVersion("h3", repositoryVersionEntity, RepositoryVersionState.INSTALLED);
+  
+      c1.recalculateClusterVersionState(repositoryVersionEntity);
+-     ClusterVersionEntity cv = clusterVersionDAO.findByClusterAndStackAndVersion(c1.getClusterName(), stackId, stackVersion);
+      assertEquals(RepositoryVersionState.INSTALLING, cv.getState());
+  
+      // 1 in NOT_REQUIRED, 1 in INSTALLED, 1 in CURRENT so should be INSTALLED
+--- 1765,1771 ----
+      HostVersionEntity hv3 = helper.createHostVersion("h3", repositoryVersionEntity, RepositoryVersionState.INSTALLED);
+  
+      c1.recalculateClusterVersionState(repositoryVersionEntity);
++     ClusterVersionEntity cv = clusterVersionDAO.findByClusterAndStackAndVersion(c1.getClusterId(), stackId, stackVersion);
+      assertEquals(RepositoryVersionState.INSTALLING, cv.getState());
+  
+      // 1 in NOT_REQUIRED, 1 in INSTALLED, 1 in CURRENT so should be INSTALLED
+***************
+*** 1772,1778 ****
+      hostVersionDAO.merge(hv2);
+  
+      c1.recalculateClusterVersionState(repositoryVersionEntity);
+-     cv = clusterVersionDAO.findByClusterAndStackAndVersion(c1.getClusterName(), stackId, stackVersion);
+      assertEquals(RepositoryVersionState.INSTALLED, cv.getState());
+  
+      // 1 in NOT_REQUIRED, and 2 in CURRENT, so cluster version should be CURRENT
+--- 1773,1779 ----
+      hostVersionDAO.merge(hv2);
+  
+      c1.recalculateClusterVersionState(repositoryVersionEntity);
++     cv = clusterVersionDAO.findByClusterAndStackAndVersion(c1.getClusterId(), stackId, stackVersion);
+      assertEquals(RepositoryVersionState.INSTALLED, cv.getState());
+  
+      // 1 in NOT_REQUIRED, and 2 in CURRENT, so cluster version should be CURRENT
+***************
+*** 1780,1786 ****
+      hostVersionDAO.merge(hv3);
+  
+      c1.recalculateClusterVersionState(repositoryVersionEntity);
+-     cv = clusterVersionDAO.findByClusterAndStackAndVersion(c1.getClusterName(), stackId, stackVersion);
+      assertEquals(RepositoryVersionState.CURRENT, cv.getState());
+    }
+  
+--- 1781,1787 ----
+      hostVersionDAO.merge(hv3);
+  
+      c1.recalculateClusterVersionState(repositoryVersionEntity);
++     cv = clusterVersionDAO.findByClusterAndStackAndVersion(c1.getClusterId(), stackId, stackVersion);
+      assertEquals(RepositoryVersionState.CURRENT, cv.getState());
+    }
+  
+***************
+*** 1722,1728 ****
+  
+      Collection<HostVersionEntity> hostVersions = hostVersionDAO.findAll();
+      Assert.assertEquals(hostVersions.size(), clusters.getHosts().size());
+-     HostVersionEntity h4Version1 = hostVersionDAO.findByClusterStackVersionAndHost(clusterName, stackId, v1, "h-4");
+      Assert.assertNotNull(h4Version1);
+      Assert.assertEquals(h4Version1.getState(), RepositoryVersionState.CURRENT);
+  
+--- 1723,1729 ----
+  
+      Collection<HostVersionEntity> hostVersions = hostVersionDAO.findAll();
+      Assert.assertEquals(hostVersions.size(), clusters.getHosts().size());
++     HostVersionEntity h4Version1 = hostVersionDAO.findByClusterStackVersionAndHost(1L, stackId, v1, "h-4");
+      Assert.assertNotNull(h4Version1);
+      Assert.assertEquals(h4Version1.getState(), RepositoryVersionState.CURRENT);
+  
+***************
+*** 1739,1757 ****
+      cluster.transitionClusterVersion(stackId, v2,
+          RepositoryVersionState.INSTALLED);
+  
+-     ClusterVersionEntity cv2 = clusterVersionDAO.findByClusterAndStackAndVersion(clusterName, stackId, v2);
+      Assert.assertNotNull(cv2);
+      Assert.assertEquals(cv2.getState(), RepositoryVersionState.INSTALLED);
+  
+      // Add one more Host, with only Ganglia on it. It should have a HostVersion in NOT_REQUIRED for v2,
+      // as Ganglia isn't versionable
+      addHost("h-5", hostAttributes);
+-     clusters.mapAndPublishHostsToCluster(Collections.singleton("h-5"), clusterName);
+      ServiceComponentHost schHost5Serv3CompB = serviceComponentHostFactory.createNew(sc3CompB, "h-5");
+      sc3CompB.addServiceComponentHost(schHost5Serv3CompB);
+  
+      // Host 5 will be in OUT_OF_SYNC, so redistribute bits to it so that it reaches a state of INSTALLED
+-     HostVersionEntity h5Version2 = hostVersionDAO.findByClusterStackVersionAndHost(clusterName, stackId, v2, "h-5");
+      Assert.assertNotNull(h5Version2);
+      Assert.assertEquals(RepositoryVersionState.NOT_REQUIRED, h5Version2.getState());
+  
+--- 1740,1758 ----
+      cluster.transitionClusterVersion(stackId, v2,
+          RepositoryVersionState.INSTALLED);
+  
++     ClusterVersionEntity cv2 = clusterVersionDAO.findByClusterAndStackAndVersion(1L, stackId, v2);
+      Assert.assertNotNull(cv2);
+      Assert.assertEquals(cv2.getState(), RepositoryVersionState.INSTALLED);
+  
+      // Add one more Host, with only Ganglia on it. It should have a HostVersion in NOT_REQUIRED for v2,
+      // as Ganglia isn't versionable
+      addHost("h-5", hostAttributes);
++     clusters.mapAndPublishHostsToCluster(Collections.singleton("h-5"), 1L);
+      ServiceComponentHost schHost5Serv3CompB = serviceComponentHostFactory.createNew(sc3CompB, "h-5");
+      sc3CompB.addServiceComponentHost(schHost5Serv3CompB);
+  
+      // Host 5 will be in OUT_OF_SYNC, so redistribute bits to it so that it reaches a state of INSTALLED
++     HostVersionEntity h5Version2 = hostVersionDAO.findByClusterStackVersionAndHost(1L, stackId, v2, "h-5");
+      Assert.assertNotNull(h5Version2);
+      Assert.assertEquals(RepositoryVersionState.NOT_REQUIRED, h5Version2.getState());
+  
+***************
+*** 1902,1910 ****
+          RepositoryVersionState.INSTALLING);
+      c1.transitionClusterVersion(stackId, v1, RepositoryVersionState.CURRENT);
+  
+-     clusters.mapHostToCluster("h-1", clusterName);
+-     clusters.mapHostToCluster("h-2", clusterName);
+-     clusters.mapHostToCluster("h-3", clusterName);
+      ClusterVersionDAOMock.failOnCurrentVersionState = false;
+  
+      Service service = c1.addService("ZOOKEEPER");
+--- 1903,1911 ----
+          RepositoryVersionState.INSTALLING);
+      c1.transitionClusterVersion(stackId, v1, RepositoryVersionState.CURRENT);
+  
++     clusters.mapHostToCluster("h-1", 1L);
++     clusters.mapHostToCluster("h-2", 1L);
++     clusters.mapHostToCluster("h-3", 1L);
+      ClusterVersionDAOMock.failOnCurrentVersionState = false;
+  
+      Service service = c1.addService("ZOOKEEPER");
+***************
+*** 1914,1920 ****
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.INSTALLED);
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.CURRENT);
+  
+-     entities = hostVersionDAO.findByClusterAndHost(clusterName, "h-3");
+  
+      assertEquals(1, entities.size());
+    }
+--- 1915,1921 ----
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.INSTALLED);
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.CURRENT);
+  
++     entities = hostVersionDAO.findByClusterAndHost(1L, "h-3");
+  
+      assertEquals(1, entities.size());
+    }
+***************
+*** 1961,1968 ****
+          RepositoryVersionState.INSTALLING);
+      c1.transitionClusterVersion(stackId, v1, RepositoryVersionState.CURRENT);
+  
+-     clusters.mapHostToCluster("h-1", clusterName);
+-     clusters.mapHostToCluster("h-2", clusterName);
+  
+      ClusterVersionDAOMock.failOnCurrentVersionState = false;
+  
+--- 1962,1969 ----
+          RepositoryVersionState.INSTALLING);
+      c1.transitionClusterVersion(stackId, v1, RepositoryVersionState.CURRENT);
+  
++     clusters.mapHostToCluster("h-1", 1L);
++     clusters.mapHostToCluster("h-2", 1L);
+  
+      ClusterVersionDAOMock.failOnCurrentVersionState = false;
+  
+***************
+*** 1976,1982 ****
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.INSTALLED);
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.OUT_OF_SYNC);
+  
+-     clusters.mapHostToCluster(h3, clusterName);
+  
+      // This method is usually called when we receive heartbeat from new host
+      HostEntity hostEntity3 = mock(HostEntity.class);
+--- 1977,1983 ----
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.INSTALLED);
+      c1.transitionClusterVersion(stackId, v2, RepositoryVersionState.OUT_OF_SYNC);
+  
++     clusters.mapHostToCluster(h3, 1L);
+  
+      // This method is usually called when we receive heartbeat from new host
+      HostEntity hostEntity3 = mock(HostEntity.class);

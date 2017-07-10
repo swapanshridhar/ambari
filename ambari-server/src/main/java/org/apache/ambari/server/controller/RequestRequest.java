@@ -26,12 +26,12 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class RequestRequest {
 
-  public RequestRequest(String clusterName, long requestId) {
-    this.clusterName = clusterName;
+  public RequestRequest(Long clusterId, long requestId) {
+    this.clusterId = clusterId;
     this.requestId = requestId;
   }
 
-  private String clusterName;
+  private Long clusterId;
 
   private long requestId;
 
@@ -89,7 +89,7 @@ public class RequestRequest {
   @Override
   public String toString() {
     return "RequestRequest{" +
-            "clusterName='" + clusterName + '\'' +
+            "clusterId='" + clusterId + '\'' +
             ", requestId=" + requestId +
             ", status=" + status +
             ", abortReason='" + abortReason + '\'' +

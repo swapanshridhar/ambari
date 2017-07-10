@@ -1,0 +1,38 @@
+***************
+*** 108,114 ****
+      helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
+      c1.createClusterVersion(stackId, stackId.getStackVersion(), "admin", RepositoryVersionState.INSTALLING);
+      c1.transitionClusterVersion(stackId, stackId.getStackVersion(), RepositoryVersionState.CURRENT);
+-     clusters.mapHostToCluster("h1", "c1");
+    }
+  
+    @After
+--- 108,114 ----
+      helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
+      c1.createClusterVersion(stackId, stackId.getStackVersion(), "admin", RepositoryVersionState.INSTALLING);
+      c1.transitionClusterVersion(stackId, stackId.getStackVersion(), RepositoryVersionState.CURRENT);
++     clusters.mapHostToCluster("h1", (clusters.getCluster("c1").getClusterId()));
+    }
+  
+    @After
+***************
+*** 460,468 ****
+      // create repo version
+      RepositoryVersionEntity repo = helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
+      c1.createClusterVersion(stackId, stackId.getStackVersion(), "admin", RepositoryVersionState.INSTALLING);
+-     clusters.mapHostToCluster(host1, clusterName);
+-     clusters.mapHostToCluster(host2, clusterName);
+-     clusters.mapHostToCluster(host3, clusterName);
+  
+      helper.createHostVersion(host1, repo, RepositoryVersionState.INSTALLED);
+      helper.createHostVersion(host2, repo, RepositoryVersionState.INSTALLED);
+--- 460,468 ----
+      // create repo version
+      RepositoryVersionEntity repo = helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
+      c1.createClusterVersion(stackId, stackId.getStackVersion(), "admin", RepositoryVersionState.INSTALLING);
++     clusters.mapHostToCluster(host1, (clusters.getCluster(clusterName).getClusterId()));
++     clusters.mapHostToCluster(host2, (clusters.getCluster(clusterName).getClusterId()));
++     clusters.mapHostToCluster(host3, (clusters.getCluster(clusterName).getClusterId()));
+  
+      helper.createHostVersion(host1, repo, RepositoryVersionState.INSTALLED);
+      helper.createHostVersion(host2, repo, RepositoryVersionState.INSTALLED);

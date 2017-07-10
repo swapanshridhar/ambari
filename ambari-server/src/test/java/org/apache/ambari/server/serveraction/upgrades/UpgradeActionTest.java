@@ -213,7 +213,7 @@ public class UpgradeActionTest {
     host.setHostAttributes(hostAttributes);
 
     // without this, HostEntity will not have a relation to ClusterEntity
-    clusters.mapHostToCluster(hostName, clusterName);
+    clusters.mapHostToCluster(hostName, c.getClusterId());
 
     HostVersionEntity entity = new HostVersionEntity(hostDAO.findByName(hostName),
         sourceRepoVersion, RepositoryVersionState.INSTALLED);
@@ -265,7 +265,7 @@ public class UpgradeActionTest {
     hostAttributes.put("os_release_version", "6");
     host.setHostAttributes(hostAttributes);
 
-    clusters.mapHostToCluster(hostName, clusterName);
+    clusters.mapHostToCluster(hostName, c.getClusterId());
 
     // Create the starting repo version
     sourceRepositoryVersion = m_helper.getOrCreateRepositoryVersion(sourceStack, sourceRepo);

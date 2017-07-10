@@ -1,0 +1,17 @@
+***************
+*** 139,145 ****
+        repoVersion.setOperatingSystems(resourceAsString("org/apache/ambari/server/stack/UpdateActiveRepoVersionOnStartupTest_initialRepos.json"));
+        ClusterVersionEntity clusterVersion = new ClusterVersionEntity();
+        clusterVersion.setRepositoryVersion(repoVersion);
+-       when(clusterVersionDAO.findByClusterAndStateCurrent(CLUSTER_NAME)).thenReturn(clusterVersion);
+  
+      }
+  
+--- 139,145 ----
+        repoVersion.setOperatingSystems(resourceAsString("org/apache/ambari/server/stack/UpdateActiveRepoVersionOnStartupTest_initialRepos.json"));
+        ClusterVersionEntity clusterVersion = new ClusterVersionEntity();
+        clusterVersion.setRepositoryVersion(repoVersion);
++       when(clusterVersionDAO.findByClusterAndStateCurrent(cluster.getClusterId())).thenReturn(clusterVersion);
+  
+      }
+  

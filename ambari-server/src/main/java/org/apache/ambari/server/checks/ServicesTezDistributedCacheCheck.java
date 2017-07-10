@@ -82,8 +82,8 @@ public class ServicesTezDistributedCacheCheck extends AbstractCheckDescriptor {
       dfsProtocolsRegex = checkProperties.get(DFS_PROTOCOLS_REGEX_PROPERTY_NAME);
     }
 
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     final String tezConfigType = "tez-site";
     final String coreSiteConfigType = "core-site";
     final Map<String, DesiredConfig> desiredConfigs = cluster.getDesiredConfigs();

@@ -1,0 +1,391 @@
+***************
+*** 282,288 ****
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+--- 282,288 ----
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+***************
+*** 345,351 ****
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+--- 345,351 ----
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+***************
+*** 389,395 ****
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+--- 389,395 ----
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+***************
+*** 544,550 ****
+      assertEquals(0, upgrades.size());
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 544,550 ----
+      assertEquals(0, upgrades.size());
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 627,633 ****
+      assertNotNull(lastUpgrade);
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 627,633 ----
+      assertNotNull(lastUpgrade);
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 661,667 ****
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 661,667 ----
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 682,688 ****
+  
+      // create another upgrade which should fail
+      requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 682,688 ----
+  
+      // create another upgrade which should fail
+      requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 695,701 ****
+      }
+  
+      // fix the properties and try again
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 695,701 ----
+      }
+  
+      // fix the properties and try again
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 747,753 ****
+  
+      // create upgrade request
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_nonrolling_new_stack");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, "NON_ROLLING");
+--- 747,753 ----
+  
+      // create upgrade request
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_nonrolling_new_stack");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, "NON_ROLLING");
+***************
+*** 791,797 ****
+      StackId stackId = new StackId("HDP", "2.2.0");
+      cluster.setDesiredStackVersion(stackId, true);
+  
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_nonrolling_new_stack");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 791,797 ----
+      StackId stackId = new StackId("HDP", "2.2.0");
+      cluster.setDesiredStackVersion(stackId, true);
+  
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_nonrolling_new_stack");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 947,953 ****
+      repoVersionDao.create(repoVersionEntity);
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.2.3");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_direction");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 947,953 ----
+      repoVersionDao.create(repoVersionEntity);
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.2.3");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_direction");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 977,983 ****
+  
+      requestProps.clear();
+      // Now perform a downgrade
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_direction");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 977,983 ----
+  
+      requestProps.clear();
+      // Now perform a downgrade
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_direction");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 1075,1081 ****
+      cluster.addDesiredConfig("admin", Collections.singleton(config));
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 1075,1081 ----
+      cluster.addDesiredConfig("admin", Collections.singleton(config));
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 1250,1256 ****
+      assertEquals(0, upgrades.size());
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 1250,1256 ----
+      assertEquals(0, upgrades.size());
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 1355,1361 ****
+      }
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_FAILURES, Boolean.TRUE.toString());
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_SC_FAILURES, Boolean.FALSE.toString());
+--- 1355,1361 ----
+      }
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_FAILURES, Boolean.TRUE.toString());
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_SC_FAILURES, Boolean.FALSE.toString());
+***************
+*** 1380,1386 ****
+      }
+  
+      requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_FAILURES, Boolean.FALSE.toString());
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_SC_FAILURES, Boolean.TRUE.toString());
+--- 1380,1386 ----
+      }
+  
+      requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_FAILURES, Boolean.FALSE.toString());
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_SC_FAILURES, Boolean.TRUE.toString());
+***************
+*** 1404,1410 ****
+      }
+  
+      requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_FAILURES, Boolean.FALSE.toString());
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_SC_FAILURES, Boolean.FALSE.toString());
+--- 1404,1410 ----
+      }
+  
+      requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_FAILURES, Boolean.FALSE.toString());
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_SC_FAILURES, Boolean.FALSE.toString());
+***************
+*** 1430,1436 ****
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+--- 1430,1436 ----
+      Cluster cluster = clusters.getCluster("c1");
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.ROLLING.toString());
+***************
+*** 1468,1474 ****
+    public void testCreateHostOrderedUpgradeThrowsExceptions() throws Exception {
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test_host_ordered");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.HOST_ORDERED.toString());
+--- 1468,1474 ----
+    public void testCreateHostOrderedUpgradeThrowsExceptions() throws Exception {
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test_host_ordered");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.HOST_ORDERED.toString());
+***************
+*** 1529,1535 ****
+      ResourceProvider upgradeResourceProvider = createProvider(amc);
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 1529,1535 ----
+      ResourceProvider upgradeResourceProvider = createProvider(amc);
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 1557,1563 ****
+      abortUpgrade(Long.parseLong(id));
+  
+      requestProps.clear();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 1557,1563 ----
+      abortUpgrade(Long.parseLong(id));
+  
+      requestProps.clear();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.1.1.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+***************
+*** 1610,1616 ****
+      hostsOrder.add(hostGrouping);
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test_host_ordered");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.HOST_ORDERED.toString());
+--- 1610,1616 ----
+      hostsOrder.add(hostGrouping);
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.0.0");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test_host_ordered");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_TYPE, UpgradeType.HOST_ORDERED.toString());
+***************
+*** 1618,1624 ****
+      repoVersionDao.create(repoVersionEntity);
+  
+      Map<String, Object> requestProps = new HashMap<>();
+-     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.2.3");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");
+--- 1618,1624 ----
+      repoVersionDao.create(repoVersionEntity);
+  
+      Map<String, Object> requestProps = new HashMap<>();
++     requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
+      requestProps.put(UpgradeResourceProvider.UPGRADE_VERSION, "2.2.2.3");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_PACK, "upgrade_test");
+      requestProps.put(UpgradeResourceProvider.UPGRADE_SKIP_PREREQUISITE_CHECKS, "true");

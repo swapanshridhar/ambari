@@ -39,7 +39,7 @@ public class WidgetResponse {
   private String scope;
   private String widgetValues;
   private String properties;
-  private String clusterName;
+  private Long clusterId;
 
   @JsonProperty("id")
   public Long getId() {
@@ -135,13 +135,13 @@ public class WidgetResponse {
     this.properties = properties;
   }
 
-  @JsonProperty("cluster_name")
-  public String getClusterName() {
-    return clusterName;
+  @JsonProperty("cluster_id")
+  public Long getClusterId() {
+    return clusterId;
   }
 
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   @Override
@@ -173,8 +173,8 @@ public class WidgetResponse {
     response.setScope(entity.getScope());
     response.setWidgetValues(entity.getWidgetValues());
     response.setProperties(entity.getProperties());
-    String clusterName = (entity.getClusterEntity() != null) ? entity.getClusterEntity().getClusterName() : null;
-    response.setClusterName(clusterName);
+    Long clusterId = (entity.getClusterEntity() != null) ? entity.getClusterEntity().getClusterId() : null;
+    response.setClusterId(clusterId);
 
     return response;
   }

@@ -324,7 +324,7 @@ public class Stage {
     return StageUtils.getActionId(requestId, getStageId());
   }
 
-  private synchronized ExecutionCommandWrapper addGenericExecutionCommand(String clusterName,
+  private synchronized ExecutionCommandWrapper addGenericExecutionCommand(Long clusterId,
       String hostName, Role role, RoleCommand command, ServiceComponentHostEvent event,
       boolean retryAllowed, boolean autoSkipFailure) {
 
@@ -335,7 +335,7 @@ public class Stage {
     HostRoleCommand hrc = hostRoleCommandFactory.create(hostName, role, event, command,
         retryAllowed, isHostRoleCommandAutoSkippable);
 
-    return addGenericExecutionCommand(clusterName, hostName, role, command, event, hrc);
+    return addGenericExecutionCommand(clusterId, hostName, role, command, event, hrc);
   }
 
   private ExecutionCommandWrapper addGenericExecutionCommand(Cluster cluster, Host host, Role role,
@@ -348,12 +348,12 @@ public class Stage {
     HostRoleCommand hrc = hostRoleCommandFactory.create(host, role, event, command, retryAllowed,
         isHostRoleCommandAutoSkippable);
 
-    return addGenericExecutionCommand(cluster.getClusterName(), host.getHostName(), role, command,
+    return addGenericExecutionCommand(cluster.getClusterId(), host.getHostName(), role, command,
         event, hrc);
   }
 
   //TODO refactor method to use Host object (host_id support)
-  private ExecutionCommandWrapper addGenericExecutionCommand(String clusterName, String hostName, Role role, RoleCommand command, ServiceComponentHostEvent event, HostRoleCommand hrc) {
+  private ExecutionCommandWrapper addGenericExecutionCommand(Long clusterId, String hostName, Role role, RoleCommand command, ServiceComponentHostEvent event, HostRoleCommand hrc) {
     ExecutionCommand cmd = new ExecutionCommand();
     ExecutionCommandWrapper wrapper = ecwFactory.createFromCommand(cmd);
     hrc.setExecutionCommandWrapper(wrapper);
@@ -398,13 +398,13 @@ public class Stage {
    * This should be called only once for a host-role for a given stage.
    */
   public synchronized void addHostRoleExecutionCommand(String host, Role role, RoleCommand command,
-      ServiceComponentHostEvent event, String clusterName, String serviceName, boolean retryAllowed,
+      ServiceComponentHostEvent event, Long clusterId, String serviceName, boolean retryAllowed,
       boolean autoSkipFailure) {
 
     boolean isHostRoleCommandAutoSkippable = autoSkipFailure && supportsAutoSkipOnFailure
         && skippable;
 
-    ExecutionCommandWrapper commandWrapper = addGenericExecutionCommand(clusterName, host, role,
+    ExecutionCommandWrapper commandWrapper = addGenericExecutionCommand(clusterId, host, role,
         command, event, retryAllowed, isHostRoleCommandAutoSkippable);
 
     commandWrapper.getExecutionCommand().setServiceName(serviceName);
@@ -446,8 +446,8 @@ public class Stage {
    *          the Role for this command
    * @param command
    *          the RoleCommand for this command
-   * @param clusterName
-   *          a String identifying the cluster on which to to execute this
+   * @param clusterId
+   *          a cluster Id on which to to execute this
    *          command
    * @param event
    *          a ServiceComponentHostServerActionEvent
@@ -467,7 +467,7 @@ public class Stage {
    *          indicates whether retry after failure is allowed
    */
   public synchronized void addServerActionCommand(String actionName, @Nullable String userName,
-      Role role, RoleCommand command, String clusterName,
+      Role role, RoleCommand command, Long clusterId,
       ServiceComponentHostServerActionEvent event, @Nullable Map<String, String> commandParams,
       @Nullable String commandDetail, @Nullable Map<String, Map<String, String>> configTags,
       @Nullable Integer timeout, boolean retryAllowed, boolean autoSkipFailure) {
@@ -475,7 +475,7 @@ public class Stage {
     boolean isHostRoleCommandAutoSkippable = autoSkipFailure && supportsAutoSkipOnFailure
         && skippable;
 
-    ExecutionCommandWrapper commandWrapper = addGenericExecutionCommand(clusterName,
+    ExecutionCommandWrapper commandWrapper = addGenericExecutionCommand(clusterId,
         INTERNAL_HOSTNAME, role, command, event, retryAllowed, isHostRoleCommandAutoSkippable);
 
     ExecutionCommand cmd = commandWrapper.getExecutionCommand();
@@ -520,8 +520,8 @@ public class Stage {
    *  Adds cancel command to stage for given cancelTargets collection of
    *  task id's that has to be canceled in Agent layer.
    */
-  public synchronized void addCancelRequestCommand(List<Long> cancelTargets, String clusterName, String hostName) {
-    ExecutionCommandWrapper commandWrapper = addGenericExecutionCommand(clusterName, hostName,
+  public synchronized void addCancelRequestCommand(List<Long> cancelTargets, Long clusterId, String hostName) {
+    ExecutionCommandWrapper commandWrapper = addGenericExecutionCommand(clusterId, hostName,
         Role.AMBARI_SERVER_ACTION, RoleCommand.ABORT, null, false, false);
     ExecutionCommand cmd = commandWrapper.getExecutionCommand();
     cmd.setCommandType(AgentCommandType.CANCEL_COMMAND);
@@ -800,7 +800,6 @@ public class Stage {
   /**
    * This method should be used only in stage planner. To add
    * a new execution command use
-   * {@link #addHostRoleExecutionCommand(String, Role, RoleCommand, ServiceComponentHostEvent, String, String, boolean, boolean)}
    * @param origStage the stage
    * @param hostname  the hostname; {@code null} for a server-side stage
    * @param r         the role

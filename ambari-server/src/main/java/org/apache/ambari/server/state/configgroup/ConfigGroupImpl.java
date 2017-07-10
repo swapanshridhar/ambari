@@ -209,8 +209,8 @@ public class ConfigGroupImpl implements ConfigGroup {
   }
 
   @Override
-  public String getClusterName() {
-    return cluster.getClusterName();
+  public Long getClusterId() {
+    return cluster.getClusterId();
   }
 
   @Override
@@ -267,6 +267,7 @@ public class ConfigGroupImpl implements ConfigGroup {
 
   /**
    * Helper method to recreate configs mapping
+   * @param configurations
    */
   @Override
   public void setConfigurations(Map<String, Config> configurations) throws AmbariException {
@@ -357,6 +358,7 @@ public class ConfigGroupImpl implements ConfigGroup {
 
   /**
    * Replaces all existing host mappings with the new collection of hosts.
+   * @param hosts
    */
   @Transactional
   void replaceHostMappings(Map<Long, Host> hosts) {
@@ -374,6 +376,8 @@ public class ConfigGroupImpl implements ConfigGroup {
 
   /**
    * Adds the collection of hosts to the configuration group.
+   * @param hosts
+   * @param configGroupEntity
    */
   @Transactional
   ConfigGroupEntity persistHostMapping(Collection<Host> hosts,
@@ -502,7 +506,7 @@ public class ConfigGroupImpl implements ConfigGroup {
 
     ConfigGroupEntity configGroupEntity = getConfigGroupEntity();
     ConfigGroupResponse configGroupResponse = new ConfigGroupResponse(
-        configGroupEntity.getGroupId(), cluster.getClusterName(),
+        configGroupEntity.getGroupId(), cluster.getClusterId(),
         configGroupEntity.getGroupName(), configGroupEntity.getTag(),
         configGroupEntity.getDescription(), hostnames, configObjMap);
     return configGroupResponse;

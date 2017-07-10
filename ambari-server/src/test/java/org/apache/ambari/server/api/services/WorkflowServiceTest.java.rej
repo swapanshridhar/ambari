@@ -1,0 +1,37 @@
+***************
+*** 58,74 ****
+    }
+  
+    private class TestWorkflowService extends WorkflowService {
+-     private String clusterName;
+  
+-     public TestWorkflowService(String clusterName) {
+-       super(ApiVersion.Default, clusterName);
+-       this.clusterName = clusterName;
+      }
+  
+      @Override
+-     ResourceInstance createWorkflowResource(String clusterName,
+          String workflowId) {
+-       assertEquals(this.clusterName, clusterName);
+        return getTestResource();
+      }
+  
+--- 58,74 ----
+    }
+  
+    private class TestWorkflowService extends WorkflowService {
++     private Long clusterId;
+  
++     public TestWorkflowService(Long clusterId) {
++       super(ApiVersion.Default, clusterId);
++       this.clusterId = clusterId;
+      }
+  
+      @Override
++     ResourceInstance createWorkflowResource(Long clusterId,
+          String workflowId) {
++       assertEquals(this.clusterId, clusterId);
+        return getTestResource();
+      }
+  

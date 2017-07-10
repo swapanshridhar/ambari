@@ -296,7 +296,7 @@ public class ClustersDeadlockTest {
           String hostName = "c64-" + hostNameCounter.getAndIncrement();
           clusters.addHost(hostName);
           setOsFamily(clusters.getHost(hostName), "redhat", "6.4");
-          clusters.mapHostToCluster(hostName, CLUSTER_NAME);
+          clusters.mapHostToCluster(hostName, clusters.getCluster(CLUSTER_NAME).getClusterId());
 
           Thread.sleep(10);
         }
@@ -323,7 +323,7 @@ public class ClustersDeadlockTest {
           String hostName = "c64-" + hostNameCounter.getAndIncrement();
           clusters.addHost(hostName);
           setOsFamily(clusters.getHost(hostName), "redhat", "6.4");
-          clusters.mapHostToCluster(hostName, CLUSTER_NAME);
+          clusters.mapHostToCluster(hostName, clusters.getCluster(CLUSTER_NAME).getClusterId());
 
           // create DATANODE on this host so that we end up exercising the
           // cluster health report since we need a service component host
@@ -357,7 +357,7 @@ public class ClustersDeadlockTest {
 
           clusters.addHost(hostName);
           setOsFamily(clusters.getHost(hostName), "redhat", "6.4");
-          clusters.mapHostToCluster(hostName, CLUSTER_NAME);
+          clusters.mapHostToCluster(hostName, clusters.getCluster(CLUSTER_NAME).getClusterId());
         }
 
         // unmap them all now

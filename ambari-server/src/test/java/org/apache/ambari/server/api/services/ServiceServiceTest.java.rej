@@ -1,0 +1,37 @@
+***************
+*** 128,144 ****
+    }
+  
+    private class TestServiceService extends ServiceService {
+-     private String m_clusterId;
+      private String m_serviceId;
+      private String m_artifact_id;
+  
+-     private TestServiceService(String clusterId, String serviceId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+        m_serviceId = serviceId;
+      }
+  
+-     private TestServiceService(String clusterId, String serviceId, String artifactId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+        m_serviceId = serviceId;
+--- 128,144 ----
+    }
+  
+    private class TestServiceService extends ServiceService {
++     private Long m_clusterId;
+      private String m_serviceId;
+      private String m_artifact_id;
+  
++     private TestServiceService(Long clusterId, String serviceId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+        m_serviceId = serviceId;
+      }
+  
++     private TestServiceService(Long clusterId, String serviceId, String artifactId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+        m_serviceId = serviceId;

@@ -155,7 +155,7 @@ public class ExecutionCommandWrapperTest {
     s.addHostRoleExecutionCommand(hostName, Role.NAMENODE,
         RoleCommand.START,
         new ServiceComponentHostStartEvent(Role.NAMENODE.toString(),
-            hostName, System.currentTimeMillis()), clusterName, "HDFS", false, false);
+            hostName, System.currentTimeMillis()), (clusters.getCluster(clusterName)).getClusterId(), "HDFS", false, false);
     List<Stage> stages = new ArrayList<>();
     stages.add(s);
     Request request = new Request(stages, "clusterHostInfo", clusters);

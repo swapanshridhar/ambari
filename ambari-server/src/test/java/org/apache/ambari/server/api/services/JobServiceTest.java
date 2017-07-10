@@ -39,7 +39,7 @@ public class JobServiceTest extends BaseServiceTest {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
 
     // getJob
-    JobService service = new TestJobService("clusterName", "jobId");
+    JobService service = new TestJobService(1L, "jobId");
     Method m = service.getClass().getMethod("getJob", String.class, HttpHeaders.class,
         UriInfo.class, String.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo(), "jobId"};
@@ -47,7 +47,7 @@ public class JobServiceTest extends BaseServiceTest {
         args, null));
 
     // getJobs
-    service = new TestJobService("clusterName", null);
+    service = new TestJobService(1L, null);
     m = service.getClass().getMethod("getJobs", String.class, HttpHeaders.class,
         UriInfo.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo()};

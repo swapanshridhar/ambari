@@ -200,7 +200,7 @@ public class UserPrivilegeResourceProviderTest extends AbstractPrivilegeResource
     UserPrivilegeResponse response = provider.getResponse(privilegeEntity, "jdoe");
     Resource resource = provider.toResource(response, provider.getPropertyIds());
 
-    Assert.assertEquals("TestCluster", resource.getPropertyValue(ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID));
+    Assert.assertEquals(1L, resource.getPropertyValue(ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID));
     Assert.assertEquals(ResourceType.CLUSTER.name(), resource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID));
 
     verifyAll();

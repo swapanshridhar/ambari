@@ -52,8 +52,8 @@ public class TaskAttemptResourceProvider extends
     AbstractJDBCResourceProvider<TaskAttemptResourceProvider.TaskAttemptFields> {
   private static final Logger LOG = LoggerFactory.getLogger(TaskAttemptResourceProvider.class);
 
-  protected static final String TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID = PropertyHelper
-      .getPropertyId("TaskAttempt", "cluster_name");
+  protected static final String TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID = PropertyHelper
+      .getPropertyId("TaskAttempt", "cluster_id");
   protected static final String TASK_ATTEMPT_WORKFLOW_ID_PROPERTY_ID = PropertyHelper
       .getPropertyId("TaskAttempt", "workflow_id");
   protected static final String TASK_ATTEMPT_JOB_ID_PROPERTY_ID = PropertyHelper
@@ -82,7 +82,7 @@ public class TaskAttemptResourceProvider extends
       .getPropertyId("TaskAttempt", "locality");
 
   private static final Set<String> pkPropertyIds = new HashSet<>(
-    Arrays.asList(new String[]{TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID,
+    Arrays.asList(new String[] {TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID,
       TASK_ATTEMPT_WORKFLOW_ID_PROPERTY_ID,
       TASK_ATTEMPT_JOB_ID_PROPERTY_ID, TASK_ATTEMPT_ID_PROPERTY_ID}));
 
@@ -136,8 +136,8 @@ public class TaskAttemptResourceProvider extends
 
     Set<Map<String,Object>> predicatePropertieSet = getPropertyMaps(predicate);
     for (Map<String,Object> predicateProperties : predicatePropertieSet) {
-      String clusterName = (String) predicateProperties
-          .get(TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID);
+      Long clusterId = MapUtils.parseLong(predicateProperties,
+          TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID);
       String workflowId = (String) predicateProperties
           .get(TASK_ATTEMPT_WORKFLOW_ID_PROPERTY_ID);
       String jobId = (String) predicateProperties
@@ -145,7 +145,7 @@ public class TaskAttemptResourceProvider extends
       String taskAttemptId = (String) predicateProperties
           .get(TASK_ATTEMPT_ID_PROPERTY_ID);
       resourceSet.addAll(taskAttemptFetcher.fetchTaskAttemptDetails(
-          requestedIds, clusterName, workflowId, jobId, taskAttemptId));
+          requestedIds, clusterId, workflowId, jobId, taskAttemptId));
     }
     return resourceSet;
   }
@@ -172,7 +172,7 @@ public class TaskAttemptResourceProvider extends
   @Override
   public Map<Type,String> getKeyPropertyIds() {
     Map<Type,String> keyPropertyIds = new HashMap<>();
-    keyPropertyIds.put(Type.Cluster, TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID);
+    keyPropertyIds.put(Type.Cluster, TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID);
     keyPropertyIds.put(Type.Workflow, TASK_ATTEMPT_WORKFLOW_ID_PROPERTY_ID);
     keyPropertyIds.put(Type.Job, TASK_ATTEMPT_JOB_ID_PROPERTY_ID);
     keyPropertyIds.put(Type.TaskAttempt, TASK_ATTEMPT_ID_PROPERTY_ID);
@@ -188,8 +188,8 @@ public class TaskAttemptResourceProvider extends
      * 
      * @param requestedIds
      *          fields to pull from db
-     * @param clusterName
-     *          the cluster name
+     * @param clusterId
+     *          the cluster Id
      * @param workflowId
      *          the workflow id
      * @param jobId
@@ -199,7 +199,7 @@ public class TaskAttemptResourceProvider extends
      * @return a set of task attempt resources
      */
     Set<Resource> fetchTaskAttemptDetails(Set<String> requestedIds,
-                                          String clusterName, String workflowId, String jobId,
+                                          Long clusterId, String workflowId, String jobId,
                                           String taskAttemptId);
   }
 
@@ -263,7 +263,7 @@ public class TaskAttemptResourceProvider extends
 
     @Override
     public Set<Resource> fetchTaskAttemptDetails(Set<String> requestedIds,
-        String clusterName, String workflowId, String jobId,
+        Long clusterId, String workflowId, String jobId,
         String taskAttemptId) {
       Set<Resource> taskAttempts = new HashSet<>();
       ResultSet rs = null;
@@ -271,8 +271,8 @@ public class TaskAttemptResourceProvider extends
         rs = getResultSet(requestedIds, workflowId, jobId, taskAttemptId);
         while (rs.next()) {
           Resource resource = new ResourceImpl(Resource.Type.TaskAttempt);
-          setResourceProperty(resource, TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID,
-              clusterName, requestedIds);
+          setResourceProperty(resource, TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID,
+              clusterId, requestedIds);
           setResourceProperty(resource, TASK_ATTEMPT_WORKFLOW_ID_PROPERTY_ID,
               workflowId, requestedIds);
           setString(resource, TASK_ATTEMPT_JOB_ID_PROPERTY_ID, rs, requestedIds);

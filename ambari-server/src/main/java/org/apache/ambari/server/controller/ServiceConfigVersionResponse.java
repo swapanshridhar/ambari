@@ -47,9 +47,9 @@ public class ServiceConfigVersionResponse {
   public static final String DELETED_CONFIG_GROUP_NAME = "Deleted";
 
 
-  @JsonProperty("cluster_name")
+  @JsonProperty("cluster_id")
   @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-  private final String clusterName;
+  private final Long clusterId;
 
   @JsonProperty("service_name")
   private final String serviceName;
@@ -104,7 +104,7 @@ public class ServiceConfigVersionResponse {
     super();
     ClusterEntity clusterEntity = serviceConfigEntity.getClusterEntity();
 
-    clusterName = clusterEntity.getClusterName();
+    clusterId = clusterEntity.getClusterId();
     serviceName = serviceConfigEntity.getServiceName();
     version = serviceConfigEntity.getVersion();
     userName = serviceConfigEntity.getUser();
@@ -136,8 +136,8 @@ public class ServiceConfigVersionResponse {
   public String getUserName() {
     return userName;
   }
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   public List<ConfigurationResponse> getConfigurations() {
@@ -200,7 +200,7 @@ public class ServiceConfigVersionResponse {
     ServiceConfigVersionResponse that = (ServiceConfigVersionResponse) o;
 
     return new EqualsBuilder()
-      .append(clusterName, that.clusterName)
+      .append(clusterId, that.clusterId)
       .append(serviceName, that.serviceName)
       .append(version, that.version)
       .append(createTime, that.createTime)
@@ -219,7 +219,7 @@ public class ServiceConfigVersionResponse {
   @Override
   public final int hashCode() {
     return new HashCodeBuilder(17, 37)
-      .append(clusterName)
+      .append(clusterId)
       .append(serviceName)
       .append(version)
       .append(createTime)

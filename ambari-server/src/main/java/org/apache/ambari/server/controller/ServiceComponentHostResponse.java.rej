@@ -1,0 +1,29 @@
+***************
+*** 44,56 ****
+    private UpgradeState upgradeState = UpgradeState.NONE;
+  
+  
+-   public ServiceComponentHostResponse(String clusterName, String serviceName,
+                                        String componentName, String displayName,
+                                        String hostname, String publicHostname,
+                                        String liveState, String stackVersion,
+                                        String desiredState, String desiredStackVersion,
+                                        HostComponentAdminState adminState) {
+-     this.clusterName = clusterName;
+      this.serviceName = serviceName;
+      this.componentName = componentName;
+      this.displayName = displayName;
+--- 44,56 ----
+    private UpgradeState upgradeState = UpgradeState.NONE;
+  
+  
++   public ServiceComponentHostResponse(Long clusterId, String serviceName,
+                                        String componentName, String displayName,
+                                        String hostname, String publicHostname,
+                                        String liveState, String stackVersion,
+                                        String desiredState, String desiredStackVersion,
+                                        HostComponentAdminState adminState) {
++     this.clusterId = clusterId;
+      this.serviceName = serviceName;
+      this.componentName = componentName;
+      this.displayName = displayName;

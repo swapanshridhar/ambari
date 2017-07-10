@@ -1,0 +1,31 @@
+***************
+*** 422,435 ****
+        {
+          addAll(Arrays.asList(h1, h2));
+        }
+-     }, c1);
+  
+      // host config override
+      host1.addDesiredConfig(cluster.getClusterId(), true, "_test", config2);
+  
+      Service hdfs = cluster.addService("HDFS");
+  
+-     Assert.assertNotNull(injector.getInstance(ClusterServiceDAO.class).findByClusterAndServiceNames(c1, "HDFS"));
+  
+      ServiceComponent nameNode = hdfs.addServiceComponent("NAMENODE");
+      ServiceComponent dataNode = hdfs.addServiceComponent("DATANODE");
+--- 422,435 ----
+        {
+          addAll(Arrays.asList(h1, h2));
+        }
++     }, 1L);
+  
+      // host config override
+      host1.addDesiredConfig(cluster.getClusterId(), true, "_test", config2);
+  
+      Service hdfs = cluster.addService("HDFS");
+  
++     Assert.assertNotNull(injector.getInstance(ClusterServiceDAO.class).findByClusterAndServiceNames(1L, "HDFS"));
+  
+      ServiceComponent nameNode = hdfs.addServiceComponent("NAMENODE");
+      ServiceComponent dataNode = hdfs.addServiceComponent("DATANODE");

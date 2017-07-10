@@ -83,7 +83,8 @@ public class LoggingSearchPropertyProvider implements PropertyProvider {
       final String clusterName = (String) resource.getPropertyValue(PropertyHelper.getPropertyId("HostRoles", "cluster_name"));
 
       // Test to see if the authenticated user is authorized to view this data... if not, skip it.
-      if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, getClusterResourceID(clusterName), REQUIRED_AUTHORIZATIONS)) {
+      Long clusterId = getClusterResourceID(clusterName);
+      if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, clusterId, REQUIRED_AUTHORIZATIONS)) {
         if(LOG.isDebugEnabled()) {
           LOG.debug("The authenticated user ({}) is not authorized to access LogSearch data for the cluster named {}",
               AuthorizationHelper.getAuthenticatedName(),
@@ -94,7 +95,7 @@ public class LoggingSearchPropertyProvider implements PropertyProvider {
 
       Boolean isLogSearchRunningForSpecifiedCluster = isLogSearchRunning.get(clusterName);
       if (isLogSearchRunningForSpecifiedCluster == null) {
-        isLogSearchRunningForSpecifiedCluster = logSearchServerRunning(clusterName);
+        isLogSearchRunningForSpecifiedCluster = logSearchServerRunning(clusterId);
         isLogSearchRunning.put(clusterName, isLogSearchRunningForSpecifiedCluster);
       }
       if (!isLogSearchRunningForSpecifiedCluster) {
@@ -108,7 +109,7 @@ public class LoggingSearchPropertyProvider implements PropertyProvider {
       if (mappedComponentNameForLogSearch != null) {
         // send query to obtain logging metadata
         Set<String> logFileNames =
-          logSearchDataRetrievalService.getLogFileNames(mappedComponentNameForLogSearch, hostName, clusterName);
+          logSearchDataRetrievalService.getLogFileNames(mappedComponentNameForLogSearch, hostName, clusterId);
 
         if ((logFileNames != null) && (!logFileNames.isEmpty())) {
           HostComponentLoggingInfo loggingInfo = new HostComponentLoggingInfo();
@@ -119,7 +120,7 @@ public class LoggingSearchPropertyProvider implements PropertyProvider {
           for (String fileName : logFileNames) {
             // generate the URIs that can be used by clients to obtain search results/tail log results/etc
             final String searchEngineURI = ambariManagementController.getAmbariServerURI(getFullPathToSearchEngine(clusterName));
-            final String logFileTailURI = logSearchDataRetrievalService.getLogFileTailURI(searchEngineURI, mappedComponentNameForLogSearch, hostName, clusterName);
+            final String logFileTailURI = logSearchDataRetrievalService.getLogFileTailURI(searchEngineURI, mappedComponentNameForLogSearch, hostName, clusterId);
             if (logFileTailURI != null) {
               // all log files are assumed to be service types for now
               listOfFileDefinitions.add(new LogFileDefinitionInfo(fileName, LogFileType.SERVICE, searchEngineURI, logFileTailURI));
@@ -180,8 +181,8 @@ public class LoggingSearchPropertyProvider implements PropertyProvider {
     return clusterResourceId;
   }
 
-  private boolean logSearchServerRunning(String clusterName) {
-    return loggingRequestHelperFactory.getHelper(ambariManagementController, clusterName) != null;
+  private boolean logSearchServerRunning(Long clusterId) {
+    return loggingRequestHelperFactory.getHelper(ambariManagementController, clusterId) != null;
   }
 
   private String getMappedComponentNameForSearch(String clusterName, String componentName, AmbariManagementController controller) {

@@ -175,7 +175,7 @@ public class HostStackVersionResourceProviderTest {
     Predicate predicate = new PredicateBuilder().begin()
             .property(HostStackVersionResourceProvider.HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID).equals(hostname)
             .and()
-            .property(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID).equals(clustername)
+            .property(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID).equals(clustername)
             .end().and().begin()
             .property(HostStackVersionResourceProvider.HOST_STACK_VERSION_STATE_PROPERTY_ID).equals("INSTALLING")
             .or()
@@ -191,7 +191,7 @@ public class HostStackVersionResourceProviderTest {
             PropertyHelper.getKeyPropertyIds(type),
             managementController);
 
-    expect(hostVersionDAOMock.findByClusterAndHost(clustername, hostname)).andReturn(Collections.singletonList(hostVersionEntityMock));
+    expect(hostVersionDAOMock.findByClusterAndHost((clusters.getCluster(clustername)).getClusterId(), hostname)).andReturn(Collections.singletonList(hostVersionEntityMock));
     expect(hostVersionEntityMock.getRepositoryVersion()).andReturn(repoVersion).anyTimes();
     expect(repositoryVersionDAOMock.findByStackAndVersion(isA(StackId.class), isA(String.class))).andReturn(null).anyTimes();
     expect(hostVersionEntityMock.getState()).andReturn(RepositoryVersionState.INSTALLING).anyTimes();
@@ -255,7 +255,7 @@ public class HostStackVersionResourceProviderTest {
 
     expect(
         hostVersionDAOMock.findByClusterStackVersionAndHost(
-            anyObject(String.class), anyObject(StackId.class),
+            anyObject(Long.class), anyObject(StackId.class),
             anyObject(String.class), anyObject(String.class))).andReturn(
         hostVersionEntityMock);
 
@@ -284,7 +284,7 @@ public class HostStackVersionResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_REPO_VERSION_PROPERTY_ID, "2.2.0.1-885");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_STACK_PROPERTY_ID, "HDP");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_VERSION_PROPERTY_ID, "2.0.1");
@@ -372,7 +372,7 @@ public class HostStackVersionResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_REPO_VERSION_PROPERTY_ID, "2.2.0.1-885");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_STACK_PROPERTY_ID, "HDP");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_VERSION_PROPERTY_ID, "2.0.1");
@@ -449,7 +449,7 @@ public class HostStackVersionResourceProviderTest {
 
     expect(
         hostVersionDAOMock.findByClusterStackVersionAndHost(
-            anyObject(String.class), anyObject(StackId.class),
+            anyObject(Long.class), anyObject(StackId.class),
             anyObject(String.class), anyObject(String.class))).andReturn(
         hostVersionEntityMock);
 
@@ -478,7 +478,7 @@ public class HostStackVersionResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_REPO_VERSION_PROPERTY_ID, "2.2.0.1-885");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_STACK_PROPERTY_ID, "HDP");
     properties.put(HostStackVersionResourceProvider.HOST_STACK_VERSION_VERSION_PROPERTY_ID, "2.0.1");

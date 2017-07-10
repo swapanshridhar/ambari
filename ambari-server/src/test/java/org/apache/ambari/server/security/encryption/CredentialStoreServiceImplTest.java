@@ -50,6 +50,7 @@ public class CredentialStoreServiceImplTest {
   private CredentialStoreServiceImpl credentialStoreService;
 
   private static final String CLUSTER_NAME = "C1";
+  private static final Long CLUSTER_ID = 1L;
 
   @Before
   public void setUp() throws Exception {
@@ -88,63 +89,63 @@ public class CredentialStoreServiceImplTest {
   @Test
   public void testSetAndGetCredential_Temporary() throws Exception {
     PrincipalKeyCredential credential = new PrincipalKeyCredential("username", "password");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential, CredentialStoreType.TEMPORARY);
 
-    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
   }
 
   @Test
   public void testSetAndGetCredential_Persisted() throws Exception {
     PrincipalKeyCredential credential = new PrincipalKeyCredential("username", "password");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential, CredentialStoreType.PERSISTED);
 
-    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertEquals(credential, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
   }
 
   @Test
   public void testRemoveCredential_Temporary() throws Exception {
     PrincipalKeyCredential credential1 = new PrincipalKeyCredential("username1", "password1");
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.TEMPORARY);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test2", credential2, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test2", credential2, CredentialStoreType.TEMPORARY);
 
     // Nothing should happen if forcing remove from persistent CredentialStore
-    credentialStoreService.removeCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED);
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.removeCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED);
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
 
     // Remove should happen if forcing remove from temporary CredentialStore
-    credentialStoreService.removeCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY);
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.removeCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY);
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1"));
 
     // The other credentials should remain untouched
-    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_NAME, "test2"));
+    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_ID, "test2"));
   }
 
   @Test
   public void testRemoveCredential_Persisted() throws Exception {
     PrincipalKeyCredential credential1 = new PrincipalKeyCredential("username1", "password1");
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test2", credential2, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test2", credential2, CredentialStoreType.PERSISTED);
 
     // Nothing should happen if forcing remove from temporary CredentialStore
-    credentialStoreService.removeCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY);
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.removeCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY);
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
 
     // Remove should happen if forcing remove from persistent CredentialStore
-    credentialStoreService.removeCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED);
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.removeCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED);
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1"));
 
     // The other credentials should remain untouched
-    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_NAME, "test2"));
+    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_ID, "test2"));
   }
 
   @Test
@@ -153,23 +154,23 @@ public class CredentialStoreServiceImplTest {
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
     PrincipalKeyCredential credential3 = new PrincipalKeyCredential("username3", "password3");
     PrincipalKeyCredential credential4 = new PrincipalKeyCredential("username4", "password4");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test2", credential2, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test3", credential3, CredentialStoreType.TEMPORARY);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test4", credential4, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test2", credential2, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test3", credential3, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test4", credential4, CredentialStoreType.TEMPORARY);
 
-    credentialStoreService.removeCredential(CLUSTER_NAME, "test1");
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
-    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_NAME, "test2"));
-    Assert.assertEquals(credential3, credentialStoreService.getCredential(CLUSTER_NAME, "test3"));
-    Assert.assertEquals(credential4, credentialStoreService.getCredential(CLUSTER_NAME, "test4"));
+    credentialStoreService.removeCredential(CLUSTER_ID, "test1");
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1"));
+    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_ID, "test2"));
+    Assert.assertEquals(credential3, credentialStoreService.getCredential(CLUSTER_ID, "test3"));
+    Assert.assertEquals(credential4, credentialStoreService.getCredential(CLUSTER_ID, "test4"));
 
-    credentialStoreService.removeCredential(CLUSTER_NAME, "test3");
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
-    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_NAME, "test2"));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test3"));
-    Assert.assertEquals(credential4, credentialStoreService.getCredential(CLUSTER_NAME, "test4"));
+    credentialStoreService.removeCredential(CLUSTER_ID, "test3");
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1"));
+    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_ID, "test2"));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test3"));
+    Assert.assertEquals(credential4, credentialStoreService.getCredential(CLUSTER_ID, "test4"));
   }
 
 
@@ -178,20 +179,20 @@ public class CredentialStoreServiceImplTest {
     PrincipalKeyCredential credential1 = new PrincipalKeyCredential("username1", "password1");
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
 
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
 
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.TEMPORARY);
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.TEMPORARY);
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertEquals(credential1, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
 
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential2, CredentialStoreType.PERSISTED);
-    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_NAME, "test1"));
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential2, CredentialStoreType.PERSISTED);
+    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertNull(credentialStoreService.getCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertEquals(credential2, credentialStoreService.getCredential(CLUSTER_ID, "test1"));
   }
 
 
@@ -201,22 +202,22 @@ public class CredentialStoreServiceImplTest {
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
     PrincipalKeyCredential credential3 = new PrincipalKeyCredential("username3", "password3");
     PrincipalKeyCredential credential4 = new PrincipalKeyCredential("username4", "password4");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test2", credential2, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test3", credential3, CredentialStoreType.TEMPORARY);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test4", credential4, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test2", credential2, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test3", credential3, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test4", credential4, CredentialStoreType.TEMPORARY);
 
 
-    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_NAME, "test1", CredentialStoreType.PERSISTED));
-    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_NAME, "test3", CredentialStoreType.PERSISTED));
+    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_ID, "test1", CredentialStoreType.PERSISTED));
+    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_ID, "test3", CredentialStoreType.PERSISTED));
 
-    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_NAME, "test1", CredentialStoreType.TEMPORARY));
-    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_NAME, "test3", CredentialStoreType.PERSISTED));
-    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_NAME, "test3", CredentialStoreType.TEMPORARY));
+    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_ID, "test1", CredentialStoreType.TEMPORARY));
+    Assert.assertFalse(credentialStoreService.containsCredential(CLUSTER_ID, "test3", CredentialStoreType.PERSISTED));
+    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_ID, "test3", CredentialStoreType.TEMPORARY));
 
-    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_NAME, "test1"));
-    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_NAME, "test3"));
+    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_ID, "test1"));
+    Assert.assertTrue(credentialStoreService.containsCredential(CLUSTER_ID, "test3"));
   }
 
 
@@ -226,18 +227,18 @@ public class CredentialStoreServiceImplTest {
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
     PrincipalKeyCredential credential3 = new PrincipalKeyCredential("username3", "password3");
     PrincipalKeyCredential credential4 = new PrincipalKeyCredential("username4", "password4");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test2", credential2, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test3", credential3, CredentialStoreType.TEMPORARY);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test4", credential4, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test2", credential2, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test3", credential3, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test4", credential4, CredentialStoreType.TEMPORARY);
 
-    Assert.assertEquals(CredentialStoreType.PERSISTED, credentialStoreService.getCredentialStoreType(CLUSTER_NAME, "test1"));
-    Assert.assertEquals(CredentialStoreType.PERSISTED, credentialStoreService.getCredentialStoreType(CLUSTER_NAME, "test2"));
-    Assert.assertEquals(CredentialStoreType.TEMPORARY, credentialStoreService.getCredentialStoreType(CLUSTER_NAME, "test3"));
-    Assert.assertEquals(CredentialStoreType.TEMPORARY, credentialStoreService.getCredentialStoreType(CLUSTER_NAME, "test4"));
+    Assert.assertEquals(CredentialStoreType.PERSISTED, credentialStoreService.getCredentialStoreType(CLUSTER_ID, "test1"));
+    Assert.assertEquals(CredentialStoreType.PERSISTED, credentialStoreService.getCredentialStoreType(CLUSTER_ID, "test2"));
+    Assert.assertEquals(CredentialStoreType.TEMPORARY, credentialStoreService.getCredentialStoreType(CLUSTER_ID, "test3"));
+    Assert.assertEquals(CredentialStoreType.TEMPORARY, credentialStoreService.getCredentialStoreType(CLUSTER_ID, "test4"));
 
     try {
-      credentialStoreService.getCredentialStoreType(CLUSTER_NAME, "test5");
+      credentialStoreService.getCredentialStoreType(CLUSTER_ID, "test5");
       Assert.fail("Expected AmbariException to be thrown");
     } catch (AmbariException e) {
       // expected
@@ -250,12 +251,12 @@ public class CredentialStoreServiceImplTest {
     PrincipalKeyCredential credential2 = new PrincipalKeyCredential("username2", "password2");
     PrincipalKeyCredential credential3 = new PrincipalKeyCredential("username3", "password3");
     PrincipalKeyCredential credential4 = new PrincipalKeyCredential("username4", "password4");
-    credentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test2", credential2, CredentialStoreType.PERSISTED);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test3", credential3, CredentialStoreType.TEMPORARY);
-    credentialStoreService.setCredential(CLUSTER_NAME, "test4", credential4, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test2", credential2, CredentialStoreType.PERSISTED);
+    credentialStoreService.setCredential(CLUSTER_ID, "test3", credential3, CredentialStoreType.TEMPORARY);
+    credentialStoreService.setCredential(CLUSTER_ID, "test4", credential4, CredentialStoreType.TEMPORARY);
 
-    Map<String, CredentialStoreType> credentials = credentialStoreService.listCredentials(CLUSTER_NAME);
+    Map<String, CredentialStoreType> credentials = credentialStoreService.listCredentials(CLUSTER_ID);
     Assert.assertNotNull(credentials);
     Assert.assertEquals(4, credentials.size());
     Assert.assertEquals(CredentialStoreType.PERSISTED, credentials.get("test1"));
@@ -283,10 +284,10 @@ public class CredentialStoreServiceImplTest {
     PrincipalKeyCredential credential1 = new PrincipalKeyCredential("username1", "password1");
 
     // The temporary store should always be initialized.... this should succeed.
-    uninitializedCredentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.TEMPORARY);
+    uninitializedCredentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.TEMPORARY);
 
     try {
-      uninitializedCredentialStoreService.setCredential(CLUSTER_NAME, "test1", credential1, CredentialStoreType.PERSISTED);
+      uninitializedCredentialStoreService.setCredential(CLUSTER_ID, "test1", credential1, CredentialStoreType.PERSISTED);
       Assert.fail("AmbariException should have been thrown");
     } catch (AmbariException e) {
       // This is expected...

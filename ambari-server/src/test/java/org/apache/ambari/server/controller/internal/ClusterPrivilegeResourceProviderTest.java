@@ -208,7 +208,7 @@ public class ClusterPrivilegeResourceProviderTest extends EasyMockSupport {
     properties.put(PrivilegeResourceProvider.PERMISSION_NAME_PROPERTY_ID, "CLUSTER.OPERATOR");
     properties.put(PrivilegeResourceProvider.PRINCIPAL_NAME_PROPERTY_ID, "User1");
     properties.put(PrivilegeResourceProvider.PRINCIPAL_TYPE_PROPERTY_ID, "USER");
-    properties.put(ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID, "c1");
+    properties.put(ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID, 1L);
 
     // create the request
     Request request = PropertyHelper.getUpdateRequest(properties, null);

@@ -50,6 +50,7 @@ import org.apache.ambari.server.state.scheduler.BatchSettings;
 import org.apache.ambari.server.state.scheduler.RequestExecution;
 import org.apache.ambari.server.state.scheduler.RequestExecutionFactory;
 import org.apache.ambari.server.state.scheduler.Schedule;
+import org.apache.ambari.server.utils.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,8 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
   protected static final String REQUEST_SCHEDULE_ID_PROPERTY_ID =
     PropertyHelper.getPropertyId("RequestSchedule", "id");
-  protected static final String REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID =
-    PropertyHelper.getPropertyId("RequestSchedule", "cluster_name");
+  protected static final String REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID =
+    PropertyHelper.getPropertyId("RequestSchedule", "cluster_id");
   protected static final String REQUEST_SCHEDULE_DESC_PROPERTY_ID =
     PropertyHelper.getPropertyId("RequestSchedule", "description");
   protected static final String REQUEST_SCHEDULE_STATUS_PROPERTY_ID =
@@ -195,8 +196,8 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
       setResourceProperty(resource, REQUEST_SCHEDULE_ID_PROPERTY_ID,
         response.getId(), requestedIds);
-      setResourceProperty(resource, REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID,
-        response.getClusterName(), requestedIds);
+      setResourceProperty(resource, REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID,
+        response.getClusterId(), requestedIds);
       setResourceProperty(resource, REQUEST_SCHEDULE_DESC_PROPERTY_ID,
         response.getDescription(), requestedIds);
       setResourceProperty(resource, REQUEST_SCHEDULE_STATUS_PROPERTY_ID,
@@ -300,7 +301,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
     Cluster cluster;
     try {
-      cluster = clusters.getCluster(request.getClusterName());
+      cluster = clusters.getCluster(request.getClusterId());
     } catch (ClusterNotFoundException e) {
       throw new ParentObjectNotFoundException(
         "Attempted to delete a request schedule from a cluster which doesn't "
@@ -312,7 +313,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
     if (requestExecution == null) {
       throw new AmbariException("Request Schedule not found "
-        + ", clusterName = " + request.getClusterName()
+        + ", clusterId = " + request.getClusterId()
         + ", description = " + request.getDescription()
         + ", id = " + request.getId());
     }
@@ -320,7 +321,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
     String username = getManagementController().getAuthName();
 
     LOG.info("Disabling Request Schedule "
-      + ", clusterName = " + request.getClusterName()
+      + ", clusterId = " + request.getClusterId()
       + ", id = " + request.getId()
       + ", user = " + username);
 
@@ -347,7 +348,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
       Cluster cluster;
       try {
-        cluster = clusters.getCluster(request.getClusterName());
+        cluster = clusters.getCluster(request.getClusterId());
       } catch (ClusterNotFoundException e) {
         throw new ParentObjectNotFoundException(
           "Attempted to add a request schedule to a cluster which doesn't " +
@@ -363,7 +364,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
       if (requestExecution == null) {
         throw new AmbariException("Request Schedule not found "
-          + ", clusterName = " + request.getClusterName()
+          + ", clusterId = " + request.getClusterId()
           + ", description = " + request.getDescription()
           + ", id = " + request.getId());
       }
@@ -382,7 +383,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
       requestExecution.setAuthenticatedUserId(userId);
 
       LOG.info("Persisting updated Request Schedule "
-        + ", clusterName = " + request.getClusterName()
+        + ", clusterId = " + request.getClusterId()
         + ", description = " + request.getDescription()
         + ", user = " + username);
 
@@ -415,7 +416,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
       Cluster cluster;
       try {
-        cluster = clusters.getCluster(request.getClusterName());
+        cluster = clusters.getCluster(request.getClusterId());
       } catch (ClusterNotFoundException e) {
         throw new ParentObjectNotFoundException(
           "Attempted to add a request schedule to a cluster which doesn't " +
@@ -434,7 +435,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
       requestExecution.setStatus(RequestExecution.Status.SCHEDULED);
 
       LOG.info("Persisting new Request Schedule "
-        + ", clusterName = " + request.getClusterName()
+        + ", clusterId = " + request.getClusterId()
         + ", description = " + request.getDescription()
         + ", user = " + username);
 
@@ -446,7 +447,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
         .scheduleBatch(requestExecution);
 
       RequestScheduleResponse response = new RequestScheduleResponse
-        (requestExecution.getId(), requestExecution.getClusterName(),
+        (requestExecution.getId(), requestExecution.getClusterId(),
           requestExecution.getDescription(), requestExecution.getStatus(),
           requestExecution.getLastExecutionStatus(),
           requestExecution.getBatch(), request.getSchedule(),
@@ -461,7 +462,7 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
   }
 
   private void validateRequest(RequestScheduleRequest request) throws AmbariException {
-    if (request.getClusterName() == null) {
+    if (request.getClusterId() == null) {
       throw new IllegalArgumentException("Cluster name is required.");
     }
     Schedule schedule = request.getSchedule();
@@ -495,13 +496,13 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
 
     if (requests != null) {
       for (RequestScheduleRequest request : requests) {
-        if (request.getClusterName() == null) {
-          LOG.warn("Cluster name is a required field.");
+        if (request.getClusterId() == null) {
+          LOG.warn("Cluster id is a required field.");
           continue;
         }
 
         Cluster cluster = getManagementController().getClusters().getCluster
-          (request.getClusterName());
+          (request.getClusterId());
 
         Map<Long, RequestExecution> allRequestExecutions =
           cluster.getAllRequestExecutions();
@@ -546,16 +547,12 @@ public class RequestScheduleResourceProvider extends AbstractControllerResourceP
   }
 
   private RequestScheduleRequest getRequestScheduleRequest(Map<String, Object> properties) {
-    Object idObj = properties.get(REQUEST_SCHEDULE_ID_PROPERTY_ID);
-    Long id = null;
-    if (idObj != null)  {
-      id = idObj instanceof Long ? (Long) idObj :
-        Long.parseLong((String) idObj);
-    }
+    Long id = MapUtils.parseLong(properties, REQUEST_SCHEDULE_ID_PROPERTY_ID);
+    Long clusterId = MapUtils.parseLong(properties, REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID);
 
     RequestScheduleRequest requestScheduleRequest = new RequestScheduleRequest(
       id,
-      (String) properties.get(REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID),
+      clusterId,
       (String) properties.get(REQUEST_SCHEDULE_DESC_PROPERTY_ID),
       (String) properties.get(REQUEST_SCHEDULE_STATUS_PROPERTY_ID),
       null,

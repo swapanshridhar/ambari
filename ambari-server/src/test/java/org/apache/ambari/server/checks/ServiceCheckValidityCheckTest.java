@@ -173,8 +173,8 @@ public class ServiceCheckValidityCheckTest {
     when(serviceConfigDAO.getLastServiceConfig(eq(CLUSTER_ID), eq(SERVICE_NAME))).thenReturn(serviceConfigEntity);
     when(hostRoleCommandDAO.findAll(any(Request.class), any(Predicate.class))).thenReturn(singletonList(hostRoleCommandEntity));
 
-    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_NAME);
-    serviceCheckValidityCheck.perform(check, new PrereqCheckRequest(CLUSTER_NAME));
+    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_ID);
+    serviceCheckValidityCheck.perform(check, new PrereqCheckRequest(CLUSTER_ID));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
   }
 
@@ -194,8 +194,8 @@ public class ServiceCheckValidityCheckTest {
     when(serviceConfigDAO.getLastServiceConfig(eq(CLUSTER_ID), eq(SERVICE_NAME))).thenReturn(serviceConfigEntity);
     when(hostRoleCommandDAO.findAll(any(Request.class), any(Predicate.class))).thenReturn(Collections.<HostRoleCommandEntity>emptyList());
 
-    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_NAME);
-    serviceCheckValidityCheck.perform(check, new PrereqCheckRequest(CLUSTER_NAME));
+    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_ID);
+    serviceCheckValidityCheck.perform(check, new PrereqCheckRequest(CLUSTER_ID));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
   }
 
@@ -226,8 +226,8 @@ public class ServiceCheckValidityCheckTest {
     when(serviceConfigDAO.getLastServiceConfig(eq(CLUSTER_ID), eq(SERVICE_NAME))).thenReturn(serviceConfigEntity);
     when(hostRoleCommandDAO.findAll(any(Request.class), any(Predicate.class))).thenReturn(asList(hostRoleCommandEntity1, hostRoleCommandEntity2));
 
-    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_NAME);
-    serviceCheckValidityCheck.perform(check, new PrereqCheckRequest(CLUSTER_NAME));
+    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_ID);
+    serviceCheckValidityCheck.perform(check, new PrereqCheckRequest(CLUSTER_ID));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
   }
 }

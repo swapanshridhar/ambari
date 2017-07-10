@@ -79,7 +79,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
   // ----- Property ID constants ---------------------------------------------
 
   protected static final String HOST_STACK_VERSION_ID_PROPERTY_ID              = PropertyHelper.getPropertyId("HostStackVersions", "id");
-  protected static final String HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID    = PropertyHelper.getPropertyId("HostStackVersions", "cluster_name");
+  protected static final String HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID      = PropertyHelper.getPropertyId("HostStackVersions", "cluster_id");
   protected static final String HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID       = PropertyHelper.getPropertyId("HostStackVersions", "host_name");
   protected static final String HOST_STACK_VERSION_STACK_PROPERTY_ID           = PropertyHelper.getPropertyId("HostStackVersions", "stack");
   protected static final String HOST_STACK_VERSION_VERSION_PROPERTY_ID         = PropertyHelper.getPropertyId("HostStackVersions", "version");
@@ -106,7 +106,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
 
 
   private static Set<String> pkPropertyIds = Sets.newHashSet(
-          HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID,
+    HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID,
           HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID,
           HOST_STACK_VERSION_ID_PROPERTY_ID,
           HOST_STACK_VERSION_STACK_PROPERTY_ID,
@@ -115,7 +115,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
 
   private static Set<String> propertyIds = Sets.newHashSet(
           HOST_STACK_VERSION_ID_PROPERTY_ID,
-          HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID,
+    HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID,
           HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID,
           HOST_STACK_VERSION_STACK_PROPERTY_ID,
           HOST_STACK_VERSION_VERSION_PROPERTY_ID,
@@ -127,7 +127,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
 
   private static Map<Type, String> keyPropertyIds = new HashMap<Type, String>() {
     {
-      put(Type.Cluster, HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID);
+      put(Type.Cluster, HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
       put(Type.Host, HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID);
       put(Type.HostStackVersion, HOST_STACK_VERSION_ID_PROPERTY_ID);
       put(Type.Stack, HOST_STACK_VERSION_STACK_PROPERTY_ID);
@@ -174,17 +174,15 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
 
     for (Map<String, Object> propertyMap: propertyMaps) {
       final String hostName = propertyMap.get(HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID).toString();
-      String clusterName = null;
-      if (propertyMap.containsKey(HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID)) {
-        clusterName = propertyMap.get(HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID).toString();
-      }
+      Long clusterId = MapUtils.parseLong(propertyMap, HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
+
       final Long id;
       List<HostVersionEntity> requestedEntities;
       if (propertyMap.get(HOST_STACK_VERSION_ID_PROPERTY_ID) == null) {
-        if (clusterName == null) {
+        if (clusterId == null) {
           requestedEntities = hostVersionDAO.findByHost(hostName);
         } else {
-          requestedEntities = hostVersionDAO.findByClusterAndHost(clusterName, hostName);
+          requestedEntities = hostVersionDAO.findByClusterAndHost(clusterId, hostName);
         }
       } else {
         try {
@@ -200,7 +198,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
         }
       }
       if (requestedEntities != null) {
-        addRequestedEntities(resources, requestedEntities, requestedIds, clusterName);
+        addRequestedEntities(resources, requestedEntities, requestedIds, clusterId);
       }
     }
 
@@ -213,12 +211,12 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
    * @param resources a list of resources to add to
    * @param requestedEntities requested entities
    * @param requestedIds
-   * @param clusterName name of cluster or null if no any
+   * @param clusterId ID of cluster or null if no any
    */
   public void addRequestedEntities(Set<Resource> resources,
                                    List<HostVersionEntity> requestedEntities,
                                    Set<String> requestedIds,
-                                   String clusterName) {
+                                   Long clusterId) {
     for (HostVersionEntity entity: requestedEntities) {
       StackId stackId = new StackId(entity.getRepositoryVersion().getStack());
 
@@ -233,8 +231,8 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
       setResourceProperty(resource, HOST_STACK_VERSION_VERSION_PROPERTY_ID, stackId.getStackVersion(), requestedIds);
       setResourceProperty(resource, HOST_STACK_VERSION_STATE_PROPERTY_ID, entity.getState().name(), requestedIds);
 
-      if (clusterName != null) {
-        setResourceProperty(resource, HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, clusterName, requestedIds);
+      if (clusterId != null) {
+        setResourceProperty(resource, HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, clusterId, requestedIds);
       }
 
       if (repoVerEntity != null) {
@@ -273,7 +271,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
               String.format("The required property %s is not defined", requiredProperty));
     }
 
-    String clName = (String) propertyMap.get (HOST_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID);
+    Long cid = MapUtils.parseLong(propertyMap, HOST_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
     hostName = (String) propertyMap.get(HOST_STACK_VERSION_HOST_NAME_PROPERTY_ID);
     desiredRepoVersion = (String) propertyMap.get(HOST_STACK_VERSION_REPO_VERSION_PROPERTY_ID);
     stackName = (String) propertyMap.get(HOST_STACK_VERSION_STACK_PROPERTY_ID);
@@ -294,12 +292,12 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
     }
 
     RequestStageContainer req = createInstallPackagesRequest(hostName, desiredRepoVersion, stackName, stackVersion,
-      clName, forceInstallOnNonMemberHost, componentNames);
+      cid, forceInstallOnNonMemberHost, componentNames);
     return getRequestStatus(req.getRequestStatusResponse());
   }
 
   private RequestStageContainer createInstallPackagesRequest(String hostName, final String desiredRepoVersion,
-                                                             String stackName, String stackVersion, String clName,
+                                                             String stackName, String stackVersion, Long cid,
                                                              final boolean forceInstallOnNonMemberHost,
                                                              Set<Map<String, String>> componentNames)
     throws NoSuchParentResourceException, SystemException {
@@ -321,7 +319,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
     }
 
     Set<Cluster> clusterSet;
-    if (clName == null) {
+    if (cid == null) {
       try {
         clusterSet = getManagementController().getClusters().getClustersForHost(hostName);
       } catch (AmbariException e) {
@@ -332,11 +330,11 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
     } else {
       Cluster cluster;
       try {
-        cluster = getManagementController().getClusters().getCluster(clName);
+        cluster = getManagementController().getClusters().getCluster(cid);
       } catch (AmbariException e) {
         throw new NoSuchParentResourceException(String.format((
                 "Cluster %s does not exist"
-        ), clName), e);
+        ), cid), e);
       }
       clusterSet = Collections.singleton(cluster);
     }
@@ -362,7 +360,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
               desiredRepoVersion, stackId));
     }
 
-    HostVersionEntity hostVersEntity = hostVersionDAO.findByClusterStackVersionAndHost(clName, stackId,
+    HostVersionEntity hostVersEntity = hostVersionDAO.findByClusterStackVersionAndHost(cid, stackId,
             desiredRepoVersion, hostName);
     if (!forceInstallOnNonMemberHost) {
       if (hostVersEntity == null) {
@@ -436,7 +434,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
             Collections.singletonList(hostName));
 
     ActionExecutionContext actionContext = new ActionExecutionContext(
-            cluster.getClusterName(), INSTALL_PACKAGES_ACTION,
+            cluster.getClusterId(), INSTALL_PACKAGES_ACTION,
             Collections.singletonList(filter),
             roleParams);
     actionContext.setTimeout(Short.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
@@ -522,7 +520,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
     req.addStages(Collections.singletonList(stage));
 
     actionContext = new ActionExecutionContext(
-      cluster.getClusterName(), STACK_SELECT_ACTION,
+      cluster.getClusterId(), STACK_SELECT_ACTION,
       Collections.singletonList(filter),
       Collections.<String, String>emptyMap());
     actionContext.setTimeout(Short.valueOf(configuration.getDefaultAgentTaskTimeout(true)));

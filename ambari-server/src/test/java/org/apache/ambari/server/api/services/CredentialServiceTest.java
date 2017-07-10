@@ -39,27 +39,27 @@ public class CredentialServiceTest extends BaseServiceTest {
 
   public List<ServiceTestInvocation> getTestInvocations() throws Exception {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
-
+    Long clusterId = 1L;
     //getCredential
-    CredentialService CredentialService = new TestCredentialService("alias");
+    CredentialService CredentialService = new TestCredentialService("alias", clusterId);
     Method m = CredentialService.getClass().getMethod("getCredential", HttpHeaders.class, UriInfo.class, String.class);
     Object[] args = new Object[]{getHttpHeaders(), getUriInfo(), "alias"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, CredentialService, m, args, null));
 
     //getCredentials
-    CredentialService = new TestCredentialService(null);
+    CredentialService = new TestCredentialService(null, clusterId);
     m = CredentialService.getClass().getMethod("getCredentials", HttpHeaders.class, UriInfo.class);
     args = new Object[]{getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, CredentialService, m, args, null));
 
     //createCredential
-    CredentialService = new TestCredentialService("alias");
+    CredentialService = new TestCredentialService("alias", clusterId);
     m = CredentialService.getClass().getMethod("createCredential", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[]{"body", getHttpHeaders(), getUriInfo(), "alias"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, CredentialService, m, args, "body"));
 
     //deleteCredential
-    CredentialService = new TestCredentialService("alias");
+    CredentialService = new TestCredentialService("alias", clusterId);
     m = CredentialService.getClass().getMethod("deleteCredential", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[]{getHttpHeaders(), getUriInfo(), "alias"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, CredentialService, m, args, null));

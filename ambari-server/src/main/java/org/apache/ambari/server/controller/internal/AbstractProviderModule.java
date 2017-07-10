@@ -84,8 +84,8 @@ public abstract class AbstractProviderModule implements ProviderModule,
   private static final int PROPERTY_REQUEST_CONNECT_TIMEOUT = 5000;
   private static final int PROPERTY_REQUEST_READ_TIMEOUT    = 10000;
 
-  private static final String CLUSTER_NAME_PROPERTY_ID                  = PropertyHelper.getPropertyId("Clusters", "cluster_name");
-  private static final String HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID   = PropertyHelper.getPropertyId("HostRoles", "cluster_name");
+  private static final String CLUSTER_ID_PROPERTY_ID                    = PropertyHelper.getPropertyId("Clusters", "cluster_id");
+  private static final String HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID     = PropertyHelper.getPropertyId("HostRoles", "cluster_id");
   private static final String HOST_COMPONENT_HOST_NAME_PROPERTY_ID      = PropertyHelper.getPropertyId("HostRoles", "host_name");
   private static final String HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("HostRoles", "component_name");
   private static final String GANGLIA_SERVER                            = "GANGLIA_SERVER";
@@ -248,12 +248,12 @@ public abstract class AbstractProviderModule implements ProviderModule,
   /**
    * The map of host components.
    */
-  private Map<String, Map<String, String>> clusterHostComponentMap;
+  private Map<Long, Map<String, String>> clusterHostComponentMap;
 
   /**
    * The host name of the Ganglia collector.
    */
-  private Map<String, String> clusterGangliaCollectorMap;
+  private Map<Long, String> clusterGangliaCollectorMap;
 
   /**
    * JMX ports read from the configs
@@ -723,13 +723,13 @@ public abstract class AbstractProviderModule implements ProviderModule,
             ComponentSSLConfiguration.instance(),
             this,
             this,
-            PropertyHelper.getPropertyId("Clusters", "cluster_name")));
+            PropertyHelper.getPropertyId("Clusters", "cluster_id")));
           providers.add(new AlertSummaryPropertyProvider(type,
-            "Clusters/cluster_name", null));
+            "Clusters/cluster_id", null));
           break;
         case Service:
           providers.add(new AlertSummaryPropertyProvider(type,
-              "ServiceInfo/cluster_name", "ServiceInfo/service_name"));
+              "ServiceInfo/cluster_id", "ServiceInfo/service_name"));
           break;
         case Host:
           providers.add(createMetricsHostPropertyProvider(
@@ -738,11 +738,11 @@ public abstract class AbstractProviderModule implements ProviderModule,
             ComponentSSLConfiguration.instance(),
             this,
             this,
-            PropertyHelper.getPropertyId("Hosts", "cluster_name"),
+            PropertyHelper.getPropertyId("Hosts", "cluster_id"),
             PropertyHelper.getPropertyId("Hosts", "host_name")
           ));
           providers.add(new AlertSummaryPropertyProvider(type,
-              "Hosts/cluster_name", "Hosts/host_name"));
+              "Hosts/cluster_id", "Hosts/host_name"));
           break;
         case Component: {
           // TODO as we fill out stack metric definitions, these can be phased out
@@ -751,7 +751,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
               streamProvider,
               this,
               this,
-              PropertyHelper.getPropertyId("ServiceComponentInfo", "cluster_name"),
+              PropertyHelper.getPropertyId("ServiceComponentInfo", "cluster_id"),
               null,
               PropertyHelper.getPropertyId("ServiceComponentInfo", "component_name"),
               PropertyHelper.getPropertyId("ServiceComponentInfo", "state"));
@@ -762,7 +762,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
               ComponentSSLConfiguration.instance(),
               this,
               this,
-              PropertyHelper.getPropertyId("ServiceComponentInfo", "cluster_name"),
+              PropertyHelper.getPropertyId("ServiceComponentInfo", "cluster_id"),
               PropertyHelper.getPropertyId("ServiceComponentInfo", "component_name"));
           providers.add(new StackDefinedPropertyProvider(
               type,
@@ -770,7 +770,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
               this,
               this,
               streamProvider,
-              PropertyHelper.getPropertyId("ServiceComponentInfo", "cluster_name"),
+              PropertyHelper.getPropertyId("ServiceComponentInfo", "cluster_id"),
               null,
               PropertyHelper.getPropertyId("ServiceComponentInfo", "component_name"),
               PropertyHelper.getPropertyId("ServiceComponentInfo", "state"),
@@ -785,7 +785,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
               streamProvider,
               this,
               this,
-              PropertyHelper.getPropertyId("HostRoles", "cluster_name"),
+              PropertyHelper.getPropertyId("HostRoles", "cluster_id"),
               PropertyHelper.getPropertyId("HostRoles", "host_name"),
               PropertyHelper.getPropertyId("HostRoles", "component_name"),
               PropertyHelper.getPropertyId("HostRoles", "state"));
@@ -796,7 +796,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
             ComponentSSLConfiguration.instance(),
             this,
             this,
-            PropertyHelper.getPropertyId("HostRoles", "cluster_name"),
+            PropertyHelper.getPropertyId("HostRoles", "cluster_id"),
             PropertyHelper.getPropertyId("HostRoles", "host_name"),
             PropertyHelper.getPropertyId("HostRoles", "component_name"));
 
@@ -806,7 +806,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
               this,
               this,
               streamProvider,
-              PropertyHelper.getPropertyId("HostRoles", "cluster_name"),
+              PropertyHelper.getPropertyId("HostRoles", "cluster_id"),
               PropertyHelper.getPropertyId("HostRoles", "host_name"),
               PropertyHelper.getPropertyId("HostRoles", "component_name"),
               PropertyHelper.getPropertyId("HostRoles", "state"),
@@ -815,7 +815,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
 
           providers.add(new HttpPropertyProvider(streamProvider,
             managementController.getClusters(),
-            PropertyHelper.getPropertyId("HostRoles", "cluster_name"),
+            PropertyHelper.getPropertyId("HostRoles", "cluster_id"),
             PropertyHelper.getPropertyId("HostRoles", "host_name"),
             PropertyHelper.getPropertyId("HostRoles", "component_name"),
             HTTP_PROPERTY_REQUESTS));
@@ -861,7 +861,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
     ResourceProvider provider = getResourceProvider(Resource.Type.Cluster);
 
     Set<String> propertyIds = new HashSet<>();
-    propertyIds.add(ClusterResourceProvider.CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(ClusterResourceProvider.CLUSTER_ID_PROPERTY_ID);
 
     Map<String, String> requestInfoProperties = new HashMap<>();
     requestInfoProperties.put(ClusterResourceProvider.GET_IGNORE_PERMISSIONS_PROPERTY_ID, "true");
@@ -871,14 +871,24 @@ public abstract class AbstractProviderModule implements ProviderModule,
 
     try {
       jmxPortMap.clear();
-      Set<Resource> clusters = provider.getResources(request, null);
+      Set<Resource> clusterResources = provider.getResources(request, null);
 
-      clusterHostComponentMap = new HashMap<>();
-      clusterGangliaCollectorMap = new HashMap<>();
+      clusterHostComponentMap = new HashMap<Long, Map<String, String>>();
+      clusterGangliaCollectorMap = new HashMap<Long, String>();
 
-      for (Resource cluster : clusters) {
+      for (Resource clusterResource : clusterResources) {
 
-        String clusterName = (String) cluster.getPropertyValue(CLUSTER_NAME_PROPERTY_ID);
+        Long clusterId = (Long)clusterResource.getPropertyValue(CLUSTER_ID_PROPERTY_ID);
+        Cluster cluster = null;
+        String clusterName = null;
+        try {
+          Clusters clusters = managementController.getClusters();
+          cluster = clusters.getCluster(clusterId);
+          clusterName = cluster.getClusterName();
+        } catch (AmbariException e) {
+            throw new SystemException("An exception occurred while initializing the host mappings: " + e, e);
+        }
+
 
         // initialize the host component map and Ganglia server from the known hosts components...
         provider = getResourceProvider(Resource.Type.HostComponent);
@@ -886,15 +896,15 @@ public abstract class AbstractProviderModule implements ProviderModule,
         request = PropertyHelper.getReadRequest(HOST_COMPONENT_HOST_NAME_PROPERTY_ID,
             HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID);
 
-        Predicate predicate = new PredicateBuilder().property(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID).
-            equals(clusterName).toPredicate();
+        Predicate predicate = new PredicateBuilder().property(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID).
+            equals(clusterId).toPredicate();
 
         Set<Resource> hostComponents = provider.getResources(request, predicate);
-        Map<String, String> hostComponentMap = clusterHostComponentMap.get(clusterName);
+        Map<String, String> hostComponentMap = clusterHostComponentMap.get(clusterId);
 
         if (hostComponentMap == null) {
           hostComponentMap = new HashMap<>();
-          clusterHostComponentMap.put(clusterName, hostComponentMap);
+          clusterHostComponentMap.put(clusterId, hostComponentMap);
         }
 
         for (Resource hostComponent : hostComponents) {
@@ -905,7 +915,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
 
           // record the Ganglia server for the current cluster
           if (componentName.equals(GANGLIA_SERVER)) {
-            clusterGangliaCollectorMap.put(clusterName, hostName);
+            clusterGangliaCollectorMap.put(clusterId, hostName);
           }
           if (componentName.equals(METRIC_SERVER)) {
             //  If current collector host is null or if the host or the host component not live
@@ -944,7 +954,7 @@ public abstract class AbstractProviderModule implements ProviderModule,
    * @param clusterName
    *          the cluster name
    * @param configType
-   *          the configuration type (for example <code>hdfs-site</code>).
+   *          the configuration type (for example hdfs-site).
    * @return
    */
   private String getDesiredConfigVersion(String clusterName,
@@ -976,13 +986,13 @@ public abstract class AbstractProviderModule implements ProviderModule,
     // Get desired configs based on the tag
     ResourceProvider configResourceProvider = getResourceProvider(Resource.Type.Configuration);
     Predicate configPredicate = new PredicateBuilder().property
-        (ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID).equals(clusterName).and()
+      (ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID).equals(clusterName).and()
         .property(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TYPE_PROPERTY_ID).equals(configType).and()
         .property(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID).equals(versionTag).toPredicate();
     Set<Resource> configResources;
     try {
       configResources = configResourceProvider.getResources
-          (PropertyHelper.getReadRequest(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID,
+          (PropertyHelper.getReadRequest(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID,
               ConfigurationResourceProvider.CONFIGURATION_CONFIG_TYPE_PROPERTY_ID,
               ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID), configPredicate);
     } catch (NoSuchResourceException e) {
@@ -1063,14 +1073,14 @@ public abstract class AbstractProviderModule implements ProviderModule,
                                                      StreamProvider streamProvider,
                                                      JMXHostProvider jmxHostProvider,
                                                      MetricHostProvider metricsHostProvider,
-                                                     String clusterNamePropertyId,
+                                                     String clusterIdPropertyId,
                                                      String hostNamePropertyId,
                                                      String componentNamePropertyId,
                                                      String statePropertyId) {
 
     return metricPropertyProviderFactory.createJMXPropertyProvider(
         PropertyHelper.getJMXPropertyIds(type), streamProvider,
-        jmxHostProvider, metricsHostProvider, clusterNamePropertyId, hostNamePropertyId,
+        jmxHostProvider, metricsHostProvider, clusterIdPropertyId, hostNamePropertyId,
         componentNamePropertyId, statePropertyId);
   }
 
@@ -1081,12 +1091,12 @@ public abstract class AbstractProviderModule implements ProviderModule,
                                                                ComponentSSLConfiguration configuration,
                                                                MetricHostProvider hostProvider,
                                                                MetricsServiceProvider serviceProvider,
-                                                               String clusterNamePropertyId) {
+                                                               String clusterIdPropertyId) {
 
     return MetricsReportPropertyProvider.createInstance(
       PropertyHelper.getMetricPropertyIds(type), streamProvider,
       configuration, metricCacheProvider, hostProvider, serviceProvider,
-      clusterNamePropertyId);
+      clusterIdPropertyId);
   }
 
   /**
@@ -1097,11 +1107,11 @@ public abstract class AbstractProviderModule implements ProviderModule,
                                                              ComponentSSLConfiguration configuration,
                                                              MetricHostProvider hostProvider,
                                                              MetricsServiceProvider serviceProvider,
-                                                             String clusterNamePropertyId,
+                                                             String clusterIdPropertyId,
                                                              String hostNamePropertyId) {
     return MetricsPropertyProvider.createInstance(type,
       PropertyHelper.getMetricPropertyIds(type), streamProvider, configuration,
-      metricCacheProvider, hostProvider, serviceProvider, clusterNamePropertyId,
+      metricCacheProvider, hostProvider, serviceProvider, clusterIdPropertyId,
       hostNamePropertyId, null);
   }
 
@@ -1113,12 +1123,12 @@ public abstract class AbstractProviderModule implements ProviderModule,
                                                                   ComponentSSLConfiguration configuration,
                                                                   MetricHostProvider hostProvider,
                                                                   MetricsServiceProvider serviceProvider,
-                                                                  String clusterNamePropertyId,
+                                                                  String clusterIdPropertyId,
                                                                   String componentNamePropertyId) {
     return MetricsPropertyProvider.createInstance(type,
       PropertyHelper.getMetricPropertyIds(type), streamProvider, configuration,
       metricCacheProvider, hostProvider, serviceProvider,
-      clusterNamePropertyId, null,
+      clusterIdPropertyId, null,
       componentNamePropertyId);
   }
 
@@ -1131,13 +1141,13 @@ public abstract class AbstractProviderModule implements ProviderModule,
                                                                       ComponentSSLConfiguration configuration,
                                                                       MetricHostProvider hostProvider,
                                                                       MetricsServiceProvider serviceProvider,
-                                                                      String clusterNamePropertyId,
+                                                                      String clusterIdPropertyId,
                                                                       String hostNamePropertyId,
                                                                       String componentNamePropertyId) {
 
     return MetricsPropertyProvider.createInstance(type,
       PropertyHelper.getMetricPropertyIds(type), streamProvider, configuration,
-      metricCacheProvider, hostProvider, serviceProvider, clusterNamePropertyId,
+      metricCacheProvider, hostProvider, serviceProvider, clusterIdPropertyId,
       hostNamePropertyId, componentNamePropertyId);
   }
 

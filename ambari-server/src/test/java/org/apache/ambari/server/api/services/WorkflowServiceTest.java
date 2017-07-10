@@ -37,9 +37,9 @@ public class WorkflowServiceTest extends BaseServiceTest {
   @Override
   public List<ServiceTestInvocation> getTestInvocations() throws Exception {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
-
+    Long clusterId = 1L;
     // getWorkflow
-    WorkflowService service = new TestWorkflowService("clusterName");
+    WorkflowService service = new TestWorkflowService(clusterId);
     Method m = service.getClass().getMethod("getWorkflow", String.class, HttpHeaders.class,
         UriInfo.class, String.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo(), "jobId"};
@@ -47,7 +47,7 @@ public class WorkflowServiceTest extends BaseServiceTest {
         args, null));
 
     // getWorkflows
-    service = new TestWorkflowService("clusterName");
+    service = new TestWorkflowService(clusterId);
     m = service.getClass().getMethod("getWorkflows", String.class, HttpHeaders.class,
         UriInfo.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo()};

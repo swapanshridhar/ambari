@@ -1,0 +1,158 @@
+***************
+*** 42,63 ****
+   */
+  public class ServiceService extends BaseService {
+    /**
+-    * Parent cluster name.
+     */
+-   private String m_clusterName;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster id
+     */
+-   public ServiceService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+    }
+  
+    /**
+-    * Handles URL: /clusters/{clusterID}/services/{serviceID}
+     * Get a specific service.
+     *
+     * @param headers     http headers
+--- 42,63 ----
+   */
+  public class ServiceService extends BaseService {
+    /**
++    * Parent cluster Id.
+     */
++   private Long m_clusterId;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster Id
+     */
++   public ServiceService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+    }
+  
+    /**
++    * Handles URL: /clusters/{clusterId}/services/{serviceID}
+     * Get a specific service.
+     *
+     * @param headers     http headers
+***************
+*** 223,229 ****
+    public Response updateService(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+                                  @PathParam("serviceName") String serviceName) {
+  
+-     return handleRequest(headers, body, ui, Request.Type.PUT, createServiceResource(m_clusterName, serviceName));
+    }
+  
+    /**
+--- 223,229 ----
+    public Response updateService(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+                                  @PathParam("serviceName") String serviceName) {
+  
++     return handleRequest(headers, body, ui, Request.Type.PUT, createServiceResource(m_clusterId, serviceName));
+    }
+  
+    /**
+***************
+*** 286,292 ****
+    public Response deleteService(@Context HttpHeaders headers, @Context UriInfo ui,
+                                  @PathParam("serviceName") String serviceName) {
+  
+-     return handleRequest(headers, null, ui, Request.Type.DELETE, createServiceResource(m_clusterName, serviceName));
+    }
+  
+    /**
+--- 286,292 ----
+    public Response deleteService(@Context HttpHeaders headers, @Context UriInfo ui,
+                                  @PathParam("serviceName") String serviceName) {
+  
++     return handleRequest(headers, null, ui, Request.Type.DELETE, createServiceResource(m_clusterId, serviceName));
+    }
+  
+    /**
+***************
+*** 298,304 ****
+    @Path("{serviceName}/components")
+    public ComponentService getComponentHandler(@PathParam("serviceName") String serviceName) {
+  
+-     return new ComponentService(m_apiVersion, m_clusterName, serviceName);
+    }
+  
+    /**
+--- 298,304 ----
+    @Path("{serviceName}/components")
+    public ComponentService getComponentHandler(@PathParam("serviceName") String serviceName) {
+  
++     return new ComponentService(m_apiVersion, m_clusterId, serviceName);
+    }
+  
+    /**
+***************
+*** 307,313 ****
+    @Path("{serviceName}/alerts")
+    public AlertService getAlertHandler(
+        @PathParam("serviceName") String serviceName) {
+-     return new AlertService(m_apiVersion, m_clusterName, serviceName, null);
+    }
+  
+    /**
+--- 307,313 ----
+    @Path("{serviceName}/alerts")
+    public AlertService getAlertHandler(
+        @PathParam("serviceName") String serviceName) {
++     return new AlertService(m_apiVersion, m_clusterId, serviceName, null);
+    }
+  
+    /**
+***************
+*** 606,625 ****
+        @Context javax.ws.rs.core.Request request,
+        @PathParam("serviceName") String serviceName) {
+  
+-     return new AlertHistoryService(m_apiVersion, m_clusterName, serviceName, null);
+    }
+  
+    /**
+     * Create a service resource instance.
+     *
+-    * @param clusterName  cluster name
+     * @param serviceName  service name
+     *
+     * @return a service resource instance
+     */
+-   ResourceInstance createServiceResource(String clusterName, String serviceName) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.Service, serviceName);
+  
+      return createResource(Resource.Type.Service, mapIds);
+--- 606,625 ----
+        @Context javax.ws.rs.core.Request request,
+        @PathParam("serviceName") String serviceName) {
+  
++     return new AlertHistoryService(m_apiVersion, m_clusterId, serviceName, null);
+    }
+  
+    /**
+     * Create a service resource instance.
+     *
++    * @param clusterId    cluster ID
+     * @param serviceName  service name
+     *
+     * @return a service resource instance
+     */
++   ResourceInstance createServiceResource(Long clusterId, String serviceName) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.Service, serviceName);
+  
+      return createResource(Resource.Type.Service, mapIds);

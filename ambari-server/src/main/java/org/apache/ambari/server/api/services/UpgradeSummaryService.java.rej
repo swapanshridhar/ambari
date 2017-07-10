@@ -1,0 +1,35 @@
+***************
+*** 39,54 ****
+   */
+  public class UpgradeSummaryService extends BaseService {
+  
+-   private String m_clusterName = null;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName the cluster name (not {@code null}).
+     */
+-   UpgradeSummaryService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+    }
+  
+    @GET
+--- 39,54 ----
+   */
+  public class UpgradeSummaryService extends BaseService {
+  
++   private Long m_clusterId = null;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId the cluster Id (not {@code null}).
+     */
++   UpgradeSummaryService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+    }
+  
+    @GET

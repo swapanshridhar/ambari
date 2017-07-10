@@ -1,0 +1,47 @@
+***************
+*** 59,80 ****
+    }
+  
+    private class TestTaskAttemptService extends TaskAttemptService {
+-     private String clusterName;
+      private String workflowId;
+      private String jobId;
+  
+-     public TestTaskAttemptService(String clusterName, String workflowId,
+          String jobId) {
+-       super(ApiVersion.Default, clusterName, workflowId, jobId);
+-       this.clusterName = clusterName;
+        this.workflowId = workflowId;
+        this.jobId = jobId;
+      }
+  
+      @Override
+-     ResourceInstance createTaskAttemptResource(String clusterName,
+          String workflowId, String jobId, String taskAttemptId) {
+-       assertEquals(this.clusterName, clusterName);
+        assertEquals(this.workflowId, workflowId);
+        assertEquals(this.jobId, jobId);
+        return getTestResource();
+--- 59,80 ----
+    }
+  
+    private class TestTaskAttemptService extends TaskAttemptService {
++     private Long clusterId;
+      private String workflowId;
+      private String jobId;
+  
++     public TestTaskAttemptService(Long clusterId, String workflowId,
+          String jobId) {
++       super(ApiVersion.Default, clusterId, workflowId, jobId);
++       this.clusterId = clusterId;
+        this.workflowId = workflowId;
+        this.jobId = jobId;
+      }
+  
+      @Override
++     ResourceInstance createTaskAttemptResource(Long clusterId,
+          String workflowId, String jobId, String taskAttemptId) {
++       assertEquals(this.clusterId, clusterId);
+        assertEquals(this.workflowId, workflowId);
+        assertEquals(this.jobId, jobId);
+        return getTestResource();

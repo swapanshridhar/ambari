@@ -52,7 +52,7 @@ public class AlertDefinitionService extends BaseService {
   public Response getDefinitions(@Context HttpHeaders headers,
       @Context UriInfo ui) {
     return handleRequest(headers, null, ui, Request.Type.GET,
-      createResourceInstance(clusterName, null));
+      createResourceInstance(clusterId, null));
   }
 
   @POST @ApiIgnore // until documented
@@ -61,7 +61,7 @@ public class AlertDefinitionService extends BaseService {
       @Context HttpHeaders headers,
       @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.POST,
-      createResourceInstance(clusterName, null));
+      createResourceInstance(clusterId, null));
   }
 
   @PUT @ApiIgnore // until documented
@@ -72,7 +72,7 @@ public class AlertDefinitionService extends BaseService {
       @Context UriInfo ui,
       @PathParam("alertDefinitionId") Long id) {
     return handleRequest(headers, body, ui, Request.Type.PUT,
-      createResourceInstance(clusterName, id));
+      createResourceInstance(clusterId, id));
   }
 
   @DELETE @ApiIgnore // until documented
@@ -83,7 +83,7 @@ public class AlertDefinitionService extends BaseService {
       @Context UriInfo ui,
       @PathParam("alertDefinitionId") Long id) {
     return handleRequest(headers, body, ui, Request.Type.DELETE,
-      createResourceInstance(clusterName, id));
+      createResourceInstance(clusterId, id));
   }
 
   @GET @ApiIgnore // until documented

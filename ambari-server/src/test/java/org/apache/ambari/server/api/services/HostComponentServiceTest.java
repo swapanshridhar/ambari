@@ -39,45 +39,45 @@ public class HostComponentServiceTest extends BaseServiceTest {
 
   public List<ServiceTestInvocation> getTestInvocations() throws Exception {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
-
+    Long clusterId = 1L;
     //getHostComponent
-    HostComponentService componentService = new TestHostComponentService("clusterName", "serviceName", "componentName");
+    HostComponentService componentService = new TestHostComponentService(clusterId, "serviceName", "componentName");
     Method m = componentService.getClass().getMethod("getHostComponent", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     Object[] args = new Object[]{null, getHttpHeaders(), getUriInfo(), "componentName", null};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, componentService, m, args, null));
 
     //getHostComponents
-    componentService = new TestHostComponentService("clusterName", "serviceName", null);
+    componentService = new TestHostComponentService(clusterId, "serviceName", null);
     m = componentService.getClass().getMethod("getHostComponents", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo(), null};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, componentService, m, args, null));
 
     //createHostComponent
-    componentService = new TestHostComponentService("clusterName", "serviceName", "componentName");
+    componentService = new TestHostComponentService(clusterId, "serviceName", "componentName");
     m = componentService.getClass().getMethod("createHostComponent", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "componentName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, componentService, m, args, "body"));
 
     //createHostComponents
-    componentService = new TestHostComponentService("clusterName", "serviceName", null);
+    componentService = new TestHostComponentService(clusterId, "serviceName", null);
     m = componentService.getClass().getMethod("createHostComponents", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, componentService, m, args, "body"));
 
     //updateHostComponent
-    componentService = new TestHostComponentService("clusterName", "serviceName", "componentName");
+    componentService = new TestHostComponentService(clusterId, "serviceName", "componentName");
     m = componentService.getClass().getMethod("updateHostComponent", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "componentName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, componentService, m, args, "body"));
 
     //updateHostComponents
-    componentService = new TestHostComponentService("clusterName", "serviceName", null);
+    componentService = new TestHostComponentService(clusterId, "serviceName", null);
     m = componentService.getClass().getMethod("updateHostComponents", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, componentService, m, args, "body"));
 
     //deleteHostComponent
-    componentService = new TestHostComponentService("clusterName", "serviceName", "componentName");
+    componentService = new TestHostComponentService(clusterId, "serviceName", "componentName");
     m = componentService.getClass().getMethod("deleteHostComponent", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "componentName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, componentService, m, args, null));
@@ -98,8 +98,8 @@ public class HostComponentServiceTest extends BaseServiceTest {
     }
 
     @Override
-    ResourceInstance createHostComponentResource(String clusterName, String hostName, String hostComponentName) {
-      assertEquals(m_clusterId, clusterName);
+    ResourceInstance createHostComponentResource(Long clusterId, String hostName, String hostComponentName) {
+      assertEquals(m_clusterId, clusterId);
       assertEquals(m_hostId, hostName);
       assertEquals(m_hostComponentId, hostComponentName);
       return getTestResource();

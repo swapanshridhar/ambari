@@ -308,7 +308,7 @@ public class AmbariContextTest {
     Collection<String> servicesFound = new HashSet<>();
     for (ServiceRequest serviceRequest : serviceRequests) {
       servicesFound.add(serviceRequest.getServiceName());
-      assertEquals(CLUSTER_NAME, serviceRequest.getClusterName());
+      assertEquals(CLUSTER_NAME, serviceRequest.getClusterId());
     }
     assertTrue(servicesFound.size() == 2 &&
         servicesFound.containsAll(Arrays.asList("service1", "service2")));
@@ -317,7 +317,7 @@ public class AmbariContextTest {
     assertEquals(3, serviceComponentRequests.size());
     Map<String, Collection<String>> foundServiceComponents = new HashMap<>();
     for (ServiceComponentRequest componentRequest : serviceComponentRequests) {
-      assertEquals(CLUSTER_NAME, componentRequest.getClusterName());
+      assertEquals(CLUSTER_NAME, componentRequest.getClusterId());
       String serviceName = componentRequest.getServiceName();
       Collection<String> serviceComponents = foundServiceComponents.get(serviceName);
       if (serviceComponents == null) {
@@ -340,18 +340,18 @@ public class AmbariContextTest {
     Set<Map<String, Object>> installPropertiesSet = installRequest.getProperties();
     assertEquals(1, installPropertiesSet.size());
     Map<String, Object> installProperties = installPropertiesSet.iterator().next();
-    assertEquals(CLUSTER_NAME, installProperties.get(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID));
+    assertEquals(CLUSTER_NAME, installProperties.get(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID));
     assertEquals("INSTALLED", installProperties.get(ServiceResourceProvider.SERVICE_SERVICE_STATE_PROPERTY_ID));
-    assertEquals(new EqualsPredicate<>(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID, CLUSTER_NAME),
+    assertEquals(new EqualsPredicate<>(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID, CLUSTER_NAME),
         installPredicateCapture.getValue());
 
     Request startRequest = serviceStartRequestCapture.getValue();
     Set<Map<String, Object>> startPropertiesSet = startRequest.getProperties();
     assertEquals(1, startPropertiesSet.size());
     Map<String, Object> startProperties = startPropertiesSet.iterator().next();
-    assertEquals(CLUSTER_NAME, startProperties.get(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID));
+    assertEquals(CLUSTER_NAME, startProperties.get(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID));
     assertEquals("STARTED", startProperties.get(ServiceResourceProvider.SERVICE_SERVICE_STATE_PROPERTY_ID));
-    assertEquals(new EqualsPredicate<>(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID, CLUSTER_NAME),
+    assertEquals(new EqualsPredicate<>(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID, CLUSTER_NAME),
         installPredicateCapture.getValue());
   }
 
@@ -434,7 +434,7 @@ public class AmbariContextTest {
     Set<ConfigGroupRequest> configGroupRequests = configGroupRequestCapture.getValue();
     assertEquals(1, configGroupRequests.size());
     ConfigGroupRequest configGroupRequest = configGroupRequests.iterator().next();
-    assertEquals(CLUSTER_NAME, configGroupRequest.getClusterName());
+    assertEquals(CLUSTER_NAME, configGroupRequest.getClusterId());
     assertEquals("testBP:group1", configGroupRequest.getGroupName());
     assertEquals("service1", configGroupRequest.getTag());
     assertEquals("Host Group Configuration", configGroupRequest.getDescription());
@@ -478,7 +478,7 @@ public class AmbariContextTest {
     Set<ConfigGroupRequest> configGroupRequests = configGroupRequestCapture.getValue();
     assertEquals(1, configGroupRequests.size());
     ConfigGroupRequest configGroupRequest = configGroupRequests.iterator().next();
-    assertEquals(CLUSTER_NAME, configGroupRequest.getClusterName());
+    assertEquals(CLUSTER_NAME, configGroupRequest.getClusterId());
     assertEquals("testBP:group1", configGroupRequest.getGroupName());
     assertEquals("service1", configGroupRequest.getTag());
     assertEquals("Host Group Configuration", configGroupRequest.getDescription());

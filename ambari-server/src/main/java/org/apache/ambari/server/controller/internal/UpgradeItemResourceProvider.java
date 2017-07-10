@@ -55,6 +55,7 @@ import org.apache.ambari.server.security.authorization.AuthorizationHelper;
 import org.apache.ambari.server.security.authorization.ResourceType;
 import org.apache.ambari.server.security.authorization.RoleAuthorization;
 import org.apache.ambari.server.state.Cluster;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.ambari.server.utils.SecretReference;
 import org.apache.commons.lang.StringUtils;
 
@@ -66,7 +67,7 @@ import com.google.inject.Inject;
 @StaticallyInject
 public class UpgradeItemResourceProvider extends ReadOnlyResourceProvider {
 
-  public static final String UPGRADE_CLUSTER_NAME = "UpgradeItem/cluster_name";
+  public static final String UPGRADE_CLUSTER_ID = "UpgradeItem/cluster_id";
   public static final String UPGRADE_REQUEST_ID = "UpgradeItem/request_id";
   public static final String UPGRADE_GROUP_ID = "UpgradeItem/group_id";
   public static final String UPGRADE_ITEM_STAGE_ID = "UpgradeItem/stage_id";
@@ -106,7 +107,7 @@ public class UpgradeItemResourceProvider extends ReadOnlyResourceProvider {
     KEY_PROPERTY_IDS.put(Resource.Type.UpgradeItem, UPGRADE_ITEM_STAGE_ID);
     KEY_PROPERTY_IDS.put(Resource.Type.UpgradeGroup, UPGRADE_GROUP_ID);
     KEY_PROPERTY_IDS.put(Resource.Type.Upgrade, UPGRADE_REQUEST_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, UPGRADE_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, UPGRADE_CLUSTER_ID);
   }
 
   /**
@@ -139,14 +140,18 @@ public class UpgradeItemResourceProvider extends ReadOnlyResourceProvider {
       Set<Resource> resources = getResources(PropertyHelper.getReadRequest(), predicate);
 
       for (Resource resource : resources) {
-        final String clusterName = (String)resource.getPropertyValue(UPGRADE_CLUSTER_NAME);
+        Long clusterId = null;
+        String clusterIdStr = (String) resource.getPropertyValue(UPGRADE_CLUSTER_ID);
+        if(StringUtils.isNotBlank(clusterIdStr)) {
+          clusterId = Long.parseLong(clusterIdStr);
+        }
         final Cluster cluster;
 
         try {
-          cluster = getManagementController().getClusters().getCluster(clusterName);
+          cluster = getManagementController().getClusters().getCluster(clusterId);
         } catch (AmbariException e) {
           throw new NoSuchParentResourceException(
-              String.format("Cluster %s could not be loaded", clusterName));
+              String.format("Cluster %s could not be loaded", clusterId));
         }
 
 
@@ -192,7 +197,7 @@ public class UpgradeItemResourceProvider extends ReadOnlyResourceProvider {
     Set<String> requestPropertyIds = getRequestPropertyIds(request, predicate);
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = (String) propertyMap.get(UPGRADE_CLUSTER_NAME);
+      Long clusterId = MapUtils.parseLong(propertyMap, UPGRADE_CLUSTER_ID);
       String requestIdStr = (String) propertyMap.get(UPGRADE_REQUEST_ID);
       String groupIdStr = (String) propertyMap.get(UPGRADE_GROUP_ID);
       String stageIdStr = (String) propertyMap.get(UPGRADE_ITEM_STAGE_ID);

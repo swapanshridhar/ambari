@@ -76,13 +76,13 @@ public class HostMaintenanceModeCheckTest {
     Mockito.when(cluster.getHosts()).thenReturn(hosts);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest("cluster"));
+    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // put a host into MM in order to trigger the warning
     check = new PrerequisiteCheck(null, null);
     Mockito.when(host3.getMaintenanceState(1L)).thenReturn(MaintenanceState.ON);
-    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest("cluster"));
+    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
   }
 
@@ -121,13 +121,13 @@ public class HostMaintenanceModeCheckTest {
     Mockito.when(cluster.getHosts()).thenReturn(hosts);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest("cluster"));
+    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     // put a host into MM in order to trigger the warning
     check = new PrerequisiteCheck(null, null);
     Mockito.when(host3.getMaintenanceState(1L)).thenReturn(MaintenanceState.ON);
-    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest("cluster", UpgradeType.HOST_ORDERED));
+    hostMaintenanceModeCheck.perform(check, new PrereqCheckRequest(1L, UpgradeType.HOST_ORDERED));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     Assert.assertEquals("The following hosts cannot be in Maintenance Mode: h3.", check.getFailReason());
   }

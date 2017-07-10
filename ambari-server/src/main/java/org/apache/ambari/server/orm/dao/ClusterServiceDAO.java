@@ -46,10 +46,10 @@ public class ClusterServiceDAO {
   }
 
   @RequiresSession
-  public ClusterServiceEntity findByClusterAndServiceNames(String  clusterName, String serviceName) {
+  public ClusterServiceEntity findByClusterAndServiceNames(Long clusterId, String serviceName) {
     TypedQuery<ClusterServiceEntity> query = entityManagerProvider.get()
             .createNamedQuery("clusterServiceByClusterAndServiceNames", ClusterServiceEntity.class);
-    query.setParameter("clusterName", clusterName);
+    query.setParameter("clusterId", clusterId);
     query.setParameter("serviceName", serviceName);
 
     try {

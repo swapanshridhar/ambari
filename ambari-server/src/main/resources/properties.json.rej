@@ -1,0 +1,34 @@
+***************
+*** 14,20 ****
+      ],
+      "Service":[
+          "ServiceInfo/service_name",
+-         "ServiceInfo/cluster_name",
+          "ServiceInfo/state",
+          "ServiceInfo/maintenance_state",
+          "ServiceInfo/credential_store_supported",
+--- 14,20 ----
+      ],
+      "Service":[
+          "ServiceInfo/service_name",
++         "ServiceInfo/cluster_id",
+          "ServiceInfo/state",
+          "ServiceInfo/maintenance_state",
+          "ServiceInfo/credential_store_supported",
+***************
+*** 41,47 ****
+      "Component":[
+          "ServiceComponentInfo/service_name",
+          "ServiceComponentInfo/component_name",
+-         "ServiceComponentInfo/cluster_name",
+          "ServiceComponentInfo/display_name",
+          "ServiceComponentInfo/state",
+          "ServiceComponentInfo/display_name",
+--- 41,47 ----
+      "Component":[
+          "ServiceComponentInfo/service_name",
+          "ServiceComponentInfo/component_name",
++         "ServiceComponentInfo/cluster_id",
+          "ServiceComponentInfo/display_name",
+          "ServiceComponentInfo/state",
+          "ServiceComponentInfo/display_name",

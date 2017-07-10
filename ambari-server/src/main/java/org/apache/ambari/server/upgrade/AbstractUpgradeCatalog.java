@@ -299,8 +299,8 @@ public abstract class AbstractUpgradeCatalog implements UpgradeCatalog {
     JsonParser jsonParser = new JsonParser();
 
     for (final Cluster cluster : getCheckedClusterMap(clusters).values()) {
-      long clusterID = cluster.getClusterId();
-      List<AlertDefinitionEntity> alertDefinitionList = alertDefinitionDAO.findAll(clusterID);
+      long clusterId = cluster.getClusterId();
+      List<AlertDefinitionEntity> alertDefinitionList = alertDefinitionDAO.findAll(clusterId);
 
       for (AlertDefinitionEntity alertDefinitionEntity : alertDefinitionList) {
         SourceType sourceType = alertDefinitionEntity.getSourceType();
@@ -1073,7 +1073,7 @@ public abstract class AbstractUpgradeCatalog implements UpgradeCatalog {
 
     Map<String, Cluster> clusterMap = getCheckedClusterMap(clusters);
     for (final Cluster cluster : clusterMap.values()) {
-      long clusterID = cluster.getClusterId();
+      long clusterId = cluster.getClusterId();
 
       Service service = cluster.getServices().get(serviceName);
       if (null == service) {
@@ -1094,7 +1094,7 @@ public abstract class AbstractUpgradeCatalog implements UpgradeCatalog {
       for (String section : widgetMap.keySet()) {
         List<String> widgets = widgetMap.get(section);
         for (String widgetName : widgets) {
-          List<WidgetEntity> widgetEntities = widgetDAO.findByName(clusterID,
+          List<WidgetEntity> widgetEntities = widgetDAO.findByName(clusterId,
               widgetName, "ambari", section);
 
           if (widgetEntities != null && widgetEntities.size() > 0) {

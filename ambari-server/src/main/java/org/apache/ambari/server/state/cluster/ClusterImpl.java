@@ -971,7 +971,7 @@ public class ClusterImpl implements Cluster {
     try {
 
       // get this once for easy lookup later
-      Map<String, Host> hosts = clusters.getHostsForCluster(getClusterName());
+      Map<String, Host> hosts = clusters.getHostsForCluster(getClusterId());
       hostsRequiringInstallation = new ArrayList<>(hosts.size());
 
       // for every host, either create or update the host version to the right
@@ -1181,8 +1181,8 @@ public class ClusterImpl implements Cluster {
   @Override
   public ClusterResponse convertToResponse()
     throws AmbariException {
-    String clusterName = getClusterName();
-    Map<String, Host> hosts = clusters.getHostsForCluster(clusterName);
+    Long clusterId = getClusterId();
+    Map<String, Host> hosts = clusters.getHostsForCluster(clusterId);
 
     return new ClusterResponse(getClusterId(), clusterName,
         getProvisioningState(), getSecurityType(), hosts.keySet(),
@@ -1743,7 +1743,7 @@ public class ClusterImpl implements Cluster {
           clusterConfigEntity.getTag());
 
       serviceConfigVersionResponse.getConfigurations().add(
-          new ConfigurationResponse(getClusterName(), config));
+          new ConfigurationResponse(getClusterId(), config));
     }
     return serviceConfigVersionResponse;
   }
@@ -2149,10 +2149,10 @@ public class ClusterImpl implements Cluster {
       //todo: why the hell does this method throw AmbariException???
       //todo: this is ridiculous that I need to get hosts for this cluster from Clusters!!!
       //todo: should I getHosts using the same logic as the other getHosts call?  At least that doesn't throw AmbariException.
-      hosts =  clusters.getHostsForCluster(clusterName);
+      hosts =  clusters.getHostsForCluster(clusterId);
     } catch (AmbariException e) {
       //todo: in what conditions is AmbariException thrown?
-      throw new RuntimeException("Unable to get hosts for cluster: " + clusterName, e);
+      throw new RuntimeException("Unable to get hosts for cluster: " + clusterId, e);
     }
     return hosts == null ? Collections.<Host>emptyList() : hosts.values();
   }

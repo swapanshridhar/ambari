@@ -426,7 +426,7 @@ public class AlertsDAOTest {
     AlertCurrentRequest request = new AlertCurrentRequest();
 
     Predicate clusterPredicate = new PredicateBuilder().property(
-        AlertResourceProvider.ALERT_CLUSTER_NAME).equals(m_cluster.getClusterName()).toPredicate();
+        AlertResourceProvider.ALERT_CLUSTER_ID).equals(m_cluster.getClusterName()).toPredicate();
 
     request.Predicate = clusterPredicate;
 
@@ -1232,7 +1232,7 @@ public class AlertsDAOTest {
     Predicate historyIdPredicate = null;
 
     clusterPredicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals("c1").toPredicate();
 
     AlertHistoryRequest request = new AlertHistoryRequest();
 
@@ -1247,15 +1247,15 @@ public class AlertsDAOTest {
         AlertHistoryResourceProvider.ALERT_HISTORY_SERVICE_NAME).equals("YARN").toPredicate();
 
     clusterAndHdfsPredicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").and().property(
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals("c1").and().property(
         AlertHistoryResourceProvider.ALERT_HISTORY_SERVICE_NAME).equals("HDFS").toPredicate();
 
     clusterAndHdfsPredicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").and().property(
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals("c1").and().property(
         AlertHistoryResourceProvider.ALERT_HISTORY_SERVICE_NAME).equals("HDFS").toPredicate();
 
     clusterAndHdfsAndCriticalPredicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").and().property(
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals("c1").and().property(
         AlertHistoryResourceProvider.ALERT_HISTORY_SERVICE_NAME).equals("HDFS").and().property(
         AlertHistoryResourceProvider.ALERT_HISTORY_STATE).equals(
         AlertState.CRITICAL.name()).toPredicate();
@@ -1361,7 +1361,7 @@ public class AlertsDAOTest {
     request.Sort = sortRequest;
 
     Predicate clusterPredicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals("c1").toPredicate();
 
     request.Predicate = clusterPredicate;
 

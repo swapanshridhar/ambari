@@ -149,14 +149,14 @@ public class JMXHostProviderTest {
     ComponentResourceProviderTest.createComponents(controller, requests);
   }
 
-  private void createServiceComponentHost(String clusterName,
+  private void createServiceComponentHost(Long clusterId,
                                           String serviceName, String componentName, String hostname,
                                           State desiredState) throws AmbariException, AuthorizationException {
     String dStateStr = null;
     if (desiredState != null) {
       dStateStr = desiredState.toString();
     }
-    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterName,
+    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterId,
       serviceName, componentName, hostname, dStateStr);
     Set<ServiceComponentHostRequest> requests =
       new HashSet<>();
@@ -166,21 +166,22 @@ public class JMXHostProviderTest {
 
   private void createHDFSServiceConfigs(boolean version1) throws AmbariException, AuthorizationException {
     String clusterName = "c1";
-    ClusterRequest r = new ClusterRequest(null, clusterName, "HDP-0.1", null);
+    Long clusterId = 1L;
+    ClusterRequest r = new ClusterRequest(1L, clusterName, "HDP-0.1", null);
     controller.createCluster(r);
     Cluster cluster = clusters.getCluster(clusterName);
     cluster.setDesiredStackVersion(new StackId("HDP-0.1"));
     String serviceName = "HDFS";
-    createService(clusterName, serviceName, null);
+    createService(clusterId, serviceName, null);
     String componentName1 = "NAMENODE";
     String componentName2 = "DATANODE";
     String componentName3 = "HDFS_CLIENT";
 
-    createServiceComponent(clusterName, serviceName, componentName1,
+    createServiceComponent(clusterId, serviceName, componentName1,
       State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName2,
+    createServiceComponent(clusterId, serviceName, componentName2,
       State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName3,
+    createServiceComponent(clusterId, serviceName, componentName3,
       State.INIT);
 
     String host1 = "h1";
@@ -195,18 +196,18 @@ public class JMXHostProviderTest {
     hostAttributes.put("os_family", "redhat");
     hostAttributes.put("os_release_version", "6.3");
     clusters.getHost("h2").setHostAttributes(hostAttributes);
-    clusters.mapHostToCluster(host1, clusterName);
-    clusters.mapHostToCluster(host2, clusterName);
+    clusters.mapHostToCluster(host1, clusterId);
+    clusters.mapHostToCluster(host2, clusterId);
 
-    createServiceComponentHost(clusterName, null, componentName1,
+    createServiceComponentHost(clusterId, null, componentName1,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName2,
+    createServiceComponentHost(clusterId, serviceName, componentName2,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName2,
+    createServiceComponentHost(clusterId, serviceName, componentName2,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName, componentName3,
+    createServiceComponentHost(clusterId, serviceName, componentName3,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName3,
+    createServiceComponentHost(clusterId, serviceName, componentName3,
       host2, null);
 
     // Create configs
@@ -216,7 +217,7 @@ public class JMXHostProviderTest {
       configs.put(DATANODE_PORT, "localhost:70075");
       configs.put("ambari.dfs.datanode.http.port", "70070");
 
-      ConfigurationRequest cr = new ConfigurationRequest(clusterName,
+      ConfigurationRequest cr = new ConfigurationRequest(clusterId,
         "hdfs-site", "version1", configs, null);
       ClusterRequest crequest = new ClusterRequest(cluster.getClusterId(), clusterName, null, null);
       crequest.setDesiredConfig(Collections.singletonList(cr));
@@ -227,7 +228,7 @@ public class JMXHostProviderTest {
       configs.put(NAMENODE_PORT_V2, "localhost:70071");
       configs.put(DATANODE_PORT, "localhost:70075");
 
-      ConfigurationRequest cr = new ConfigurationRequest(clusterName,
+      ConfigurationRequest cr = new ConfigurationRequest(clusterId,
         "hdfs-site", "version2", configs, null);
 
       ClusterRequest crequest = new ClusterRequest(cluster.getClusterId(), clusterName, null, null);
@@ -238,6 +239,7 @@ public class JMXHostProviderTest {
 
   private void createConfigs() throws AmbariException, AuthorizationException {
     String clusterName = "c1";
+    Long clusterId = 1L;
     ClusterRequest r = new ClusterRequest(null, clusterName, "HDP-2.0.6", null);
     controller.createCluster(r);
     Cluster cluster = clusters.getCluster(clusterName);
@@ -247,10 +249,10 @@ public class JMXHostProviderTest {
     String serviceName3 = "MAPREDUCE2";
     String serviceName4 = "HBASE";
 
-    createService(clusterName, serviceName, null);
-    createService(clusterName, serviceName2, null);
-    createService(clusterName, serviceName3, null);
-    createService(clusterName, serviceName4, null);
+    createService(clusterId, serviceName, null);
+    createService(clusterId, serviceName2, null);
+    createService(clusterId, serviceName3, null);
+    createService(clusterId, serviceName4, null);
 
     String componentName1 = "NAMENODE";
     String componentName2 = "DATANODE";
@@ -262,23 +264,23 @@ public class JMXHostProviderTest {
     String componentName8 = "HBASE_MASTER";
     String componentName9 = "HBASE_REGIONSERVER";
 
-    createServiceComponent(clusterName, serviceName, componentName1,
+    createServiceComponent(clusterId, serviceName, componentName1,
       State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName2,
+    createServiceComponent(clusterId, serviceName, componentName2,
       State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName3,
+    createServiceComponent(clusterId, serviceName, componentName3,
       State.INIT);
-    createServiceComponent(clusterName, serviceName2, componentName4,
+    createServiceComponent(clusterId, serviceName2, componentName4,
       State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName5,
+    createServiceComponent(clusterId, serviceName, componentName5,
         State.INIT);
-    createServiceComponent(clusterName, serviceName3, componentName6,
+    createServiceComponent(clusterId, serviceName3, componentName6,
         State.INIT);
-    createServiceComponent(clusterName, serviceName2, componentName7,
+    createServiceComponent(clusterId, serviceName2, componentName7,
       State.INIT);
-    createServiceComponent(clusterName, serviceName4, componentName8,
+    createServiceComponent(clusterId, serviceName4, componentName8,
       State.INIT);
-    createServiceComponent(clusterName, serviceName4, componentName9,
+    createServiceComponent(clusterId, serviceName4, componentName9,
       State.INIT);
 
     String host1 = "h1";
@@ -293,32 +295,32 @@ public class JMXHostProviderTest {
     hostAttributes.put("os_family", "redhat");
     hostAttributes.put("os_release_version", "6.3");
     clusters.getHost("h2").setHostAttributes(hostAttributes);
-    clusters.mapHostToCluster(host1, clusterName);
-    clusters.mapHostToCluster(host2, clusterName);
+    clusters.mapHostToCluster(host1, clusterId);
+    clusters.mapHostToCluster(host2, clusterId);
 
-    createServiceComponentHost(clusterName, null, componentName1,
+    createServiceComponentHost(clusterId, null, componentName1,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName2,
+    createServiceComponentHost(clusterId, serviceName, componentName2,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName2,
+    createServiceComponentHost(clusterId, serviceName, componentName2,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName, componentName3,
+    createServiceComponentHost(clusterId, serviceName, componentName3,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName5,
+    createServiceComponentHost(clusterId, serviceName, componentName5,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName5,
+    createServiceComponentHost(clusterId, serviceName, componentName5,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName, componentName3,
+    createServiceComponentHost(clusterId, serviceName, componentName3,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName2, componentName4,
+    createServiceComponentHost(clusterId, serviceName2, componentName4,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName3, componentName6,
+    createServiceComponentHost(clusterId, serviceName3, componentName6,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName2, componentName7,
+    createServiceComponentHost(clusterId, serviceName2, componentName7,
       host2, null);
-    createServiceComponentHost(clusterName, serviceName4, componentName8,
+    createServiceComponentHost(clusterId, serviceName4, componentName8,
       host1, null);
-    createServiceComponentHost(clusterName, serviceName4, componentName9,
+    createServiceComponentHost(clusterId, serviceName4, componentName9,
       host2, null);
 
     // Create configs
@@ -344,7 +346,7 @@ public class JMXHostProviderTest {
     Map<String, String> hbaseConfigs = new HashMap<>();
     hbaseConfigs.put("hbase.ssl.enabled", "true");
 
-    ConfigurationRequest cr1 = new ConfigurationRequest(clusterName,
+    ConfigurationRequest cr1 = new ConfigurationRequest(clusterId,
       "hdfs-site", "versionN", configs, null);
 
     ClusterRequest crReq = new ClusterRequest(cluster.getClusterId(), clusterName, null, null);
@@ -354,17 +356,17 @@ public class JMXHostProviderTest {
     Assert.assertEquals("versionN", cluster.getDesiredConfigByType("hdfs-site")
       .getTag());
 
-    ConfigurationRequest cr2 = new ConfigurationRequest(clusterName,
+    ConfigurationRequest cr2 = new ConfigurationRequest(clusterId,
       "yarn-site", "versionN", yarnConfigs, null);
     crReq.setDesiredConfig(Collections.singletonList(cr2));
     controller.updateClusters(Collections.singleton(crReq), null);
 
-    ConfigurationRequest cr3 = new ConfigurationRequest(clusterName,
+    ConfigurationRequest cr3 = new ConfigurationRequest(clusterId,
         "mapred-site", "versionN", mapreduceConfigs, null);
       crReq.setDesiredConfig(Collections.singletonList(cr3));
       controller.updateClusters(Collections.singleton(crReq), null);
 
-    ConfigurationRequest cr4 = new ConfigurationRequest(clusterName,
+    ConfigurationRequest cr4 = new ConfigurationRequest(clusterId,
         "hbase-site", "versionN", hbaseConfigs, null);
       crReq.setDesiredConfig(Collections.singletonList(cr4));
       controller.updateClusters(Collections.singleton(crReq), null);
@@ -377,21 +379,22 @@ public class JMXHostProviderTest {
 
   private void createConfigsNameNodeHa() throws AmbariException, AuthorizationException {
     String clusterName = "nnha";
+    Long clusterId = 1L;
     ClusterRequest r = new ClusterRequest(null, clusterName, "HDP-2.0.6", null);
     controller.createCluster(r);
     Cluster cluster = clusters.getCluster(clusterName);
     cluster.setDesiredStackVersion(new StackId("HDP-2.0.6"));
     String serviceName = "HDFS";
-    createService(clusterName, serviceName, null);
+    createService(clusterId, serviceName, null);
     String componentName1 = "NAMENODE";
     String componentName2 = "DATANODE";
     String componentName3 = "HDFS_CLIENT";
 
-    createServiceComponent(clusterName, serviceName, componentName1,
+    createServiceComponent(clusterId, serviceName, componentName1,
         State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName2,
+    createServiceComponent(clusterId, serviceName, componentName2,
         State.INIT);
-    createServiceComponent(clusterName, serviceName, componentName3,
+    createServiceComponent(clusterId, serviceName, componentName3,
         State.INIT);
 
     String host1 = "h1";
@@ -406,20 +409,20 @@ public class JMXHostProviderTest {
     hostAttributes.put("os_family", "redhat");
     hostAttributes.put("os_release_version", "6.3");
     clusters.getHost("h2").setHostAttributes(hostAttributes);
-    clusters.mapHostToCluster(host1, clusterName);
-    clusters.mapHostToCluster(host2, clusterName);
+    clusters.mapHostToCluster(host1, clusterId);
+    clusters.mapHostToCluster(host2, clusterId);
 
-    createServiceComponentHost(clusterName, serviceName, componentName1,
+    createServiceComponentHost(clusterId, serviceName, componentName1,
         host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName1,
+    createServiceComponentHost(clusterId, serviceName, componentName1,
         host2, null);
-    createServiceComponentHost(clusterName, serviceName, componentName2,
+    createServiceComponentHost(clusterId, serviceName, componentName2,
         host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName2,
+    createServiceComponentHost(clusterId, serviceName, componentName2,
         host2, null);
-    createServiceComponentHost(clusterName, serviceName, componentName3,
+    createServiceComponentHost(clusterId, serviceName, componentName3,
         host1, null);
-    createServiceComponentHost(clusterName, serviceName, componentName3,
+    createServiceComponentHost(clusterId, serviceName, componentName3,
         host2, null);
 
     // Create configs
@@ -434,7 +437,7 @@ public class JMXHostProviderTest {
     configs.put("dfs.ha.namenodes.ns", "nn1,nn2");
 
 
-    ConfigurationRequest cr1 = new ConfigurationRequest(clusterName,
+    ConfigurationRequest cr1 = new ConfigurationRequest(clusterId,
         "hdfs-site", "version1", configs, null);
 
     ClusterRequest crReq = new ClusterRequest(cluster.getClusterId(), clusterName, null, null);
@@ -632,7 +635,7 @@ public class JMXHostProviderTest {
     Map<String, String> yarnConfigs = new HashMap<>();
     yarnConfigs.put(RESOURCEMANAGER_PORT, "localhost:50030");
     yarnConfigs.put(NODEMANAGER_PORT, "localhost:11111");
-    ConfigurationRequest cr2 = new ConfigurationRequest("c1",
+    ConfigurationRequest cr2 = new ConfigurationRequest(1L,
       "yarn-site", "versionN+1", yarnConfigs, null);
 
     ClusterRequest crReq = new ClusterRequest(1L, "c1", null, null);

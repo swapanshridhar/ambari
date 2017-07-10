@@ -56,7 +56,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetTailFileWhenHelperIsAvailable() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
     final String expectedResultURI = "http://localhost/test/result";
 
     EasyMockSupport mockSupport = new EasyMockSupport();
@@ -69,7 +69,7 @@ public class LogSearchDataRetrievalServiceTest {
     Configuration configurationMock =
       mockSupport.createMock(Configuration.class);
 
-    expect(helperFactoryMock.getHelper(null, expectedClusterName)).andReturn(helperMock);
+    expect(helperFactoryMock.getHelper(null, expectedClusterId)).andReturn(helperMock);
     expect(helperMock.createLogFileTailURI("http://localhost", expectedComponentName, expectedHostName)).andReturn(expectedResultURI);
     expect(configurationMock.getLogSearchMetadataCacheExpireTimeout()).andReturn(1).atLeastOnce();
 
@@ -82,7 +82,7 @@ public class LogSearchDataRetrievalServiceTest {
     retrievalService.doStart();
 
     String resultTailFileURI =
-      retrievalService.getLogFileTailURI("http://localhost", expectedComponentName, expectedHostName, expectedClusterName);
+      retrievalService.getLogFileTailURI("http://localhost", expectedComponentName, expectedHostName, expectedClusterId);
 
     assertEquals("TailFileURI was not returned as expected", expectedResultURI, resultTailFileURI);
 
@@ -93,7 +93,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetTailFileWhenRequestHelperIsNull() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -105,7 +105,7 @@ public class LogSearchDataRetrievalServiceTest {
 
     // return null, to simulate the case where LogSearch Server is
     // not available for some reason
-    expect(helperFactoryMock.getHelper(null, expectedClusterName)).andReturn(null);
+    expect(helperFactoryMock.getHelper(null, expectedClusterId)).andReturn(null);
 
     expect(configurationMock.getLogSearchMetadataCacheExpireTimeout()).andReturn(1).atLeastOnce();
 
@@ -118,7 +118,7 @@ public class LogSearchDataRetrievalServiceTest {
     retrievalService.doStart();
 
     String resultTailFileURI =
-      retrievalService.getLogFileTailURI("http://localhost", expectedComponentName, expectedHostName, expectedClusterName);
+      retrievalService.getLogFileTailURI("http://localhost", expectedComponentName, expectedHostName, expectedClusterId);
 
     assertNull("TailFileURI should be null in this case", resultTailFileURI);
 
@@ -129,7 +129,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetLogFileNamesDefault() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -165,7 +165,7 @@ public class LogSearchDataRetrievalServiceTest {
 
     assertEquals("Default request set should be empty", 0, retrievalService.getCurrentRequests().size());
 
-    Set<String> resultSet = retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterName);
+    Set<String> resultSet = retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterId);
 
     assertNull("Inital query on the retrieval service should be null, since cache is empty by default", resultSet);
     assertEquals("Incorrect number of entries in the current request set", 1, retrievalService.getCurrentRequests().size());
@@ -182,7 +182,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetLogFileNamesExistingFailuresLessThanThreshold() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -220,7 +220,7 @@ public class LogSearchDataRetrievalServiceTest {
 
     assertEquals("Default request set should be empty", 0, retrievalService.getCurrentRequests().size());
 
-    Set<String> resultSet = retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterName);
+    Set<String> resultSet = retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterId);
 
     assertNull("Inital query on the retrieval service should be null, since cache is empty by default", resultSet);
     assertEquals("Incorrect number of entries in the current request set", 1, retrievalService.getCurrentRequests().size());
@@ -239,7 +239,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetLogFileNamesExistingFailuresAtThreshold() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -270,7 +270,7 @@ public class LogSearchDataRetrievalServiceTest {
     assertEquals("Default request set should be empty", 0, retrievalService.getCurrentRequests().size());
 
     Set<String> resultSet =
-      retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterName);
+      retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterId);
 
     assertNull("Inital query on the retrieval service should be null, since cache is empty by default", resultSet);
     assertEquals("Incorrect number of entries in the current request set", 0, retrievalService.getCurrentRequests().size());
@@ -287,7 +287,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetLogFileNamesExistingFailuresOverThreshold() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -318,7 +318,7 @@ public class LogSearchDataRetrievalServiceTest {
     assertEquals("Default request set should be empty", 0, retrievalService.getCurrentRequests().size());
 
     Set<String> resultSet =
-      retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterName);
+      retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterId);
 
     assertNull("Inital query on the retrieval service should be null, since cache is empty by default", resultSet);
     assertEquals("Incorrect number of entries in the current request set", 0, retrievalService.getCurrentRequests().size());
@@ -335,7 +335,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testGetLogFileNamesIgnoreMultipleRequestsForSameHostComponent() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
 
@@ -363,7 +363,7 @@ public class LogSearchDataRetrievalServiceTest {
     // but is not yet completed.
     retrievalService.getCurrentRequests().add(expectedComponentName + "+" + expectedHostName);
 
-    Set<String> resultSet = retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterName);
+    Set<String> resultSet = retrievalService.getLogFileNames(expectedComponentName, expectedHostName, expectedClusterId);
 
     assertNull("Inital query on the retrieval service should be null, since cache is empty by default", resultSet);
 
@@ -375,7 +375,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testRunnableWithSuccessfulCall() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
     final String expectedComponentAndHostName = expectedComponentName + "+" + expectedHostName;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
@@ -388,7 +388,7 @@ public class LogSearchDataRetrievalServiceTest {
     Set<String> currentRequestsMock = mockSupport.createMock(Set.class);
     Map<String, AtomicInteger> componentFailureCounts = mockSupport.createMock(Map.class);
 
-    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterName)).andReturn(helperMock);
+    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterId)).andReturn(helperMock);
     expect(helperMock.sendGetLogFileNamesRequest(expectedComponentName, expectedHostName)).andReturn(Collections.singleton("/this/is/just/a/test/directory"));
     // expect that the results will be placed in the cache
     cacheMock.put(expectedComponentAndHostName, Collections.singleton("/this/is/just/a/test/directory"));
@@ -398,7 +398,7 @@ public class LogSearchDataRetrievalServiceTest {
     mockSupport.replayAll();
 
     LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable loggingRunnable =
-      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterName,
+      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterId,
           cacheMock, currentRequestsMock, helperFactoryMock, componentFailureCounts, controllerMock);
     loggingRunnable.run();
 
@@ -410,7 +410,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testRunnableWithFailedCallNullHelper() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
     final String expectedComponentAndHostName = expectedComponentName + "+" + expectedHostName;
 
     EasyMockSupport mockSupport = new EasyMockSupport();
@@ -423,7 +423,7 @@ public class LogSearchDataRetrievalServiceTest {
     Map<String, AtomicInteger> componentFailureCounts = mockSupport.createMock(Map.class);
 
     // return null to simulate an error during helper instance creation
-    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterName)).andReturn(null);
+    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterId)).andReturn(null);
     // expect that the completed request is removed from the current request set,
     // even in the event of a failure to obtain the LogSearch data
     expect(currentRequestsMock.remove(expectedComponentAndHostName)).andReturn(true).once();
@@ -431,7 +431,7 @@ public class LogSearchDataRetrievalServiceTest {
     mockSupport.replayAll();
 
     LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable loggingRunnable =
-      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterName,
+      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterId,
           cacheMock, currentRequestsMock, helperFactoryMock, componentFailureCounts, controllerMock);
     loggingRunnable.run();
 
@@ -444,7 +444,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testRunnableWithFailedCallNullResult() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
     final String expectedComponentAndHostName = expectedComponentName + "+" + expectedHostName;
     final AtomicInteger testInteger = new AtomicInteger(0);
 
@@ -460,7 +460,7 @@ public class LogSearchDataRetrievalServiceTest {
 
     Capture<AtomicInteger> captureFailureCount = EasyMock.newCapture();
 
-    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterName)).andReturn(helperMock);
+    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterId)).andReturn(helperMock);
     // return null to simulate an error occurring during the LogSearch data request
     expect(helperMock.sendGetLogFileNamesRequest(expectedComponentName, expectedHostName)).andReturn(null);
     // expect that the completed request is removed from the current request set,
@@ -477,7 +477,7 @@ public class LogSearchDataRetrievalServiceTest {
     mockSupport.replayAll();
 
     LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable loggingRunnable =
-      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterName,
+      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterId,
           cacheMock, currentRequestsMock, helperFactoryMock, componentFailureCounts, controllerMock);
     loggingRunnable.run();
 
@@ -494,7 +494,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testRunnableWithFailedCallNullResultExistingFailureCount() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
     final String expectedComponentAndHostName = expectedComponentName + "+" + expectedHostName;
     final AtomicInteger testFailureCount = new AtomicInteger(2);
 
@@ -508,7 +508,7 @@ public class LogSearchDataRetrievalServiceTest {
     Set<String> currentRequestsMock = mockSupport.createMock(Set.class);
     Map<String, AtomicInteger> componentFailureCounts = mockSupport.createMock(Map.class);
 
-    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterName)).andReturn(helperMock);
+    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterId)).andReturn(helperMock);
     // return null to simulate an error occurring during the LogSearch data request
     expect(helperMock.sendGetLogFileNamesRequest(expectedComponentName, expectedHostName)).andReturn(null);
     // expect that the completed request is removed from the current request set,
@@ -525,7 +525,7 @@ public class LogSearchDataRetrievalServiceTest {
                  2, testFailureCount.get());
 
     LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable loggingRunnable =
-      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterName,
+      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterId,
         cacheMock, currentRequestsMock, helperFactoryMock, componentFailureCounts, controllerMock);
     loggingRunnable.run();
 
@@ -540,7 +540,7 @@ public class LogSearchDataRetrievalServiceTest {
   public void testRunnableWithFailedCallEmptyResult() throws Exception {
     final String expectedHostName = "c6401.ambari.apache.org";
     final String expectedComponentName = "DATANODE";
-    final String expectedClusterName = "clusterone";
+    final Long expectedClusterId = 1L;
     final String expectedComponentAndHostName = expectedComponentName + "+" + expectedHostName;
     final AtomicInteger testInteger = new AtomicInteger(0);
 
@@ -556,7 +556,7 @@ public class LogSearchDataRetrievalServiceTest {
 
     Capture<AtomicInteger> captureFailureCount = EasyMock.newCapture();
 
-    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterName)).andReturn(helperMock);
+    expect(helperFactoryMock.getHelper(controllerMock, expectedClusterId)).andReturn(helperMock);
     // return null to simulate an error occurring during the LogSearch data request
     expect(helperMock.sendGetLogFileNamesRequest(expectedComponentName, expectedHostName)).andReturn(Collections.<String>emptySet());
     // expect that the completed request is removed from the current request set,
@@ -572,7 +572,7 @@ public class LogSearchDataRetrievalServiceTest {
     mockSupport.replayAll();
 
     LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable loggingRunnable =
-      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterName,
+      new LogSearchDataRetrievalService.LogSearchFileNameRequestRunnable(expectedHostName, expectedComponentName, expectedClusterId,
           cacheMock, currentRequestsMock, helperFactoryMock, componentFailureCounts, controllerMock);
     loggingRunnable.run();
 

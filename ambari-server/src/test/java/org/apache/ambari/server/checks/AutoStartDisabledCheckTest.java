@@ -80,8 +80,9 @@ public class AutoStartDisabledCheckTest {
 
   @Test
   public void testNoAutoStart() throws Exception {
-    PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.AUTO_START_DISABLED, "foo");
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    Long clusterId = 1L;
+    PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.AUTO_START_DISABLED, clusterId);
+    PrereqCheckRequest request = new PrereqCheckRequest(clusterId);
 
     Assert.assertTrue(m_check.isApplicable(request));
 
@@ -93,8 +94,9 @@ public class AutoStartDisabledCheckTest {
 
   @Test
   public void testAutoStartFalse() throws Exception {
-    PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.AUTO_START_DISABLED, "foo");
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    Long clusterId = 1L;
+    PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.AUTO_START_DISABLED, clusterId);
+    PrereqCheckRequest request = new PrereqCheckRequest(clusterId);
 
     Assert.assertTrue(m_check.isApplicable(request));
 
@@ -108,8 +110,9 @@ public class AutoStartDisabledCheckTest {
 
   @Test
   public void testAutoStartTrue() throws Exception {
-    PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.AUTO_START_DISABLED, "foo");
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    Long clusterId = 1L;
+    PrerequisiteCheck check = new PrerequisiteCheck(CheckDescription.AUTO_START_DISABLED, clusterId);
+    PrereqCheckRequest request = new PrereqCheckRequest(clusterId);
 
     Assert.assertTrue(m_check.isApplicable(request));
 

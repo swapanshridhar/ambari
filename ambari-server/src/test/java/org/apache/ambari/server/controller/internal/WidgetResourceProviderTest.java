@@ -109,7 +109,7 @@ public class WidgetResourceProviderTest {
       WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID,
       WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID,
       WidgetResourceProvider.WIDGET_TIME_CREATED_PROPERTY_ID,
-      WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID,
+      WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID,
       WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID,
       WidgetResourceProvider.WIDGET_DESCRIPTION_PROPERTY_ID,
       WidgetResourceProvider.WIDGET_SCOPE_PROPERTY_ID,
@@ -125,7 +125,7 @@ public class WidgetResourceProviderTest {
     expect(cluster.getClusterName()).andReturn("c1").anyTimes();
 
     Predicate predicate = new PredicateBuilder().property(
-        WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID).equals(1L)
           .and().property(WidgetResourceProvider.WIDGET_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID).equals("username").toPredicate();
 
@@ -170,7 +170,7 @@ public class WidgetResourceProviderTest {
             WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID,
             WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID,
             WidgetResourceProvider.WIDGET_TIME_CREATED_PROPERTY_ID,
-            WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID,
+            WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID,
             WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID,
             WidgetResourceProvider.WIDGET_DESCRIPTION_PROPERTY_ID,
             WidgetResourceProvider.WIDGET_SCOPE_PROPERTY_ID,
@@ -186,7 +186,7 @@ public class WidgetResourceProviderTest {
     expect(cluster.getClusterName()).andReturn("c1").anyTimes();
 
     Predicate predicate = new PredicateBuilder().property(
-            WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+            WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID).equals(1L)
             .and().property(WidgetResourceProvider.WIDGET_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID).equals("username").toPredicate();
 
@@ -228,7 +228,7 @@ public class WidgetResourceProviderTest {
     WidgetResourceProvider provider = createProvider(amc);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID, "widget name");
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID, "GAUGE");
     requestProps.put(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID, "admin");
@@ -283,7 +283,7 @@ public class WidgetResourceProviderTest {
     replay(amc, clusters, cluster, dao);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID, "widget name");
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID, "GAUGE");
     requestProps.put(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID, "admin");
@@ -310,7 +310,7 @@ public class WidgetResourceProviderTest {
     Assert.assertNotNull(entity);
 
     Predicate predicate = new PredicateBuilder().property(
-            WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+            WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID).equals(1L)
             .and().property(WidgetResourceProvider.WIDGET_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID).equals("username").toPredicate();
 
@@ -328,7 +328,7 @@ public class WidgetResourceProviderTest {
 
     requestProps = new HashMap<>();
     requestProps.put(WidgetResourceProvider.WIDGET_ID_PROPERTY_ID, "1");
-    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID, "widget name2");
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID, "GAUGE");
     requestProps.put(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID, "admin");
@@ -380,7 +380,7 @@ public class WidgetResourceProviderTest {
     WidgetResourceProvider provider = createProvider(amc);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID, "widget name");
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID, "GAUGE");
     requestProps.put(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID, "admin");
@@ -404,7 +404,7 @@ public class WidgetResourceProviderTest {
     Assert.assertNotNull(entity);
 
     Predicate predicate = new PredicateBuilder().property(
-            WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+            WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID).equals(1L)
             .and().property(WidgetResourceProvider.WIDGET_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID).equals("username").toPredicate();
 
@@ -445,7 +445,7 @@ public class WidgetResourceProviderTest {
     PowerMock.replayAll();
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetResourceProvider.WIDGET_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_NAME_PROPERTY_ID, "widget name");
     requestProps.put(WidgetResourceProvider.WIDGET_WIDGET_TYPE_PROPERTY_ID, "GAUGE");
     requestProps.put(WidgetResourceProvider.WIDGET_AUTHOR_PROPERTY_ID, "admin");

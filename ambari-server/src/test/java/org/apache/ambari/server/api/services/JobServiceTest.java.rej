@@ -1,0 +1,39 @@
+***************
+*** 59,76 ****
+  
+    private class TestJobService extends JobService {
+      private String workflowId;
+-     private String clusterName;
+  
+-     public TestJobService(String clusterName, String workflowId) {
+-       super(ApiVersion.Default, clusterName, workflowId);
+-       this.clusterName = clusterName;
+        this.workflowId = workflowId;
+      }
+  
+      @Override
+-     ResourceInstance createJobResource(String clusterName, String workflowId,
+          String jobId) {
+-       assertEquals(this.clusterName, clusterName);
+        assertEquals(this.workflowId, workflowId);
+        return getTestResource();
+      }
+--- 59,76 ----
+  
+    private class TestJobService extends JobService {
+      private String workflowId;
++     private Long clusterId;
+  
++     public TestJobService(Long clusterId, String workflowId) {
++       super(ApiVersion.Default, clusterId, workflowId);
++       this.clusterId = clusterId;
+        this.workflowId = workflowId;
+      }
+  
+      @Override
++     ResourceInstance createJobResource(Long clusterId, String workflowId,
+          String jobId) {
++       assertEquals(this.clusterId, clusterId);
+        assertEquals(this.workflowId, workflowId);
+        return getTestResource();
+      }

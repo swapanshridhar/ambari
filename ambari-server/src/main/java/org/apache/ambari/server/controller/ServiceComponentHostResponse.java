@@ -26,7 +26,7 @@ import org.apache.ambari.server.state.UpgradeState;
 
 public class ServiceComponentHostResponse {
 
-  private String clusterName; // REF
+  private Long clusterId; // REF
   private String serviceName;
   private String componentName;
   private String displayName;
@@ -186,17 +186,17 @@ public class ServiceComponentHostResponse {
   }
 
   /**
-   * @return the clusterName
+   * @return the clusterId
    */
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   /**
-   * @param clusterName the clusterName to set
+   * @param clusterId the clusterId to set
    */
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   /**
@@ -225,8 +225,8 @@ public class ServiceComponentHostResponse {
     ServiceComponentHostResponse that =
         (ServiceComponentHostResponse) o;
 
-    if (clusterName != null ?
-        !clusterName.equals(that.clusterName) : that.clusterName != null) {
+    if (clusterId != null ?
+        !clusterId.equals(that.clusterId) : that.clusterId != null) {
       return false;
     }
     if (serviceName != null ?
@@ -247,7 +247,7 @@ public class ServiceComponentHostResponse {
 
   @Override
   public int hashCode() {
-    int result = clusterName != null ? clusterName.hashCode() : 0;
+    int result = clusterId != null ? clusterId.hashCode() : 0;
     result = 71 * result + (serviceName != null ? serviceName.hashCode() : 0);
     result = 71 * result + (componentName != null ? componentName.hashCode() : 0);
     result = 71 * result + (hostname != null ? hostname.hashCode() : 0);

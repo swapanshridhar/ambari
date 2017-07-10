@@ -60,9 +60,9 @@ public class RequestService extends BaseService {
   private static final String REQUEST_PUT_REQUEST_TYPE = "org.apache.ambari.server.controller.RequestPutRequest";
 
   /**
-   * Parent cluster name.
+   * Parent cluster ID.
    */
-  private String m_clusterName;
+  private Long m_clusterId;
 
 
   public RequestService() {
@@ -109,7 +109,7 @@ public class RequestService extends BaseService {
                              @ApiParam @PathParam("requestId") String requestId) {
 
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createRequestResource(m_clusterName, requestId));
+        createRequestResource(m_clusterId, requestId));
   }
 
   /**
@@ -145,7 +145,7 @@ public class RequestService extends BaseService {
   })
   public Response getRequests(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createRequestResource(m_clusterName, null));
+        createRequestResource(m_clusterId, null));
   }
 
   /**

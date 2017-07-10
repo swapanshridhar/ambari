@@ -37,6 +37,8 @@ import org.apache.ambari.server.orm.entities.PrivilegeEntity;
 import org.apache.ambari.server.orm.entities.ResourceEntity;
 import org.apache.ambari.server.orm.entities.UserEntity;
 import org.apache.ambari.server.security.authorization.RoleAuthorization;
+import org.apache.ambari.server.utils.MapUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Resource provider for cluster privileges.
@@ -51,14 +53,14 @@ public class ClusterPrivilegeResourceProvider extends PrivilegeResourceProvider<
   /**
    * Cluster privilege property id constants.
    */
-  protected static final String PRIVILEGE_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("PrivilegeInfo", "cluster_name");
+  protected static final String PRIVILEGE_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId("PrivilegeInfo", "cluster_id");
 
   /**
    * The property ids for a privilege resource.
    */
   private static Set<String> propertyIds = new HashSet<>();
   static {
-    propertyIds.add(PRIVILEGE_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(PRIVILEGE_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_ID_PROPERTY_ID);
     propertyIds.add(PERMISSION_NAME_PROPERTY_ID);
     propertyIds.add(PERMISSION_NAME_PROPERTY_ID);
@@ -72,7 +74,7 @@ public class ClusterPrivilegeResourceProvider extends PrivilegeResourceProvider<
    */
   private static Map<Resource.Type, String> keyPropertyIds = new HashMap<>();
   static {
-    keyPropertyIds.put(Resource.Type.Cluster, PRIVILEGE_CLUSTER_NAME_PROPERTY_ID);
+    keyPropertyIds.put(Resource.Type.Cluster, PRIVILEGE_CLUSTER_ID_PROPERTY_ID);
     keyPropertyIds.put(Resource.Type.ClusterPrivilege, PRIVILEGE_ID_PROPERTY_ID);
   }
 
@@ -117,10 +119,9 @@ public class ClusterPrivilegeResourceProvider extends PrivilegeResourceProvider<
   @Override
   public Map<Long, ClusterEntity> getResourceEntities(Map<String, Object> properties) {
 
-    String clusterName = (String) properties.get(PRIVILEGE_CLUSTER_NAME_PROPERTY_ID);
-
-    if (clusterName == null) {
-      Map<Long, ClusterEntity> resourceEntities = new HashMap<>();
+    Long clusterId = MapUtils.parseLong(properties, PRIVILEGE_CLUSTER_ID_PROPERTY_ID);
+    if (clusterId == null) {
+      Map<Long, ClusterEntity> resourceEntities = new HashMap<Long, ClusterEntity>();
 
       List<ClusterEntity> clusterEntities = clusterDAO.findAll();
 
@@ -129,14 +130,18 @@ public class ClusterPrivilegeResourceProvider extends PrivilegeResourceProvider<
       }
       return resourceEntities;
     }
-    ClusterEntity clusterEntity = clusterDAO.findByName(clusterName);
+    ClusterEntity clusterEntity = clusterDAO.findById(clusterId);
     return Collections.singletonMap(clusterEntity.getResource().getId(), clusterEntity);
   }
 
   @Override
   public Long getResourceEntityId(Predicate predicate) {
-    final String clusterName = getQueryParameterValue(PRIVILEGE_CLUSTER_NAME_PROPERTY_ID, predicate).toString();
-    final ClusterEntity clusterEntity = clusterDAO.findByName(clusterName);
+    Long clusterId = null;
+    String clusterIdStr = (String)getQueryParameterValue(PRIVILEGE_CLUSTER_ID_PROPERTY_ID, predicate);
+    if(StringUtils.isNotBlank(clusterIdStr)) {
+      clusterId = Long.parseLong(clusterIdStr);
+    }
+    final ClusterEntity clusterEntity = clusterDAO.findById(clusterId);
     return clusterEntity.getResource().getId();
   }
 
@@ -154,7 +159,7 @@ public class ClusterPrivilegeResourceProvider extends PrivilegeResourceProvider<
     Resource resource = super.toResource(privilegeEntity, userEntities, groupEntities, roleEntities, resourceEntities, requestedIds);
     if (resource != null) {
       ClusterEntity clusterEntity = resourceEntities.get(privilegeEntity.getResource().getId());
-      setResourceProperty(resource, PRIVILEGE_CLUSTER_NAME_PROPERTY_ID, clusterEntity.getClusterName(), requestedIds);
+      setResourceProperty(resource, PRIVILEGE_CLUSTER_ID_PROPERTY_ID, clusterEntity.getClusterId(), requestedIds);
     }
     return resource;
   }

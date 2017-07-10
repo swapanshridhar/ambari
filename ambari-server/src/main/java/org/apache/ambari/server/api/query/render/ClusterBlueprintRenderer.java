@@ -338,7 +338,7 @@ public class ClusterBlueprintRenderer extends BaseRenderer implements Renderer {
 
   private Map<String, Object> getKerberosDescriptor(ClusterController clusterController, String clusterName) throws AmbariException {
     PredicateBuilder pb = new PredicateBuilder();
-    Predicate predicate = pb.begin().property("Artifacts/cluster_name").equals(clusterName).and().
+    Predicate predicate = pb.begin().property("Artifacts/cluster_id").equals(clusterName).and().
       property(ArtifactResourceProvider.ARTIFACT_NAME_PROPERTY).equals("kerberos_descriptor").
       end().toPredicate();
 

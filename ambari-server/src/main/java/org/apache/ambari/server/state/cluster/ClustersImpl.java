@@ -280,7 +280,7 @@ public class ClustersImpl implements Clusters {
   public Cluster getClusterById(long id) throws AmbariException {
     Cluster cluster = clustersById.get(id);
     if (null == cluster) {
-      throw new ClusterNotFoundException("clusterID=" + id);
+      throw new ClusterNotFoundException("clusterId=" + id);
     }
 
     return clustersById.get(id);
@@ -399,18 +399,17 @@ public class ClustersImpl implements Clusters {
 
   @Override
   public void updateHostWithClusterAndAttributes(
-      Map<String, Set<String>> hostClusters,
-      Map<String, Map<String, String>> hostAttributes) throws AmbariException {
+    Map<String, Set<Long>> hostsClusters, Map<String, Map<String, String>> hostAttributes) throws AmbariException {
 
-    if (null == hostClusters || hostClusters.isEmpty()) {
+    if (null == hostsClusters || hostsClusters.isEmpty()) {
       return;
     }
 
-    Map<String, Host> hostMap = getHostsMap(hostClusters.keySet());
+    Map<String, Host> hostMap = getHostsMap(hostsClusters.keySet());
 
-    Map<String, Set<String>> clusterHosts = new HashMap<>();
-    for (Map.Entry<String, Set<String>> hostClustersEntry : hostClusters.entrySet()) {
-      Set<String> hostClusterNames = hostClustersEntry.getValue();
+    Map<Long, Set<String>> clusterHosts = new HashMap<>();
+    for (Map.Entry<String, Set<Long>> hostClustersEntry : hostsClusters.entrySet()) {
+      Set<Long> hostClusterIds = hostClustersEntry.getValue();
       String hostname = hostClustersEntry.getKey();
 
       // populate attributes
@@ -421,20 +420,20 @@ public class ClustersImpl implements Clusters {
       }
 
       // create cluster to hosts map
-      for (String clusterName : hostClusterNames) {
-        if (clusterName != null && !clusterName.isEmpty()) {
-          if (!clusterHosts.containsKey(clusterName)) {
-            clusterHosts.put(clusterName, new HashSet<String>());
+      for (Long clusterId : hostClusterIds) {
+        if (clusterId != null) {
+          if (!clusterHosts.containsKey(clusterId)) {
+            clusterHosts.put(clusterId, new HashSet<String>());
           }
-          clusterHosts.get(clusterName).add(hostname);
+          clusterHosts.get(clusterId).add(hostname);
         }
       }
     }
 
-    for (Map.Entry<String, Set<String>> clusterHostsEntry : clusterHosts.entrySet()) {
+    for (Map.Entry<Long, Set<String>> clusterHostsEntry : clusterHosts.entrySet()) {
       Set<String> clusterHostsNames = clusterHostsEntry.getValue();
-      String clusterName = clusterHostsEntry.getKey();
-      mapAndPublishHostsToCluster(clusterHostsNames, clusterName);
+      Long clusterId = clusterHostsEntry.getKey();
+      mapAndPublishHostsToCluster(clusterHostsNames, clusterId);
     }
   }
 
@@ -462,20 +461,20 @@ public class ClustersImpl implements Clusters {
   /**
    *  For each host, attempts to map it to the cluster, and apply the cluster's current version to the host.
    * @param hostnames Collection of host names
-   * @param clusterName Cluster name
+   * @param clusterId Cluster Id
    * @throws AmbariException
    */
   @Override
-  public void mapAndPublishHostsToCluster(Set<String> hostnames, String clusterName) throws AmbariException {
+  public void mapAndPublishHostsToCluster(Set<String> hostnames, Long clusterId) throws AmbariException {
     for (String hostname : hostnames) {
-      mapHostToCluster(hostname, clusterName);
+      mapHostToCluster(hostname, clusterId);
     }
-    publishAddingHostsToCluster(hostnames, clusterName);
-    getCluster(clusterName).refresh();
+    publishAddingHostsToCluster(hostnames, clusterId);
+    getCluster(clusterId).refresh();
   }
 
-  private void publishAddingHostsToCluster(Set<String> hostnames, String clusterName) throws AmbariException {
-    HostsAddedEvent event = new HostsAddedEvent(getCluster(clusterName).getClusterId(), hostnames);
+  private void publishAddingHostsToCluster(Set<String> hostnames, Long clusterId) throws AmbariException {
+    HostsAddedEvent event = new HostsAddedEvent(getCluster(clusterId).getClusterId(), hostnames);
     eventPublisher.publish(event);
   }
 
@@ -501,7 +500,6 @@ public class ClustersImpl implements Clusters {
       }
     }
 
-    long clusterId = cluster.getClusterId();
     if (LOG.isDebugEnabled()) {
       LOG.debug("Mapping host {} to cluster {} (id={})", hostname, clusterName,
         clusterId);
@@ -566,7 +564,7 @@ public class ClustersImpl implements Clusters {
 
   @Override
   public Map<Long, Host> getHostIdsForCluster(String clusterName)
-      throws AmbariException {
+    throws AmbariException {
     Map<Long, Host> hosts = new HashMap<>();
 
     for (Host h : clusterHostMap.get(clusterName)) {
@@ -575,6 +573,13 @@ public class ClustersImpl implements Clusters {
     }
 
     return hosts;
+  }
+
+  @Override
+  public Map<String, Host> getHostsForCluster(Long clusterId)
+    throws AmbariException {
+    Cluster cluster = getCluster(clusterId);
+    return getHostsForCluster(cluster.getClusterName());
   }
 
   @Override

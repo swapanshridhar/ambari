@@ -41,9 +41,9 @@ import org.apache.ambari.server.controller.spi.Resource;
  */
 public class StageService extends BaseService {
   /**
-   * Parent cluster name.
+   * Parent cluster Id.
    */
-  private String m_clusterName;
+  private Long m_clusterId;
 
   /**
    * Parent request id.
@@ -66,7 +66,7 @@ public class StageService extends BaseService {
   // ----- StageService ------------------------------------------------------
 
   /**
-   * Handles URL: /clusters/{clusterID}/requests/{requestID}/stages/{stageID} or
+   * Handles URL: /clusters/{clusterId}/requests/{requestID}/stages/{stageID} or
    * /requests/{requestId}/stages/{stageID}
    * Get a specific stage.
    *
@@ -83,7 +83,7 @@ public class StageService extends BaseService {
                            @PathParam("stageId") String stageId) {
 
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createStageResource(m_clusterName, m_requestId, stageId));
+        createStageResource(m_clusterId, m_requestId, stageId));
   }
 
   /**
@@ -99,7 +99,7 @@ public class StageService extends BaseService {
   @Produces("text/plain")
   public Response getStages(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createStageResource(m_clusterName, m_requestId, null));
+        createStageResource(m_clusterId, m_requestId, null));
   }
 
   /**
@@ -124,7 +124,7 @@ public class StageService extends BaseService {
   @Produces("text/plain")
   public Response updateStages(String body, @Context HttpHeaders headers, @Context UriInfo ui,
                                @PathParam("stageId") String stageId) {
-    return handleRequest(headers, body, ui, Request.Type.PUT, createStageResource(m_clusterName, m_requestId, stageId));
+    return handleRequest(headers, body, ui, Request.Type.PUT, createStageResource(m_clusterId, m_requestId, stageId));
   }
 
   /**
@@ -140,23 +140,23 @@ public class StageService extends BaseService {
   @Produces("text/plain")
   public Response createStages(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
 
-    return handleRequest(headers, body, ui, Request.Type.POST, createStageResource(m_clusterName, m_requestId, null));
+    return handleRequest(headers, body, ui, Request.Type.POST, createStageResource(m_clusterId, m_requestId, null));
   }
 
   /**
    * Create a stage resource instance.
    *
-   * @param clusterName  cluster name
+   * @param clusterId    cluster Id
    * @param requestId    request id
    * @param stageId      stage id
    *
    * @return a stage resource instance
    */
-  ResourceInstance createStageResource(String clusterName, String requestId, String stageId) {
+  ResourceInstance createStageResource(Long clusterId, String requestId, String stageId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
 
-    if (clusterName != null) {
-      mapIds.put(Resource.Type.Cluster, clusterName);
+    if (clusterId != null) {
+      mapIds.put(Resource.Type.Cluster, clusterId.toString());
     }
     mapIds.put(Resource.Type.Request, requestId);
     mapIds.put(Resource.Type.Stage, stageId);

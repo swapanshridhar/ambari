@@ -39,12 +39,12 @@ public class GangliaHostComponentPropertyProvider extends GangliaPropertyProvide
                                               URLStreamProvider streamProvider,
                                               ComponentSSLConfiguration configuration,
                                               MetricHostProvider hostProvider,
-                                              String clusterNamePropertyId,
+                                              String clusterIdPropertyId,
                                               String hostNamePropertyId,
                                               String componentNamePropertyId) {
 
     super(componentPropertyInfoMap, streamProvider, configuration, hostProvider,
-        clusterNamePropertyId, hostNamePropertyId, componentNamePropertyId);
+        clusterIdPropertyId, hostNamePropertyId, componentNamePropertyId);
   }
 
 

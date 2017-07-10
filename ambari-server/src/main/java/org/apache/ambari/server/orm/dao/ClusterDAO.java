@@ -266,8 +266,9 @@ public class ClusterDAO {
    * @param clusterEntity entity to create
    */
   @Transactional
-  public void create(ClusterEntity clusterEntity) {
+  public ClusterEntity create(ClusterEntity clusterEntity) {
     entityManagerProvider.get().persist(clusterEntity);
+    return clusterEntity;
   }
 
   /**

@@ -1,0 +1,17 @@
+***************
+*** 174,180 ****
+  
+      // Create another Cluster Version and mark the old one as INSTALLED
+      if (clusterEntity.getClusterVersionEntities() != null && clusterEntity.getClusterVersionEntities().size() > 0) {
+-       ClusterVersionEntity installedClusterVersion = clusterVersionDAO.findByClusterAndStateCurrent(clusterEntity.getClusterName());
+        installedClusterVersion.setState(RepositoryVersionState.INSTALLED);
+        clusterVersionDAO.merge(installedClusterVersion);
+      } else {
+--- 174,180 ----
+  
+      // Create another Cluster Version and mark the old one as INSTALLED
+      if (clusterEntity.getClusterVersionEntities() != null && clusterEntity.getClusterVersionEntities().size() > 0) {
++       ClusterVersionEntity installedClusterVersion = clusterVersionDAO.findByClusterAndStateCurrent(clusterEntity.getClusterId());
+        installedClusterVersion.setState(RepositoryVersionState.INSTALLED);
+        clusterVersionDAO.merge(installedClusterVersion);
+      } else {

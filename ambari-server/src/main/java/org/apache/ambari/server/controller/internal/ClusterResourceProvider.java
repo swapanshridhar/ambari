@@ -56,6 +56,7 @@ import org.apache.ambari.server.topology.SecurityConfiguration;
 import org.apache.ambari.server.topology.SecurityConfigurationFactory;
 import org.apache.ambari.server.topology.TopologyManager;
 import org.apache.ambari.server.topology.TopologyRequestFactory;
+import org.apache.ambari.server.utils.MapUtils;
 import org.springframework.security.core.Authentication;
 
 import com.google.gson.Gson;
@@ -136,7 +137,7 @@ public class ClusterResourceProvider extends AbstractControllerResourceProvider 
    */
   private static Map<Resource.Type, String> keyPropertyIds = new HashMap<>();
   static {
-    keyPropertyIds.put(Resource.Type.Cluster, CLUSTER_NAME_PROPERTY_ID);
+    keyPropertyIds.put(Resource.Type.Cluster, CLUSTER_ID_PROPERTY_ID);
   }
 
   /**
@@ -234,16 +235,26 @@ public class ClusterResourceProvider extends AbstractControllerResourceProvider 
              NoSuchParentResourceException {
 
     RequestStatusResponse createResponse = null;
+    ClusterResponse clusterResponse = null;
     for (final Map<String, Object> properties : request.getProperties()) {
       if (isCreateFromBlueprint(properties)) {
         createResponse = processBlueprintCreate(properties, request.getRequestInfoProperties());
       } else {
-        createClusterResource(properties);
+        clusterResponse = createClusterResource(properties);
       }
     }
 
     notifyCreate(Resource.Type.Cluster, request);
-    return getRequestStatus(createResponse);
+
+    Set<Resource> associatedResources = new HashSet<>();
+    Resource resource = new ResourceImpl(Resource.Type.Cluster);
+    resource.setProperty(CLUSTER_ID_PROPERTY_ID, clusterResponse.getClusterId());
+    resource.setProperty(CLUSTER_NAME_PROPERTY_ID, clusterResponse.getClusterName());
+    resource.setProperty(CLUSTER_VERSION_PROPERTY_ID,clusterResponse.getDesiredStackVersion());
+
+    associatedResources.add(resource);
+
+    return getRequestStatus(createResponse, associatedResources);
   }
 
   @Override
@@ -416,8 +427,9 @@ public class ClusterResourceProvider extends AbstractControllerResourceProvider 
       }
     }
 
+    Long clusterId = MapUtils.parseLong(properties, CLUSTER_ID_PROPERTY_ID);
     ClusterRequest cr = new ClusterRequest(
-        (Long) properties.get(CLUSTER_ID_PROPERTY_ID),
+        clusterId,
         (String) properties.get(CLUSTER_NAME_PROPERTY_ID),
         (String) properties.get(CLUSTER_PROVISIONING_STATE_PROPERTY_ID),
         securityType,
@@ -563,16 +575,15 @@ public class ClusterResourceProvider extends AbstractControllerResourceProvider 
    * @throws SystemException                 an unexpected exception occurred
    * @throws NoSuchParentResourceException   shouldn't be thrown as a cluster doesn't have a parent resource
    */
-  private void createClusterResource(final Map<String, Object> properties)
+  private ClusterResponse createClusterResource(final Map<String, Object> properties)
       throws ResourceAlreadyExistsException, SystemException, NoSuchParentResourceException {
-
-    createResources(new Command<Void>() {
+    ClusterResponse clusterResponse =
+    createResources(new Command<ClusterResponse>() {
       @Override
-      public Void invoke() throws AmbariException, AuthorizationException {
-        getManagementController().createCluster(getRequest(properties));
-        return null;
+      public ClusterResponse invoke() throws AmbariException, AuthorizationException { return getManagementController().createCluster(getRequest(properties));
       }
     });
+    return clusterResponse;
   }
 
 }

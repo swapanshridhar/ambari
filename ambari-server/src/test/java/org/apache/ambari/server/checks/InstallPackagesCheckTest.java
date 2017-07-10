@@ -64,10 +64,11 @@ public class InstallPackagesCheckTest {
   private StackId targetStackId = new StackId("HDP", "2.2");
   private String repositoryVersion = "2.2.6.0-1234";
   private String clusterName = "cluster";
+  private Long clusterId = 1L;
 
   @Test
   public void testIsApplicable() throws Exception {
-    PrereqCheckRequest checkRequest = new PrereqCheckRequest(clusterName);
+    PrereqCheckRequest checkRequest = new PrereqCheckRequest(clusterId);
     checkRequest.setRepositoryVersion(repositoryVersion);
     checkRequest.setSourceStackId(sourceStackId);
     checkRequest.setTargetStackId(targetStackId);
@@ -143,7 +144,7 @@ public class InstallPackagesCheckTest {
     }
     Mockito.when(cluster.getHosts()).thenReturn(hosts);
 
-    PrereqCheckRequest checkRequest = new PrereqCheckRequest(clusterName);
+    PrereqCheckRequest checkRequest = new PrereqCheckRequest(clusterId);
     checkRequest.setRepositoryVersion(repositoryVersion);
     checkRequest.setSourceStackId(sourceStackId);
     checkRequest.setTargetStackId(targetStackId);

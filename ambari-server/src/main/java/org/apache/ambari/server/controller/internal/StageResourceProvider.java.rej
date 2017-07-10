@@ -1,0 +1,84 @@
+***************
+*** 47,53 ****
+  import org.apache.ambari.server.controller.utilities.PredicateHelper;
+  import org.apache.ambari.server.orm.dao.HostRoleCommandDAO;
+  import org.apache.ambari.server.orm.dao.HostRoleCommandStatusSummaryDTO;
+- import org.apache.ambari.server.orm.dao.RequestDAO;
+  import org.apache.ambari.server.orm.dao.StageDAO;
+  import org.apache.ambari.server.orm.entities.StageEntity;
+  import org.apache.ambari.server.state.Cluster;
+--- 47,52 ----
+  import org.apache.ambari.server.controller.utilities.PredicateHelper;
+  import org.apache.ambari.server.orm.dao.HostRoleCommandDAO;
+  import org.apache.ambari.server.orm.dao.HostRoleCommandStatusSummaryDTO;
+  import org.apache.ambari.server.orm.dao.StageDAO;
+  import org.apache.ambari.server.orm.entities.StageEntity;
+  import org.apache.ambari.server.state.Cluster;
+***************
+*** 88,94 ****
+     * Stage property constants.
+     */
+    public static final String STAGE_STAGE_ID = "Stage/stage_id";
+-   public static final String STAGE_CLUSTER_NAME = "Stage/cluster_name";
+    public static final String STAGE_REQUEST_ID = "Stage/request_id";
+    public static final String STAGE_LOG_INFO = "Stage/log_info";
+    public static final String STAGE_CONTEXT = "Stage/context";
+--- 87,93 ----
+     * Stage property constants.
+     */
+    public static final String STAGE_STAGE_ID = "Stage/stage_id";
++   public static final String STAGE_CLUSTER_ID = "Stage/cluster_id";
+    public static final String STAGE_REQUEST_ID = "Stage/request_id";
+    public static final String STAGE_LOG_INFO = "Stage/log_info";
+    public static final String STAGE_CONTEXT = "Stage/context";
+***************
+*** 115,121 ****
+    static {
+      // properties
+      PROPERTY_IDS.add(STAGE_STAGE_ID);
+-     PROPERTY_IDS.add(STAGE_CLUSTER_NAME);
+      PROPERTY_IDS.add(STAGE_REQUEST_ID);
+      PROPERTY_IDS.add(STAGE_LOG_INFO);
+      PROPERTY_IDS.add(STAGE_CONTEXT);
+--- 114,120 ----
+    static {
+      // properties
+      PROPERTY_IDS.add(STAGE_STAGE_ID);
++     PROPERTY_IDS.add(STAGE_CLUSTER_ID);
+      PROPERTY_IDS.add(STAGE_REQUEST_ID);
+      PROPERTY_IDS.add(STAGE_LOG_INFO);
+      PROPERTY_IDS.add(STAGE_CONTEXT);
+***************
+*** 130,136 ****
+  
+      // keys
+      KEY_PROPERTY_IDS.put(Resource.Type.Stage, STAGE_STAGE_ID);
+-     KEY_PROPERTY_IDS.put(Resource.Type.Cluster, STAGE_CLUSTER_NAME);
+      KEY_PROPERTY_IDS.put(Resource.Type.Request, STAGE_REQUEST_ID);
+    }
+  
+--- 129,135 ----
+  
+      // keys
+      KEY_PROPERTY_IDS.put(Resource.Type.Stage, STAGE_STAGE_ID);
++     KEY_PROPERTY_IDS.put(Resource.Type.Cluster, STAGE_CLUSTER_ID);
+      KEY_PROPERTY_IDS.put(Resource.Type.Request, STAGE_REQUEST_ID);
+    }
+  
+***************
+*** 290,296 ****
+        try {
+          Cluster cluster = clustersProvider.get().getClusterById(clusterId);
+  
+-         setResourceProperty(resource, STAGE_CLUSTER_NAME, cluster.getClusterName(), requestedIds);
+        } catch (Exception e) {
+          LOG.error("Can not get information for cluster " + clusterId + ".", e );
+        }
+--- 289,295 ----
+        try {
+          Cluster cluster = clustersProvider.get().getClusterById(clusterId);
+  
++         setResourceProperty(resource, STAGE_CLUSTER_ID, cluster.getClusterId(), requestedIds);
+        } catch (Exception e) {
+          LOG.error("Can not get information for cluster " + clusterId + ".", e );
+        }

@@ -683,7 +683,7 @@ public class KerberosHelperImpl implements KerberosHelper {
 
       Map<String, String> kerberosConfiguration = kerberosDetails.getKerberosEnvProperties();
       KerberosOperationHandler kerberosOperationHandler = kerberosOperationHandlerFactory.getKerberosOperationHandler(kerberosDetails.getKdcType());
-      PrincipalKeyCredential administratorCredential = getKDCAdministratorCredentials(cluster.getClusterName());
+      PrincipalKeyCredential administratorCredential = getKDCAdministratorCredentials(cluster.getClusterId());
 
       try {
         kerberosOperationHandler.open(administratorCredential, kerberosDetails.getDefaultRealm(), kerberosConfiguration);
@@ -1286,21 +1286,21 @@ public class KerberosHelperImpl implements KerberosHelper {
   }
 
   @Override
-  public Map<String, Collection<KerberosIdentityDescriptor>> getActiveIdentities(String clusterName,
+  public Map<String, Collection<KerberosIdentityDescriptor>> getActiveIdentities(Long clusterId,
                                                                                  String hostName,
                                                                                  String serviceName,
                                                                                  String componentName,
                                                                                  boolean replaceHostNames)
       throws AmbariException {
 
-    if ((clusterName == null) || clusterName.isEmpty()) {
+    if ((clusterId == null)) {
       throw new IllegalArgumentException("Invalid argument, cluster name is required");
     }
 
-    Cluster cluster = clusters.getCluster(clusterName);
+    Cluster cluster = clusters.getCluster(clusterId);
 
     if (cluster == null) {
-      throw new AmbariException(String.format("The cluster object for the cluster name %s is not available", clusterName));
+      throw new AmbariException(String.format("The cluster object for the cluster name %s is not available", clusterId));
     }
 
     Map<String, Collection<KerberosIdentityDescriptor>> activeIdentities = new HashMap<>();
@@ -1310,14 +1310,14 @@ public class KerberosHelperImpl implements KerberosHelper {
     Config kerberosEnvConfig = cluster.getDesiredConfigByType("kerberos-env");
     if(kerberosEnvConfig == null) {
       LOG.debug("Calculating the active identities for {} is being skipped since the kerberos-env configuration is not available",
-          clusterName, cluster.getSecurityType().name(), SecurityType.KERBEROS.name());
+        clusterId, cluster.getSecurityType().name(), SecurityType.KERBEROS.name());
     }
     else {
       Collection<String> hosts;
       String ambariServerHostname = StageUtils.getHostName();
 
       if (hostName == null) {
-        Map<String, Host> hostMap = clusters.getHostsForCluster(clusterName);
+        Map<String, Host> hostMap = clusters.getHostsForCluster(cluster.getClusterName());
         if (hostMap == null) {
           hosts = Collections.emptySet();
         } else {
@@ -1478,13 +1478,13 @@ public class KerberosHelperImpl implements KerberosHelper {
    * <p/>
    * This implementation accesses the secure CredentialStoreService instance to get the data.
    *
-   * @param clusterName the name of the relevant cluster
+   * @param clusterId the Id of the relevant cluster
    * @return a PrincipalKeyCredential or null, if the KDC administrator credential is not available
    * @throws AmbariException if an error occurs while retrieving the credentials
    */
   @Override
-  public PrincipalKeyCredential getKDCAdministratorCredentials(String clusterName) throws AmbariException {
-    Credential credentials = credentialStoreService.getCredential(clusterName, KDC_ADMINISTRATOR_CREDENTIAL_ALIAS);
+  public PrincipalKeyCredential getKDCAdministratorCredentials(Long clusterId) throws AmbariException {
+    Credential credentials = credentialStoreService.getCredential(clusterId, KDC_ADMINISTRATOR_CREDENTIAL_ALIAS);
 
     if (credentials instanceof PrincipalKeyCredential) {
       return (PrincipalKeyCredential) credentials;
@@ -1589,7 +1589,7 @@ public class KerberosHelperImpl implements KerberosHelper {
     }
 
     if (kerberosDetails.manageIdentities()) {
-      PrincipalKeyCredential credentials = getKDCAdministratorCredentials(cluster.getClusterName());
+      PrincipalKeyCredential credentials = getKDCAdministratorCredentials(cluster.getClusterId());
       if (credentials == null) {
         throw new KerberosMissingAdminCredentialsException();
       } else {
@@ -1607,7 +1607,7 @@ public class KerberosHelperImpl implements KerberosHelper {
             throw new KerberosAdminAuthenticationException(
                 "Invalid KDC administrator credentials.\n" +
                     "The KDC administrator credentials must be set as a persisted or temporary credential resource." +
-                    "This may be done by issuing a POST (or PUT for updating) to the /api/v1/clusters/:clusterName/credentials/kdc.admin.credential API entry point with the following payload:\n" +
+                    "This may be done by issuing a POST (or PUT for updating) to the /api/v2/clusters/:clusterId/credentials/kdc.admin.credential API entry point with the following payload:\n" +
                     "{\n" +
                     "  \"Credential\" : {\n" +
                     "    \"principal\" : \"(PRINCIPAL)\", \"key\" : \"(PASSWORD)\", \"type\" : \"(persisted|temporary)\"}\n" +
@@ -2290,7 +2290,7 @@ public class KerberosHelperImpl implements KerberosHelper {
 
     Stage stage = createNewStage(id, cluster, requestId, requestContext,  commandParams, hostParams);
     stage.addServerActionCommand(actionClass.getName(), null, Role.AMBARI_SERVER_ACTION,
-        RoleCommand.EXECUTE, cluster.getClusterName(), event, commandParameters, commandDetail,
+        RoleCommand.EXECUTE, cluster.getClusterId(), event, commandParameters, commandDetail,
         ambariManagementController.findConfigurationTagsWithOverrides(cluster, null), timeout,
         false, false);
 
@@ -3025,7 +3025,7 @@ public class KerberosHelperImpl implements KerberosHelper {
         requestResourceFilters.add(reqResFilter);
 
         ActionExecutionContext actionExecContext = new ActionExecutionContext(
-            cluster.getClusterName(),
+            cluster.getClusterId(),
             "SET_KEYTAB",
             requestResourceFilters,
             requestParams);
@@ -3094,7 +3094,7 @@ public class KerberosHelperImpl implements KerberosHelper {
             if (!component.getServiceComponentHosts().isEmpty()) {
               String firstHost = component.getServiceComponentHosts().keySet().iterator().next(); // it is only necessary to send it to one host
               ActionExecutionContext exec = new ActionExecutionContext(
-                cluster.getClusterName(),
+                cluster.getClusterId(),
                 "DISABLE_SECURITY",
                 singletonList(new RequestResourceFilter(service.getName(), component.getName(), singletonList(firstHost))),
                 Collections.<String, String>emptyMap());
@@ -3127,7 +3127,7 @@ public class KerberosHelperImpl implements KerberosHelper {
       for (ServiceComponent component : zookeeper.getServiceComponents().values()) {
           Set<String> hosts = component.getServiceComponentHosts().keySet();
           ActionExecutionContext exec = new ActionExecutionContext(
-            cluster.getClusterName(),
+            cluster.getClusterId(),
             "STOP",
             singletonList(new RequestResourceFilter(zookeeper.getName(), component.getName(), new ArrayList<>(hosts))),
             Collections.<String, String>emptyMap());
@@ -3168,7 +3168,7 @@ public class KerberosHelperImpl implements KerberosHelper {
           requestResourceFilters.add(reqResFilter);
 
           ActionExecutionContext actionExecContext = new ActionExecutionContext(
-              cluster.getClusterName(),
+              cluster.getClusterId(),
               "REMOVE_KEYTAB",
               requestResourceFilters,
               requestParams);

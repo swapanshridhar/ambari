@@ -1,0 +1,135 @@
+***************
+*** 573,609 ****
+      addHost(hostC6402, clusterName);
+  
+      clusters.getCluster(clusterName);
+-     createService(clusterName, "YARN", null);
+-     createService(clusterName, "GANGLIA", null);
+-     createService(clusterName, "ZOOKEEPER", null);
+-     createService(clusterName, "FLUME", null);
+- 
+-     createServiceComponent(clusterName, "YARN", "RESOURCEMANAGER", State.INIT);
+-     createServiceComponent(clusterName, "YARN", "NODEMANAGER", State.INIT);
+-     createServiceComponent(clusterName, "GANGLIA", "GANGLIA_SERVER", State.INIT);
+-     createServiceComponent(clusterName, "GANGLIA", "GANGLIA_MONITOR", State.INIT);
+-     createServiceComponent(clusterName, "ZOOKEEPER", "ZOOKEEPER_CLIENT", State.INIT);
+  
+      // this component should be not installed on any host
+-     createServiceComponent(clusterName, "FLUME", "FLUME_HANDLER", State.INIT);
+  
+  
+-     createServiceComponentHost(clusterName, "YARN", "RESOURCEMANAGER", hostC6401, null);
+-     createServiceComponentHost(clusterName, "YARN", "NODEMANAGER", hostC6401, null);
+-     createServiceComponentHost(clusterName, "GANGLIA", "GANGLIA_SERVER", hostC6401, State.INIT);
+-     createServiceComponentHost(clusterName, "GANGLIA", "GANGLIA_MONITOR", hostC6401, State.INIT);
+-     createServiceComponentHost(clusterName, "ZOOKEEPER", "ZOOKEEPER_CLIENT", hostC6401, State.INIT);
+  
+-     createServiceComponentHost(clusterName, "YARN", "NODEMANAGER", hostC6402, null);
+-     createServiceComponentHost(clusterName, "GANGLIA", "GANGLIA_MONITOR", hostC6402, State.INIT);
+-     createServiceComponentHost(clusterName, "ZOOKEEPER", "ZOOKEEPER_CLIENT", hostC6402, State.INIT);
+    }
+    private void addHost(String hostname, String clusterName) throws AmbariException {
+      clusters.addHost(hostname);
+      setOsFamily(clusters.getHost(hostname), "redhat", "6.3");
+      clusters.getHost(hostname).setState(HostState.HEALTHY);
+      if (null != clusterName) {
+-       clusters.mapHostToCluster(hostname, clusterName);
+      }
+    }
+    private void setOsFamily(Host host, String osFamily, String osVersion) {
+--- 573,610 ----
+      addHost(hostC6402, clusterName);
+  
+      clusters.getCluster(clusterName);
++     Long clusterId = clusters.getCluster(clusterName).getClusterId();
++     createService(clusterId, "YARN", null);
++     createService(clusterId, "GANGLIA", null);
++     createService(clusterId, "ZOOKEEPER", null);
++     createService(clusterId, "FLUME", null);
++ 
++     createServiceComponent(clusterId, "YARN", "RESOURCEMANAGER", State.INIT);
++     createServiceComponent(clusterId, "YARN", "NODEMANAGER", State.INIT);
++     createServiceComponent(clusterId, "GANGLIA", "GANGLIA_SERVER", State.INIT);
++     createServiceComponent(clusterId, "GANGLIA", "GANGLIA_MONITOR", State.INIT);
++     createServiceComponent(clusterId, "ZOOKEEPER", "ZOOKEEPER_CLIENT", State.INIT);
+  
+      // this component should be not installed on any host
++     createServiceComponent(clusterId, "FLUME", "FLUME_HANDLER", State.INIT);
+  
+  
++     createServiceComponentHost(clusterId, "YARN", "RESOURCEMANAGER", hostC6401, null);
++     createServiceComponentHost(clusterId, "YARN", "NODEMANAGER", hostC6401, null);
++     createServiceComponentHost(clusterId, "GANGLIA", "GANGLIA_SERVER", hostC6401, State.INIT);
++     createServiceComponentHost(clusterId, "GANGLIA", "GANGLIA_MONITOR", hostC6401, State.INIT);
++     createServiceComponentHost(clusterId, "ZOOKEEPER", "ZOOKEEPER_CLIENT", hostC6401, State.INIT);
+  
++     createServiceComponentHost(clusterId, "YARN", "NODEMANAGER", hostC6402, null);
++     createServiceComponentHost(clusterId, "GANGLIA", "GANGLIA_MONITOR", hostC6402, State.INIT);
++     createServiceComponentHost(clusterId, "ZOOKEEPER", "ZOOKEEPER_CLIENT", hostC6402, State.INIT);
+    }
+    private void addHost(String hostname, String clusterName) throws AmbariException {
+      clusters.addHost(hostname);
+      setOsFamily(clusters.getHost(hostname), "redhat", "6.3");
+      clusters.getHost(hostname).setState(HostState.HEALTHY);
+      if (null != clusterName) {
++       clusters.mapHostToCluster(hostname, clusters.getCluster("c1").getClusterId());
+      }
+    }
+    private void setOsFamily(Host host, String osFamily, String osVersion) {
+***************
+*** 620,646 ****
+      ambariManagementController.createCluster(r);
+    }
+  
+-   private void createService(String clusterName,
+        String serviceName, State desiredState) throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
+-     ServiceRequest r1 = new ServiceRequest(clusterName, serviceName, dStateStr);
+      Set<ServiceRequest> requests = new HashSet<>();
+      requests.add(r1);
+  
+      ServiceResourceProviderTest.createServices(ambariManagementController, requests);
+    }
+  
+-   private void createServiceComponent(String clusterName,
+        String serviceName, String componentName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
+-     ServiceComponentRequest r = new ServiceComponentRequest(clusterName,
+          serviceName, componentName, dStateStr);
+      Set<ServiceComponentRequest> requests =
+        new HashSet<>();
+--- 621,647 ----
+      ambariManagementController.createCluster(r);
+    }
+  
++   private void createService(Long clusterId,
+        String serviceName, State desiredState) throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
++     ServiceRequest r1 = new ServiceRequest(clusterId, serviceName, dStateStr);
+      Set<ServiceRequest> requests = new HashSet<>();
+      requests.add(r1);
+  
+      ServiceResourceProviderTest.createServices(ambariManagementController, requests);
+    }
+  
++   private void createServiceComponent(Long clusterId,
+        String serviceName, String componentName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
++     ServiceComponentRequest r = new ServiceComponentRequest(clusterId,
+          serviceName, componentName, dStateStr);
+      Set<ServiceComponentRequest> requests =
+        new HashSet<>();

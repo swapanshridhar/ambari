@@ -67,10 +67,10 @@ public class RangerAuditDbCheckTest {
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
     Mockito.when(clusters.getCluster("cluster")).thenReturn(cluster);
 
-    Assert.assertTrue(rangerAuditDbCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertTrue(rangerAuditDbCheck.isApplicable(new PrereqCheckRequest(1L)));
 
     services.remove("RANGER");
-    Assert.assertFalse(rangerAuditDbCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertFalse(rangerAuditDbCheck.isApplicable(new PrereqCheckRequest(1L)));
   }
 
   @Test
@@ -98,12 +98,12 @@ public class RangerAuditDbCheckTest {
 
     properties.put("ranger.audit.source.type", "db");
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    rangerAuditDbCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerAuditDbCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
 
     properties.put("ranger.audit.source.type", "solr");
     check = new PrerequisiteCheck(null, null);
-    rangerAuditDbCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerAuditDbCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
   }

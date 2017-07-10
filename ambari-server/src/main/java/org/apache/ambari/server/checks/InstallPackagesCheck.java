@@ -57,8 +57,8 @@ public class InstallPackagesCheck extends AbstractCheckDescriptor {
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     final StackId targetStackId = request.getTargetStackId();
     final String stackName = targetStackId.getStackName();
     final String repoVersion = request.getRepositoryVersion();

@@ -1,0 +1,19 @@
+***************
+*** 59,66 ****
+    }
+  
+    private class TestHostStackVersionService extends HostStackVersionService {
+-     public TestHostStackVersionService(String hostName, String clusterName) {
+-       super(ApiVersion.Default, hostName, clusterName);
+      }
+  
+      @Override
+--- 59,66 ----
+    }
+  
+    private class TestHostStackVersionService extends HostStackVersionService {
++     public TestHostStackVersionService(String hostName, Long clusterId) {
++       super(ApiVersion.Default, hostName, clusterId);
+      }
+  
+      @Override

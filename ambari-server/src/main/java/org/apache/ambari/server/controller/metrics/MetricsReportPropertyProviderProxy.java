@@ -41,7 +41,7 @@ public class MetricsReportPropertyProviderProxy extends AbstractPropertyProvider
   private MetricsReportPropertyProvider gangliaMetricsReportProvider;
   private final MetricsServiceProvider metricsServiceProvider;
   private TimelineMetricCacheProvider cacheProvider;
-  private String clusterNamePropertyId;
+  private String clusterIdPropertyId;
 
   public MetricsReportPropertyProviderProxy(
     Map<String, Map<String, PropertyInfo>> componentPropertyInfoMap,
@@ -50,26 +50,26 @@ public class MetricsReportPropertyProviderProxy extends AbstractPropertyProvider
     TimelineMetricCacheProvider cacheProvider,
     MetricHostProvider hostProvider,
     MetricsServiceProvider serviceProvider,
-    String clusterNamePropertyId) {
+    String clusterIdPropertyId) {
 
 
     super(componentPropertyInfoMap);
     this.metricsServiceProvider = serviceProvider;
     this.cacheProvider = cacheProvider;
-    this.clusterNamePropertyId = clusterNamePropertyId;
+    this.clusterIdPropertyId = clusterIdPropertyId;
 
     createReportPropertyProviders(componentPropertyInfoMap,
       streamProvider,
       configuration,
       hostProvider,
-      clusterNamePropertyId);
+      clusterIdPropertyId);
   }
 
   private void createReportPropertyProviders(Map<String, Map<String, PropertyInfo>> componentPropertyInfoMap,
                                              URLStreamProvider streamProvider,
                                              ComponentSSLConfiguration configuration,
                                              MetricHostProvider hostProvider,
-                                             String clusterNamePropertyId) {
+                                             String clusterIdPropertyId) {
 
     this.amsMetricsReportProvider = new AMSReportPropertyProvider(
       componentPropertyInfoMap,
@@ -77,14 +77,14 @@ public class MetricsReportPropertyProviderProxy extends AbstractPropertyProvider
       configuration,
       cacheProvider,
       hostProvider,
-      clusterNamePropertyId);
+      clusterIdPropertyId);
 
     this.gangliaMetricsReportProvider = new GangliaReportPropertyProvider(
       componentPropertyInfoMap,
       streamProvider,
       configuration,
       hostProvider,
-      clusterNamePropertyId);
+      clusterIdPropertyId);
   }
 
   /**
@@ -106,7 +106,7 @@ public class MetricsReportPropertyProviderProxy extends AbstractPropertyProvider
   public Set<Resource> populateResources(Set<Resource> resources, Request request,
                                          Predicate predicate) throws SystemException {
 
-    if(!checkAuthorizationForMetrics(resources, clusterNamePropertyId)) {
+    if(!checkAuthorizationForMetrics(resources, clusterIdPropertyId)) {
       return resources;
     }
     MetricsService metricsService = metricsServiceProvider.getMetricsServiceType();

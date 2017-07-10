@@ -1,0 +1,65 @@
+***************
+*** 41,51 ****
+   */
+  public class AlertDefinitionService extends BaseService {
+  
+-   private String clusterName = null;
+  
+-   AlertDefinitionService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    @GET
+--- 41,51 ----
+   */
+  public class AlertDefinitionService extends BaseService {
+  
++   private Long clusterId = null;
+  
++   AlertDefinitionService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    @GET
+***************
+*** 94,110 ****
+        @Context UriInfo ui,
+        @PathParam("alertDefinitionId") Long id) {
+      return handleRequest(headers, null, ui, Request.Type.GET,
+-       createResourceInstance(clusterName, id));
+    }
+  
+  
+    /**
+     * Create a request schedule resource instance
+     */
+-   private ResourceInstance createResourceInstance(String clusterName,
+        Long definitionId) {
+      Map<Resource.Type, String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.AlertDefinition, null == definitionId ? null : definitionId.toString());
+  
+      return createResource(Resource.Type.AlertDefinition, mapIds);
+--- 94,113 ----
+        @Context UriInfo ui,
+        @PathParam("alertDefinitionId") Long id) {
+      return handleRequest(headers, null, ui, Request.Type.GET,
++       createResourceInstance(clusterId, id));
+    }
+  
+  
+    /**
+     * Create a request schedule resource instance
++    * @param clusterId
++    * @param definitionId
++    * @return
+     */
++   private ResourceInstance createResourceInstance(Long clusterId,
+        Long definitionId) {
+      Map<Resource.Type, String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.AlertDefinition, null == definitionId ? null : definitionId.toString());
+  
+      return createResource(Resource.Type.AlertDefinition, mapIds);

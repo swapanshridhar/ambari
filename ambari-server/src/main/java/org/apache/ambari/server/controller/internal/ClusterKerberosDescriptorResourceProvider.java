@@ -45,6 +45,7 @@ import org.apache.ambari.server.security.authorization.RoleAuthorization;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.Clusters;
 import org.apache.ambari.server.state.kerberos.KerberosDescriptor;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -75,7 +76,7 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
 
   // ----- Property ID constants ---------------------------------------------
 
-  public static final String CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("KerberosDescriptor", "cluster_name");
+  public static final String CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId("KerberosDescriptor", "cluster_id");
   public static final String CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID = PropertyHelper.getPropertyId("KerberosDescriptor", "type");
   public static final String CLUSTER_KERBEROS_DESCRIPTOR_DESCRIPTOR_PROPERTY_ID = PropertyHelper.getPropertyId("KerberosDescriptor", "kerberos_descriptor");
 
@@ -91,18 +92,18 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
   static {
     Set<String> set;
     set = new HashSet<>();
-    set.add(CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID);
+    set.add(CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID);
     set.add(CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID);
     PK_PROPERTY_IDS = Collections.unmodifiableSet(set);
 
     set = new HashSet<>();
-    set.add(CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID);
+    set.add(CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID);
     set.add(CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID);
     set.add(CLUSTER_KERBEROS_DESCRIPTOR_DESCRIPTOR_PROPERTY_ID);
     PROPERTY_IDS = Collections.unmodifiableSet(set);
 
     HashMap<Type, String> map = new HashMap<>();
-    map.put(Type.Cluster, CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID);
+    map.put(Type.Cluster, CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID);
     map.put(Type.ClusterKerberosDescriptor, CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID);
     KEY_PROPERTY_IDS = Collections.unmodifiableMap(map);
   }
@@ -128,17 +129,17 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
     Clusters clusters = managementController.getClusters();
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = getClusterName(propertyMap);
+      Long clusterId = getClusterId(propertyMap);
 
       Cluster cluster;
       try {
-        cluster = clusters.getCluster(clusterName);
+        cluster = clusters.getCluster(clusterId);
 
         if (cluster == null) {
-          throw new NoSuchParentResourceException(String.format("A cluster with the name %s does not exist.", clusterName));
+          throw new NoSuchParentResourceException(String.format("A cluster with the name %s does not exist.", clusterId));
         }
       } catch (AmbariException e) {
-        throw new NoSuchParentResourceException(String.format("A cluster with the name %s does not exist.", clusterName));
+        throw new NoSuchParentResourceException(String.format("A cluster with the name %s does not exist.", clusterId));
       }
 
       // Ensure the authenticated use has access to this data for the requested cluster...
@@ -147,7 +148,7 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
       KerberosHelper.KerberosDescriptorType kerberosDescriptorType = getKerberosDescriptorType(propertyMap);
       if (kerberosDescriptorType == null) {
         for (KerberosHelper.KerberosDescriptorType type : KerberosHelper.KerberosDescriptorType.values()) {
-          resources.add(toResource(clusterName, type, null, requestedIds));
+          resources.add(toResource(clusterId, type, null, requestedIds));
         }
       } else {
         KerberosDescriptor kerberosDescriptor;
@@ -164,7 +165,7 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
         }
 
         if (kerberosDescriptor != null) {
-          resources.add(toResource(clusterName, kerberosDescriptorType, kerberosDescriptor, requestedIds));
+          resources.add(toResource(clusterId, kerberosDescriptorType, kerberosDescriptor, requestedIds));
         }
       }
     }
@@ -178,20 +179,21 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
   }
 
   /**
-   * Retrieves the cluster name from the request property map.
+   * Retrieves the cluster ID from the request property map.
    *
    * @param propertyMap the request property map
-   * @return a cluster name
+   * @return a cluster Id
    * @throws IllegalArgumentException if the cluster name value is missing or empty.
    */
-  private String getClusterName(Map<String, Object> propertyMap) {
-    String clusterName = (String) propertyMap.get(CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID);
+  private Long getClusterId(Map<String, Object> propertyMap) {
+    Long clusterId = MapUtils.parseLong(propertyMap, CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID);
 
-    if (StringUtils.isEmpty(clusterName)) {
+
+    if (null == clusterId) {
       throw new IllegalArgumentException("Invalid argument, cluster name is required");
     }
 
-    return clusterName;
+    return clusterId;
   }
 
   /**
@@ -255,17 +257,17 @@ public class ClusterKerberosDescriptorResourceProvider extends ReadOnlyResourceP
   /**
    * Creates a new resource from the given cluster name, alias, and persist values.
    *
-   * @param clusterName            a cluster name
+   * @param clusterId              a cluster ID
    * @param kerberosDescriptorType a Kerberos descriptor type
    * @param kerberosDescriptor     a Kerberos descriptor
    * @param requestedIds           the properties to include in the resulting resource instance
    * @return a resource
    */
-  private Resource toResource(String clusterName, KerberosHelper.KerberosDescriptorType kerberosDescriptorType,
+  private Resource toResource(Long clusterId, KerberosHelper.KerberosDescriptorType kerberosDescriptorType,
                               KerberosDescriptor kerberosDescriptor, Set<String> requestedIds) {
     Resource resource = new ResourceImpl(Type.ClusterKerberosDescriptor);
 
-    setResourceProperty(resource, CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID, clusterName, requestedIds);
+    setResourceProperty(resource, CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID, clusterId, requestedIds);
 
     if (kerberosDescriptorType != null) {
       setResourceProperty(resource, CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID, kerberosDescriptorType.name(), requestedIds);

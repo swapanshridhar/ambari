@@ -65,7 +65,7 @@ public class ActiveWidgetLayoutResourceDefinition extends BaseResourceDefinition
       for (TreeNode<Resource> node : parent.getChildren()) {
         if (node.getObject().getPropertiesMap().get("WidgetLayoutInfo") != null) {
           String layoutId = resultNode.getObject().getPropertyValue("WidgetLayoutInfo/id").toString();
-          String clusterName = resultNode.getObject().getPropertyValue("WidgetLayoutInfo/cluster_name").toString();
+          String clusterName = resultNode.getObject().getPropertyValue("WidgetLayoutInfo/cluster_id").toString();
           String newHref = href.substring(0, href.indexOf("/users") + 1) +
                   "clusters/" + clusterName + "/widget_layouts/" + layoutId;
           resultNode.setProperty("href", newHref);
@@ -77,9 +77,9 @@ public class ActiveWidgetLayoutResourceDefinition extends BaseResourceDefinition
           for (Object widgetObject : widgetsList) {
             HashMap<String, Object> widgetMap = (HashMap) widgetObject;
             String widgetId = ((WidgetResponse) widgetMap.get("Widget")).getId().toString();
-            String clusterName = ((WidgetResponse) widgetMap.get("Widget")).getClusterName().toString();
+            Long clusterId = ((WidgetResponse) widgetMap.get("Widget")).getClusterId();
             String widgetHref = href.substring(0, href.indexOf("/users") + 1) +
-                    "clusters/" + clusterName + "/widgets/" + widgetId;
+                    "clusters/" + clusterId + "/widgets/" + widgetId;
             widgetMap.put("href", widgetHref);
           }
         }

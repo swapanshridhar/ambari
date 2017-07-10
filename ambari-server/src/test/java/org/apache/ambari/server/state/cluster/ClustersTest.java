@@ -259,7 +259,7 @@ public class ClustersTest {
     String h4 = "h4";
 
     try {
-      clusters.mapHostToCluster(h1, c1);
+      clusters.mapHostToCluster(h1, 1L);
       fail("Expected exception for invalid cluster/host");
     } catch (Exception e) {
       // Expected
@@ -272,16 +272,16 @@ public class ClustersTest {
     clusters.addCluster(c1, stackId);
     clusters.addCluster(c2, stackId);
 
-    Cluster cluster1 = clusters.getCluster(c1);
-    Cluster cluster2 = clusters.getCluster(c2);
-    Assert.assertNotNull(clusters.getCluster(c1));
-    Assert.assertNotNull(clusters.getCluster(c2));
+    Cluster cluster1 = clusters.getCluster(1L);
+    Cluster cluster2 = clusters.getCluster(2L);
+    Assert.assertNotNull(clusters.getCluster(1L));
+    Assert.assertNotNull(clusters.getCluster(2L));
 
     cluster1.setDesiredStackVersion(stackId);
     helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
 
     try {
-      clusters.mapHostToCluster(h1, c1);
+      clusters.mapHostToCluster(h1, 1L);
       fail("Expected exception for invalid host");
     } catch (Exception e) {
       // Expected
@@ -305,11 +305,11 @@ public class ClustersTest {
     Set<Cluster> c = clusters.getClustersForHost(h3);
     Assert.assertEquals(0, c.size());
 
-    clusters.mapHostToCluster(h1, c1);
-    clusters.mapHostToCluster(h2, c1);
+    clusters.mapHostToCluster(h1, 1L);
+    clusters.mapHostToCluster(h2, 1L);
 
     try {
-      clusters.mapHostToCluster(h1, c1);
+      clusters.mapHostToCluster(h1, 1L);
       fail("Expected exception for duplicate");
     } catch (DuplicateResourceException e) {
       // expected
@@ -325,7 +325,7 @@ public class ClustersTest {
     hostnames.add(h1);
     hostnames.add(h2);
 
-    clusters.mapAndPublishHostsToCluster(hostnames, c2);
+    clusters.mapAndPublishHostsToCluster(hostnames, 2L);
 
     c = clusters.getClustersForHost(h1);
     Assert.assertEquals(2, c.size());
@@ -370,8 +370,8 @@ public class ClustersTest {
     setOsFamily(clusters.getHost(h1), "redhat", "6.4");
     setOsFamily(clusters.getHost(h2), "redhat", "5.9");
     setOsFamily(clusters.getHost(h3), "redhat", "6.4");
-    clusters.mapHostToCluster(h1, c1);
-    clusters.mapHostToCluster(h2, c1);
+    clusters.mapHostToCluster(h1, 1L);
+    clusters.mapHostToCluster(h2, 1L);
 
     StringBuilder sb = new StringBuilder();
     clusters.debugDump(sb);
@@ -629,7 +629,7 @@ public class ClustersTest {
 
     Set<String> hostnames = new HashSet<>();
     hostnames.add(hostName);
-    clusters.mapAndPublishHostsToCluster(hostnames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostnames, (clusters.getCluster(clusterName)).getClusterId());
   }
 
   private Cluster createCluster(String clusterName) throws AmbariException {

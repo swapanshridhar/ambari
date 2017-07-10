@@ -105,7 +105,7 @@ public class WidgetLayoutResourceProviderTest {
   @Test
   public void testGetSingleResource() throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID,
+        WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID,
         WidgetLayoutResourceProvider.WIDGETLAYOUT_ID_PROPERTY_ID,
         WidgetLayoutResourceProvider.WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID,
         WidgetLayoutResourceProvider.WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID,
@@ -122,7 +122,7 @@ public class WidgetLayoutResourceProviderTest {
     expect(cluster.getClusterName()).andReturn("c1").anyTimes();
 
     Predicate predicate = new PredicateBuilder().property(
-        WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID).equals(1L)
           .and().property(WidgetLayoutResourceProvider.WIDGETLAYOUT_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetLayoutResourceProvider.WIDGETLAYOUT_USERNAME_PROPERTY_ID).equals("username").toPredicate();
 
@@ -172,7 +172,7 @@ public class WidgetLayoutResourceProviderTest {
     WidgetLayoutResourceProvider provider = createProvider(amc);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID, "layout_name");
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID, "display_name");
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID, "section_name");
@@ -233,7 +233,7 @@ public class WidgetLayoutResourceProviderTest {
     replay(amc, clusters, cluster, dao, widgetDAO);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID, "layout_name");
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID, "display_name");
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID, "section_name");
@@ -257,7 +257,7 @@ public class WidgetLayoutResourceProviderTest {
     Assert.assertNotNull(entity);
 
     Predicate predicate = new PredicateBuilder().property(
-            WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+            WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID).equals(1L)
             .and().property(WidgetLayoutResourceProvider.WIDGETLAYOUT_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetLayoutResourceProvider.WIDGETLAYOUT_USERNAME_PROPERTY_ID).equals("username").toPredicate();
 
@@ -313,7 +313,7 @@ public class WidgetLayoutResourceProviderTest {
     WidgetLayoutResourceProvider provider = createProvider(amc);
 
     Map<String, Object> requestProps = new HashMap<>();
-    requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID, "c1");
+    requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID, 1L);
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID, "layout_name");
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID, "display_name");
     requestProps.put(WidgetLayoutResourceProvider.WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID, "section_name");
@@ -331,7 +331,7 @@ public class WidgetLayoutResourceProviderTest {
     Assert.assertNotNull(entity);
 
     Predicate predicate = new PredicateBuilder().property(
-            WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+            WidgetLayoutResourceProvider.WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID).equals(1L)
             .and().property(WidgetLayoutResourceProvider.WIDGETLAYOUT_ID_PROPERTY_ID).equals("1")
             .and().property(WidgetLayoutResourceProvider.WIDGETLAYOUT_USERNAME_PROPERTY_ID).equals("username").toPredicate();
 

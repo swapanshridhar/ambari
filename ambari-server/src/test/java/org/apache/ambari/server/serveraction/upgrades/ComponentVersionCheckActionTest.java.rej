@@ -1,0 +1,70 @@
+***************
+*** 193,199 ****
+    }
+  
+    private void makeCrossStackUpgradeCluster(StackId sourceStack, String sourceRepo, StackId targetStack,
+-                                             String targetRepo, String clusterName, String hostName) throws Exception {
+  
+      Clusters clusters = m_injector.getInstance(Clusters.class);
+      clusters.addCluster(clusterName, sourceStack);
+--- 193,199 ----
+    }
+  
+    private void makeCrossStackUpgradeCluster(StackId sourceStack, String sourceRepo, StackId targetStack,
++                                             String targetRepo, String clusterName, Long clusterId, String hostName) throws Exception {
+  
+      Clusters clusters = m_injector.getInstance(Clusters.class);
+      clusters.addCluster(clusterName, sourceStack);
+***************
+*** 334,342 ****
+      String sourceRepo = HDP_2_1_1_0;
+      String targetRepo = HDP_2_2_1_0;
+      String clusterName = "c1";
+      String hostName = "h1";
+  
+-     makeCrossStackUpgradeCluster(sourceStack, sourceRepo, targetStack, targetRepo, clusterName, hostName);
+  
+      Clusters clusters = m_injector.getInstance(Clusters.class);
+      Cluster cluster = clusters.getCluster("c1");
+--- 334,343 ----
+      String sourceRepo = HDP_2_1_1_0;
+      String targetRepo = HDP_2_2_1_0;
+      String clusterName = "c1";
++     Long clusterId = 1L;
+      String hostName = "h1";
+  
++     makeCrossStackUpgradeCluster(sourceStack, sourceRepo, targetStack, targetRepo, clusterName, clusterId, hostName);
+  
+      Clusters clusters = m_injector.getInstance(Clusters.class);
+      Cluster cluster = clusters.getCluster("c1");
+***************
+*** 363,376 ****
+      // inject an unhappy path where the cluster repo version is still UPGRADING
+      // even though all of the hosts are UPGRADED
+      ClusterVersionEntity upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-         "c1", HDP_22_STACK, targetRepo);
+  
+      upgradingClusterVersion.setState(RepositoryVersionState.INSTALLING);
+      upgradingClusterVersion = clusterVersionDAO.merge(upgradingClusterVersion);
+  
+      // verify the conditions for the test are met properly
+-     upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion("c1", HDP_22_STACK, targetRepo);
+-     List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion("c1", HDP_22_STACK, targetRepo);
+  
+      assertEquals(RepositoryVersionState.INSTALLING, upgradingClusterVersion.getState());
+      assertTrue(hostVersions.size() > 0);
+--- 364,377 ----
+      // inject an unhappy path where the cluster repo version is still UPGRADING
+      // even though all of the hosts are UPGRADED
+      ClusterVersionEntity upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++              1L, HDP_22_STACK, targetRepo);
+  
+      upgradingClusterVersion.setState(RepositoryVersionState.INSTALLING);
+      upgradingClusterVersion = clusterVersionDAO.merge(upgradingClusterVersion);
+  
+      // verify the conditions for the test are met properly
++     upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(1L, HDP_22_STACK, targetRepo);
++     List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(1L, HDP_22_STACK, targetRepo);
+  
+      assertEquals(RepositoryVersionState.INSTALLING, upgradingClusterVersion.getState());
+      assertTrue(hostVersions.size() > 0);

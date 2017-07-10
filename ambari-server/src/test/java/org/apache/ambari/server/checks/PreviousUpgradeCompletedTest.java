@@ -47,7 +47,8 @@ public class PreviousUpgradeCompletedTest {
   private String sourceRepositoryVersion = "2.2.6.0-1234";
   private String destRepositoryVersion = "2.2.8.0-5678";
   private String clusterName = "cluster";
-  private PrereqCheckRequest checkRequest = new PrereqCheckRequest(clusterName);
+  private Long clusterId = 1L;
+  private PrereqCheckRequest checkRequest = new PrereqCheckRequest(clusterId);
   private PreviousUpgradeCompleted puc = new PreviousUpgradeCompleted();
 
   private RepositoryVersionEntity toRepsitoryVersion;

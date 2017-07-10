@@ -40,45 +40,45 @@ public class ComponentServiceTest extends BaseServiceTest {
 
   public List<ServiceTestInvocation> getTestInvocations() throws Exception {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
-
+    long clusterId = 1L;
     //getComponent
-    ComponentService service = new TestComponentService("clusterName", "serviceName", "componentName");
+    ComponentService service = new TestComponentService(clusterId, "serviceName", "componentName");
     Method m = service.getClass().getMethod("getComponent", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo(), "componentName", null};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
     //getComponents
-    service = new TestComponentService("clusterName", "serviceName", null);
+    service = new TestComponentService(clusterId, "serviceName", null);
     m = service.getClass().getMethod("getComponents", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo(), null};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
     //createComponent
-    service = new TestComponentService("clusterName", "serviceName", "componentName");
+    service = new TestComponentService(clusterId, "serviceName", "componentName");
     m = service.getClass().getMethod("createComponent", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "componentName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, service, m, args, "body"));
 
     //createComponentsAndHosts
-    service = new TestComponentService("clusterName", "serviceName", null);
+    service = new TestComponentService(clusterId, "serviceName", null);
     m = service.getClass().getMethod("createComponents", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, service, m, args, "body"));
 
     //updateComponent
-    service = new TestComponentService("clusterName", "serviceName", "componentName");
+    service = new TestComponentService(clusterId, "serviceName", "componentName");
     m = service.getClass().getMethod("updateComponent", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "componentName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));
 
     //updateComponents
-    service = new TestComponentService("clusterName", "serviceName", null);
+    service = new TestComponentService(clusterId, "serviceName", null);
     m = service.getClass().getMethod("updateComponents", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));
 
     //deleteComponent
-    service = new TestComponentService("clusterName", "serviceName", "componentName");
+    service = new TestComponentService(clusterId, "serviceName", "componentName");
     m = service.getClass().getMethod("deleteComponent", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "componentName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, service, m, args, null));
@@ -99,8 +99,8 @@ public class ComponentServiceTest extends BaseServiceTest {
     }
 
     @Override
-    ResourceInstance createComponentResource(String clusterName, String serviceName, String componentName) {
-      assertEquals(m_clusterId, clusterName);
+    ResourceInstance createComponentResource(Long clusterId, String serviceName, String componentName) {
+      assertEquals(m_clusterId, clusterId);
       assertEquals(m_serviceId, serviceName);
       assertEquals(m_componentId, componentName);
       return getTestResource();

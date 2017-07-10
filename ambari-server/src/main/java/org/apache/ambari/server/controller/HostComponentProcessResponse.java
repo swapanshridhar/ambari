@@ -24,31 +24,31 @@ import java.util.Map;
  */
 public class HostComponentProcessResponse {
 
-  private String cluster;
+  private Long clusterId;
   private String host;
   private String component;
   private Map<String, String> map;
 
   /**
    * Constructor
-   * @param clusterName the cluster
+   * @param clusterId the cluster
    * @param hostName the host
    * @param componentName the component
    * @param processValueMap the map of process information
    */
-  public HostComponentProcessResponse(String clusterName, String hostName,
+  public HostComponentProcessResponse(Long clusterId, String hostName,
       String componentName, Map<String, String> processValueMap) {
-    cluster = clusterName;
+    this.clusterId = clusterId;
     host = hostName;
     component = componentName;
     map = processValueMap;
   }
  
   /**
-   * @return the cluster
+   * @return the cluster Id
    */
-  public String getCluster() {
-    return cluster;
+  public Long getClusterId() {
+    return clusterId;
   }
   
   /**

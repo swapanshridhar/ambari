@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.ambari.server.AmbariException;
 import org.apache.ambari.server.api.services.AmbariMetaInfo;
 import org.apache.ambari.server.configuration.ComponentSSLConfiguration;
 import org.apache.ambari.server.controller.AmbariManagementController;
@@ -92,12 +93,12 @@ public abstract class AMSPropertyProvider extends MetricsPropertyProvider {
                              ComponentSSLConfiguration configuration,
                              TimelineMetricCacheProvider cacheProvider,
                              MetricHostProvider hostProvider,
-                             String clusterNamePropertyId,
+                             String clusterIdPropertyId,
                              String hostNamePropertyId,
                              String componentNamePropertyId) {
 
     super(componentPropertyInfoMap, streamProvider, configuration,
-      hostProvider, clusterNamePropertyId, hostNamePropertyId,
+      hostProvider, clusterIdPropertyId, hostNamePropertyId,
       componentNamePropertyId);
 
     this.metricCache = cacheProvider.getTimelineMetricsCache();
@@ -599,7 +600,15 @@ public abstract class AMSPropertyProvider extends MetricsPropertyProvider {
     Map<String, Boolean> clusterCollectorHostLiveMap = new HashMap<>();
 
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+      Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+      AmbariManagementController amc = AmbariServer.getController();
+      Cluster cluster = null;
+      try {
+        cluster = amc.getClusters().getCluster(clusterId);
+      } catch (AmbariException e) {
+        continue;
+      }
+      String clusterName = cluster.getClusterName();
       // If a resource is not part of a cluster, do not return metrics since
       // we cannot decide which collector to reach
       if (StringUtils.isEmpty(clusterName)) {
@@ -688,7 +697,7 @@ public abstract class AMSPropertyProvider extends MetricsPropertyProvider {
                 getAMSUriBuilder(collectorHost,
                   collectorPort != null ? Integer.parseInt(collectorPort) : COLLECTOR_DEFAULT_PORT,
                   configuration.isHttpsEnabled()),
-                  (String) resource.getPropertyValue(clusterNamePropertyId));
+                  (String) resource.getPropertyValue(clusterIdPropertyId));
               requests.put(temporalInfo, metricsRequest);
             }
             metricsRequest.putResource(getComponentName(resource), resource);

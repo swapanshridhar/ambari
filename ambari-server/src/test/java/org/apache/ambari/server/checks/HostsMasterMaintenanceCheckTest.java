@@ -53,7 +53,7 @@ public class HostsMasterMaintenanceCheckTest {
 
   @Test
   public void testIsApplicable() throws Exception {
-    final PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    final PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("not null");
     HostsMasterMaintenanceCheck hmmc = new HostsMasterMaintenanceCheck();
     Configuration config = Mockito.mock(Configuration.class);

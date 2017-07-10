@@ -1,0 +1,132 @@
+***************
+*** 64,78 ****
+     * @param body
+     * @param headers
+     * @param ui
+-    * @param clusterName
+     * @return
+     */
+    @POST
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response createRemoteCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+-                                 @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, body, ui, Request.Type.POST, createRemoteClusterResource(clusterName));
+    }
+  
+  
+--- 64,78 ----
+     * @param body
+     * @param headers
+     * @param ui
++    * @param clusterId
+     * @return
+     */
+    @POST
++   @Path("{clusterId}")
+    @Produces("text/plain")
+    public Response createRemoteCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
++                                 @PathParam("clusterId") Long clusterId) {
++     return handleRequest(headers, body, ui, Request.Type.POST, createRemoteClusterResource(clusterId));
+    }
+  
+  
+***************
+*** 81,95 ****
+     * @param body
+     * @param headers
+     * @param ui
+-    * @param clusterName
+     * @return
+     */
+    @PUT
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response updateRemoteCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+-                             @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, body, ui, Request.Type.PUT, createRemoteClusterResource(clusterName));
+    }
+  
+    /**
+--- 81,95 ----
+     * @param body
+     * @param headers
+     * @param ui
++    * @param clusterId
+     * @return
+     */
+    @PUT
++   @Path("{clusterId}")
+    @Produces("text/plain")
+    public Response updateRemoteCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
++                             @PathParam("clusterId") Long clusterId) {
++     return handleRequest(headers, body, ui, Request.Type.PUT, createRemoteClusterResource(clusterId));
+    }
+  
+    /**
+***************
+*** 97,111 ****
+     * @param body
+     * @param headers
+     * @param ui
+-    * @param clusterName
+     * @return
+     */
+    @DELETE
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response deleteRemoteCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+-                             @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, body, ui, Request.Type.DELETE, createRemoteClusterResource(clusterName));
+    }
+  
+  
+--- 97,111 ----
+     * @param body
+     * @param headers
+     * @param ui
++    * @param clusterId
+     * @return
+     */
+    @DELETE
++   @Path("{clusterId}")
+    @Produces("text/plain")
+    public Response deleteRemoteCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
++                             @PathParam("clusterId") Long clusterId) {
++     return handleRequest(headers, body, ui, Request.Type.DELETE, createRemoteClusterResource(clusterId));
+    }
+  
+  
+***************
+*** 113,127 ****
+     * Get information about a Remote Cluster
+     * @param headers
+     * @param ui
+-    * @param clusterName
+     * @return
+     */
+    @GET
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response getRemoteCluster(@Context HttpHeaders headers, @Context UriInfo ui,
+-                                 @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, null, ui, Request.Type.GET, createRemoteClusterResource(clusterName));
+    }
+  
+  
+--- 113,127 ----
+     * Get information about a Remote Cluster
+     * @param headers
+     * @param ui
++    * @param clusterId
+     * @return
+     */
+    @GET
++   @Path("{clusterId}")
+    @Produces("text/plain")
+    public Response getRemoteCluster(@Context HttpHeaders headers, @Context UriInfo ui,
++                                 @PathParam("clusterId") Long clusterId) {
++     return handleRequest(headers, null, ui, Request.Type.GET, createRemoteClusterResource(clusterId));
+    }
+  
+  

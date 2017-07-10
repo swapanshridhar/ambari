@@ -43,6 +43,7 @@ import org.apache.ambari.server.state.kerberos.KerberosIdentityDescriptor;
 import org.apache.ambari.server.state.kerberos.KerberosKeytabDescriptor;
 import org.apache.ambari.server.state.kerberos.KerberosPrincipalDescriptor;
 import org.apache.ambari.server.state.kerberos.KerberosPrincipalType;
+import org.apache.ambari.server.utils.MapUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -53,7 +54,7 @@ import com.google.inject.assistedinject.AssistedInject;
  */
 public class HostKerberosIdentityResourceProvider extends ReadOnlyResourceProvider {
 
-  protected static final String KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID = "KerberosIdentity/cluster_name";
+  protected static final String KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID = "KerberosIdentity/cluster_id";
   protected static final String KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID = "KerberosIdentity/host_name";
   protected static final String KERBEROS_IDENTITY_DESCRIPTION_PROPERTY_ID = "KerberosIdentity/description";
   protected static final String KERBEROS_IDENTITY_PRINCIPAL_NAME_PROPERTY_ID = "KerberosIdentity/principal_name";
@@ -69,7 +70,7 @@ public class HostKerberosIdentityResourceProvider extends ReadOnlyResourceProvid
 
   protected static final Map<Resource.Type, String> PK_PROPERTY_MAP = Collections.unmodifiableMap(
       new HashMap<Resource.Type, String>() {{
-        put(Resource.Type.Cluster, KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID);
+        put(Resource.Type.Cluster, KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID);
         put(Resource.Type.Host, KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID);
         put(Resource.Type.HostKerberosIdentity, KERBEROS_IDENTITY_PRINCIPAL_NAME_PROPERTY_ID);
       }}
@@ -81,7 +82,7 @@ public class HostKerberosIdentityResourceProvider extends ReadOnlyResourceProvid
 
   protected static final Set<String> PROPERTY_IDS = Collections.unmodifiableSet(
       new HashSet<String>() {{
-        add(KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID);
+        add(KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID);
         add(KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID);
         add(KERBEROS_IDENTITY_DESCRIPTION_PROPERTY_ID);
         add(KERBEROS_IDENTITY_PRINCIPAL_NAME_PROPERTY_ID);
@@ -157,12 +158,12 @@ public class HostKerberosIdentityResourceProvider extends ReadOnlyResourceProvid
       Set<Resource> resources = new HashSet<>();
 
       for (Map<String, Object> propertyMap : propertyMaps) {
-        String clusterName = (String) propertyMap.get(KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID);
+        Long clusterId = MapUtils.parseLong(propertyMap, KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID);
         String hostName = (String) propertyMap.get(KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID);
 
         // Retrieve the active identities for the cluster filtered and grouped by hostname
         Map<String, Collection<KerberosIdentityDescriptor>> hostDescriptors =
-            kerberosHelper.getActiveIdentities(clusterName, hostName, null, null, true);
+            kerberosHelper.getActiveIdentities(clusterId, hostName, null, null, true);
 
         if (hostDescriptors != null) {
           for (Map.Entry<String, Collection<KerberosIdentityDescriptor>> entry : hostDescriptors.entrySet()) {
@@ -187,7 +188,7 @@ public class HostKerberosIdentityResourceProvider extends ReadOnlyResourceProvid
                       principalType = KerberosPrincipalType.SERVICE;
                     }
 
-                    setResourceProperty(resource, KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID, clusterName, requestPropertyIds);
+                    setResourceProperty(resource, KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID, clusterId, requestPropertyIds);
                     setResourceProperty(resource, KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID, currentHostName, requestPropertyIds);
 
                     setResourceProperty(resource, KERBEROS_IDENTITY_PRINCIPAL_NAME_PROPERTY_ID, principal, requestPropertyIds);

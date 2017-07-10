@@ -128,9 +128,9 @@ public class HostVersionOutOfSyncListenerTest {
     h1.setState(HostState.HEALTHY);
 
     addHost("h2");
-    clusters.mapHostToCluster("h2", "c1");
+    clusters.mapHostToCluster("h2", (clusters.getCluster("c1").getClusterId()));
     addHost("h3");
-    clusters.mapHostToCluster("h3", "c1");
+    clusters.mapHostToCluster("h3", (clusters.getCluster("c1").getClusterId()));
 
     // create the new repo version
     RepositoryVersionEntity repositoryVersionEntity = helper.getOrCreateRepositoryVersion(stackId,
@@ -374,7 +374,7 @@ public class HostVersionOutOfSyncListenerTest {
 
     // Add new host and verify that it has all host versions present
     addHost("h2");
-    clusters.mapHostToCluster("h2", "c1");
+    clusters.mapHostToCluster("h2", (clusters.getCluster("c1").getClusterId()));
 
     List<HostVersionEntity> h2Versions = hostVersionDAO.findByHost("h2");
 
@@ -395,7 +395,7 @@ public class HostVersionOutOfSyncListenerTest {
   public void testOnHostRemovedEvent() throws AmbariException {
     // add the 2nd host
     addHost("h2");
-    clusters.mapHostToCluster("h2", "c1");
+    clusters.mapHostToCluster("h2", (clusters.getCluster("c1").getClusterId()));
     clusters.getHost("h2").setState(HostState.HEALTHY);
 
     StackId stackId = new StackId(this.stackId);

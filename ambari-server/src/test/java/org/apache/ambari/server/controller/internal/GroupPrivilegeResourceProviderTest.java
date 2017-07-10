@@ -187,7 +187,7 @@ public class GroupPrivilegeResourceProviderTest extends AbstractPrivilegeResourc
     GroupPrivilegeResponse response = provider.getResponse(privilegeEntity, "group1");
     Resource resource = provider.toResource(response, provider.getPropertyIds());
 
-    Assert.assertEquals("TestCluster", resource.getPropertyValue(ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID));
+    Assert.assertEquals("TestCluster", resource.getPropertyValue(ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID));
     Assert.assertEquals(ResourceType.CLUSTER.name(), resource.getPropertyValue(GroupPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID));
 
     verifyAll();

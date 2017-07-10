@@ -169,7 +169,7 @@ public class AbstractCheckDescriptorTest {
   public void testIsApplicable() throws Exception{
     final String clusterName = "c1";
     final Cluster cluster = EasyMock.createMock(Cluster.class);
-
+    cluster.setClusterName(clusterName);
 
     Map<String, Service> services = new HashMap<String, Service>(){{
       put("SERVICE1", null);
@@ -179,11 +179,12 @@ public class AbstractCheckDescriptorTest {
 
     expect(clusters.getCluster(anyString())).andReturn(cluster).atLeastOnce();
     expect(cluster.getServices()).andReturn(services).atLeastOnce();
+    expect(cluster.getClusterId()).andReturn(1L).atLeastOnce();
 
     replay(clusters, cluster);
+    PrereqCheckRequest request = new PrereqCheckRequest(1L, UpgradeType.ROLLING);
 
     AbstractCheckDescriptor check = new TestCheckImpl(PrereqCheckType.SERVICE);
-    PrereqCheckRequest request = new PrereqCheckRequest(clusterName, UpgradeType.ROLLING);
 
     List<String> oneServiceList = Arrays.asList("SERVICE1");
 
@@ -214,6 +215,7 @@ public class AbstractCheckDescriptorTest {
   @Test
   public void testIsApplicableWithVDF() throws Exception{
     final String clusterName = "c1";
+    final Long clusterId = 1L;
     final Cluster cluster = EasyMock.createMock(Cluster.class);
 
     Map<String, Service> services = new HashMap<String, Service>(){{
@@ -237,7 +239,7 @@ public class AbstractCheckDescriptorTest {
     replay(clusters, cluster, repositoryVersionDao, repoVersion, repoXml);
 
     AbstractCheckDescriptor check = new TestCheckImpl(PrereqCheckType.SERVICE);
-    PrereqCheckRequest request = new PrereqCheckRequest(clusterName, UpgradeType.ROLLING);
+    PrereqCheckRequest request = new PrereqCheckRequest(clusterId, UpgradeType.ROLLING);
     request.setTargetStackId(new StackId("HDP-2.5"));
 
     List<String> allServicesList = Arrays.asList("SERVICE1", "SERVICE2");

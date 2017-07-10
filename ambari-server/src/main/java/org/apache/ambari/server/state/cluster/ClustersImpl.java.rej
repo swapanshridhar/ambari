@@ -1,0 +1,38 @@
+***************
+*** 483,499 ****
+     * Attempts to map the host to the cluster via clusterhostmapping table if not already present, and add a host_version
+     * record for the cluster's currently applied (stack, version) if not already present.
+     * @param hostname Host name
+-    * @param clusterName Cluster name
+     * @throws AmbariException May throw a DuplicateResourceException.
+     */
+    @Override
+-   public void mapHostToCluster(String hostname, String clusterName)
+        throws AmbariException {
+      Host host = null;
+      Cluster cluster = null;
+  
+      host = getHost(hostname);
+-     cluster = getCluster(clusterName);
+  
+      // check to ensure there are no duplicates
+      for (Cluster c : hostClusterMap.get(hostname)) {
+--- 482,499 ----
+     * Attempts to map the host to the cluster via clusterhostmapping table if not already present, and add a host_version
+     * record for the cluster's currently applied (stack, version) if not already present.
+     * @param hostname Host name
++    * @param clusterId Cluster id
+     * @throws AmbariException May throw a DuplicateResourceException.
+     */
+    @Override
++   public void mapHostToCluster(String hostname, Long clusterId)
+        throws AmbariException {
+      Host host = null;
+      Cluster cluster = null;
+  
+      host = getHost(hostname);
++     cluster = getCluster(clusterId);
++     String clusterName = cluster.getClusterName();
+  
+      // check to ensure there are no duplicates
+      for (Cluster c : hostClusterMap.get(hostname)) {

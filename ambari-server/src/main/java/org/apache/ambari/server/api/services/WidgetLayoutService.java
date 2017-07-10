@@ -119,7 +119,7 @@ public class WidgetLayoutService extends BaseService {
   private ResourceInstance createResource(String widgetLayoutId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
     mapIds.put(Resource.Type.WidgetLayout, widgetLayoutId);
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     return createResource(Resource.Type.WidgetLayout, mapIds);
   }
 }

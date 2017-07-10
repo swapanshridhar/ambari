@@ -1,0 +1,18 @@
+***************
+*** 72,78 ****
+      HostResponse hostResponse;
+  
+      try {
+-       HostRequest hostRequest = new HostRequest(hostName, clusterName,
+          Collections.<String, String>emptyMap());
+        Set<HostResponse> hosts = HostResourceProvider.getHosts(managementController, hostRequest);
+  
+--- 73,80 ----
+      HostResponse hostResponse;
+  
+      try {
++       Long clusterId = managementController.getClusters().getCluster(clusterName).getClusterId();
++       HostRequest hostRequest = new HostRequest(hostName, clusterId,
+          Collections.<String, String>emptyMap());
+        Set<HostResponse> hosts = HostResourceProvider.getHosts(managementController, hostRequest);
+  

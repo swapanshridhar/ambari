@@ -82,7 +82,7 @@ public class TaskAttemptService extends BaseService {
         body,
         ui,
         Request.Type.GET,
-        createTaskAttemptResource(clusterName, workflowId, jobId, taskAttemptId));
+        createTaskAttemptResource(clusterId, workflowId, jobId, taskAttemptId));
   }
 
   /**
@@ -101,14 +101,14 @@ public class TaskAttemptService extends BaseService {
   public Response getTaskAttempts(String body, @Context HttpHeaders headers,
       @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createTaskAttemptResource(clusterName, workflowId, jobId, null));
+        createTaskAttemptResource(clusterId, workflowId, jobId, null));
   }
 
   /**
    * Create a task attempt resource instance.
    * 
-   * @param clusterName
-   *          cluster name
+   * @param clusterId
+   *          cluster Id
    * @param workflowId
    *          workflow id
    * @param jobId
@@ -118,10 +118,10 @@ public class TaskAttemptService extends BaseService {
    * 
    * @return a task attempt resource instance
    */
-  ResourceInstance createTaskAttemptResource(String clusterName,
+  ResourceInstance createTaskAttemptResource(Long clusterId,
       String workflowId, String jobId, String taskAttemptId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Workflow, workflowId);
     mapIds.put(Resource.Type.Job, jobId);
     mapIds.put(Resource.Type.TaskAttempt, taskAttemptId);

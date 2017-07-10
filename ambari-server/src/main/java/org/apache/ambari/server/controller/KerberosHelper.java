@@ -423,7 +423,7 @@ public interface KerberosHelper {
    * endpoint
    * <p/>
    * The user-specified Kerberos descriptor was registered to the
-   * <code>cluster/:clusterName/artifacts/kerberos_descriptor</code> endpoint.
+   * <code>cluster/:clusterId/artifacts/kerberos_descriptor</code> endpoint.
    * <p/>
    * If the user-specified Kerberos descriptor exists, it is used to update the default Kerberos
    * descriptor and the composite is returned.  If not, the default cluster descriptor is returned
@@ -597,7 +597,7 @@ public interface KerberosHelper {
    * The return values are grouped by host and optionally <code>_HOST</code> in principals will be
    * replaced with the relevant hostname if specified to do so.
    *
-   * @param clusterName      the name of the relevant cluster (mandatory)
+   * @param clusterId        the Id of the relevant cluster (mandatory)
    * @param hostName         the name of a host for which to find results, null indicates all hosts
    * @param serviceName      the name of a service for which to find results, null indicates all
    *                         services
@@ -608,7 +608,7 @@ public interface KerberosHelper {
    * @return a map of host names to kerberos identities
    * @throws AmbariException if an error occurs processing the cluster's active identities
    */
-  Map<String, Collection<KerberosIdentityDescriptor>> getActiveIdentities(String clusterName,
+  Map<String, Collection<KerberosIdentityDescriptor>> getActiveIdentities(Long clusterId,
                                                                           String hostName,
                                                                           String serviceName,
                                                                           String componentName,
@@ -635,12 +635,12 @@ public interface KerberosHelper {
   /**
    * Gets the previously stored KDC administrator credentials.
    *
-   * @param clusterName the name of the relevant cluster
+   * @param clusterId the ID of the relevant cluster
    * @return a PrincipalKeyCredential or null, if the KDC administrator credentials have not be set or
    * have been removed
    * @throws AmbariException if an error occurs while retrieving the credentials
    */
-  PrincipalKeyCredential getKDCAdministratorCredentials(String clusterName) throws AmbariException;
+  PrincipalKeyCredential getKDCAdministratorCredentials(Long clusterId) throws AmbariException;
 
   /**
    * Types of Kerberos descriptors related to where the data is stored.

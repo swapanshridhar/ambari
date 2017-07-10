@@ -1,0 +1,17 @@
+***************
+*** 230,236 ****
+            break;
+          case CLUSTER:
+            final ClusterEntity clusterEntity = clusterDAO.findByResourceId(privilegeEntity.getResource().getId());
+-           setResourceProperty(resource, PRIVILEGE_CLUSTER_NAME_PROPERTY_ID, clusterEntity.getClusterName(), requestedIds);
+            break;
+          case VIEW:
+            final ViewInstanceEntity viewInstanceEntity = viewInstanceDAO.findByResourceId(privilegeEntity.getResource().getId());
+--- 230,236 ----
+            break;
+          case CLUSTER:
+            final ClusterEntity clusterEntity = clusterDAO.findByResourceId(privilegeEntity.getResource().getId());
++           setResourceProperty(resource, PRIVILEGE_CLUSTER_ID_PROPERTY_ID, clusterEntity.getClusterId(), requestedIds);
+            break;
+          case VIEW:
+            final ViewInstanceEntity viewInstanceEntity = viewInstanceDAO.findByResourceId(privilegeEntity.getResource().getId());

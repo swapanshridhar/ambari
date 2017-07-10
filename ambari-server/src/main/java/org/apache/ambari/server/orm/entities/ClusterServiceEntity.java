@@ -39,7 +39,7 @@ import javax.persistence.OneToOne;
                 "SELECT clusterService " +
                         "FROM ClusterServiceEntity clusterService " +
                         "JOIN clusterService.clusterEntity cluster " +
-                        "WHERE clusterService.serviceName=:serviceName AND cluster.clusterName=:clusterName")
+                        "WHERE clusterService.serviceName=:serviceName AND cluster.clusterId=:clusterId")
 })
 @Entity
 public class ClusterServiceEntity {

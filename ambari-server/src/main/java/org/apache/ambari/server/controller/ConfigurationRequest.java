@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public class ConfigurationRequest {
 
-  private String clusterName;
+  private Long clusterId;
   private String type;
   private String tag;
   private Long version;
@@ -42,13 +42,13 @@ public class ConfigurationRequest {
     configsAttributes = new HashMap<>();
   }
   
-  public ConfigurationRequest(String clusterName,
+  public ConfigurationRequest(Long clusterId,
                               String type,
                               String tag,
                               Map<String, String> configs,
                               Map<String, Map<String, String>> configsAttributes) {
 
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.configs = configs;
     this.type = type;
     this.tag = tag;
@@ -100,18 +100,18 @@ public class ConfigurationRequest {
   }
 
   /**
-   * @return the clusterName
+   * @return the clusterId
    */
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
 
   /**
-   * @param clusterName the clusterName to set
+   * @param clusterId the cluster ID to set
    */
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   /**

@@ -123,7 +123,7 @@ public class PreUpgradeCheckResourceProviderTest {
 
     expect(repoDao.findByStackNameAndVersion("Stack100", "Repo100")).andReturn(repo).anyTimes();
     expect(repo.getStackId()).andReturn(targetStackId).atLeastOnce();
-    expect(upgradeHelper.suggestUpgradePack("Cluster100", "1.0", "Repo100", Direction.UPGRADE, UpgradeType.NON_ROLLING, "upgrade_pack11")).andReturn(upgradePack);
+    expect(upgradeHelper.suggestUpgradePack(1L, "1.0", "Repo100", Direction.UPGRADE, UpgradeType.NON_ROLLING, "upgrade_pack11")).andReturn(upgradePack);
 
     List<AbstractCheckDescriptor> upgradeChecksToRun = new LinkedList<>();
     List<String> prerequisiteChecks = new LinkedList<>();
@@ -144,7 +144,7 @@ public class PreUpgradeCheckResourceProviderTest {
     // create the request
     Request request = PropertyHelper.getReadRequest(new HashSet<String>());
     PredicateBuilder builder = new PredicateBuilder();
-    Predicate predicate = builder.property(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+    Predicate predicate = builder.property(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_PACK_PROPERTY_ID).equals("upgrade_pack11").and()
         .property(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_TYPE_PROPERTY_ID).equals(UpgradeType.NON_ROLLING).and()
         .property(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_REPOSITORY_VERSION_PROPERTY_ID).equals("Repo100").toPredicate();
@@ -171,8 +171,8 @@ public class PreUpgradeCheckResourceProviderTest {
       Assert.assertEquals("Sample service check always fails.", reason);
       PrereqCheckType checkType = (PrereqCheckType) resource.getPropertyValue(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CHECK_TYPE_PROPERTY_ID);
       Assert.assertEquals(PrereqCheckType.HOST, checkType);
-      String clusterName = (String) resource.getPropertyValue(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CLUSTER_NAME_PROPERTY_ID);
-      Assert.assertEquals("Cluster100", clusterName);
+      Long clusterId = (Long) resource.getPropertyValue(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_CLUSTER_ID_PROPERTY_ID);
+      Assert.assertEquals((Long)1L, clusterId);
       UpgradeType upgradeType = (UpgradeType) resource.getPropertyValue(PreUpgradeCheckResourceProvider.UPGRADE_CHECK_UPGRADE_TYPE_PROPERTY_ID);
       Assert.assertEquals(UpgradeType.NON_ROLLING, upgradeType);
     }

@@ -209,7 +209,7 @@ public class ConfigGroupResourceProviderTest {
     configSet.add(configs);
 
     properties.put(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_NAME_PROPERTY_ID,
         "test-1");
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID,
@@ -287,7 +287,7 @@ public class ConfigGroupResourceProviderTest {
         (String) anyObject(), (String) anyObject(), EasyMock.<Map<String, Config>>anyObject(),
         EasyMock.<Map<Long, Host>>anyObject())).andReturn(configGroup).anyTimes();
 
-    expect(configGroup.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(configGroup.getClusterId()).andReturn(1L).anyTimes();
     expect(configGroup.getName()).andReturn("test-1").anyTimes();
     expect(configGroup.getTag()).andReturn("tag-1").anyTimes();
 
@@ -301,7 +301,7 @@ public class ConfigGroupResourceProviderTest {
     Set<Map<String, Object>> propertySet = new LinkedHashSet<>();
 
     properties.put(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_NAME_PROPERTY_ID,
         "test-1");
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID,
@@ -364,7 +364,7 @@ public class ConfigGroupResourceProviderTest {
     expect(configGroup.getTag()).andReturn("tag-1").anyTimes();
 
     expect(configGroup.convertToResponse()).andReturn(configGroupResponse).anyTimes();
-    expect(configGroupResponse.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(configGroupResponse.getClusterId()).andReturn(1L).anyTimes();
     expect(configGroupResponse.getId()).andReturn(25L).anyTimes();
 
     expect(cluster.getConfigGroups()).andStubAnswer(new IAnswer<Map<Long, ConfigGroup>>() {
@@ -402,7 +402,7 @@ public class ConfigGroupResourceProviderTest {
     configSet.add(configs);
 
     properties.put(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_NAME_PROPERTY_ID,
         "test-1");
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID,
@@ -418,7 +418,7 @@ public class ConfigGroupResourceProviderTest {
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
 
     Predicate predicate = new PredicateBuilder().property
-        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals
+        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals
         ("Cluster100").and().
         property(ConfigGroupResourceProvider.CONFIGGROUP_ID_PROPERTY_ID).equals
         (25L).toPredicate();
@@ -503,7 +503,7 @@ public class ConfigGroupResourceProviderTest {
     expect(configGroup.getTag()).andReturn("tag-1").anyTimes();
 
     expect(configGroup.convertToResponse()).andReturn(configGroupResponse).anyTimes();
-    expect(configGroupResponse.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(configGroupResponse.getClusterId()).andReturn(1L).anyTimes();
     expect(configGroupResponse.getId()).andReturn(25L).anyTimes();
 
     expect(cluster.getConfigGroups()).andStubAnswer(new IAnswer<Map<Long, ConfigGroup>>() {
@@ -541,7 +541,7 @@ public class ConfigGroupResourceProviderTest {
     configSet.add(configs);
 
     properties.put(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_NAME_PROPERTY_ID,
         "test-1");
     properties.put(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID,
@@ -557,7 +557,7 @@ public class ConfigGroupResourceProviderTest {
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
 
     Predicate predicate = new PredicateBuilder().property
-        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals
+        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals
         ("Cluster100").and().
         property(ConfigGroupResourceProvider.CONFIGGROUP_ID_PROPERTY_ID).equals
         (25L).toPredicate();
@@ -661,10 +661,10 @@ public class ConfigGroupResourceProviderTest {
     expect(configGroup4.getHosts()).andReturn(hostMap).anyTimes();
 
 
-    expect(response1.getClusterName()).andReturn("Cluster100").anyTimes();
-    expect(response2.getClusterName()).andReturn("Cluster100").anyTimes();
-    expect(response3.getClusterName()).andReturn("Cluster100").anyTimes();
-    expect(response4.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(response1.getClusterId()).andReturn(1L).anyTimes();
+    expect(response2.getClusterId()).andReturn(1L).anyTimes();
+    expect(response3.getClusterId()).andReturn(1L).anyTimes();
+    expect(response4.getClusterId()).andReturn(1L).anyTimes();
     expect(response1.getId()).andReturn(1L).anyTimes();
     expect(response2.getId()).andReturn(2L).anyTimes();
     expect(response3.getId()).andReturn(3L).anyTimes();
@@ -688,13 +688,13 @@ public class ConfigGroupResourceProviderTest {
 
     Set<String> propertyIds = new HashSet<>();
 
-    propertyIds.add(ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(ConfigGroupResourceProvider.CONFIGGROUP_ID_PROPERTY_ID);
 
     // Read all
     Predicate predicate = new PredicateBuilder().property
-        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100").toPredicate();
+        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID)
+        .equals(1L).toPredicate();
     Request request = PropertyHelper.getReadRequest(propertyIds);
 
     Set<Resource> resources = resourceProvider.getResources(request, predicate);
@@ -704,8 +704,8 @@ public class ConfigGroupResourceProviderTest {
     // Read by id
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
         .CONFIGGROUP_ID_PROPERTY_ID).equals(1L).and().property
-        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100").toPredicate();
+        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID)
+        .equals(1L).toPredicate();
 
     resources = resourceProvider.getResources(request, predicate);
 
@@ -715,7 +715,7 @@ public class ConfigGroupResourceProviderTest {
 
     // Read by Name
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ConfigGroupResourceProvider.CONFIGGROUP_NAME_PROPERTY_ID)
         .equals("g2").toPredicate();
 
@@ -727,7 +727,7 @@ public class ConfigGroupResourceProviderTest {
 
     // Read by tag
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID)
         .equals("t3").toPredicate();
 
@@ -739,7 +739,7 @@ public class ConfigGroupResourceProviderTest {
 
     // Read by hostname (hosts=h1)
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ConfigGroupResourceProvider.CONFIGGROUP_HOSTS_PROPERTY_ID)
         .equals("h1").toPredicate();
 
@@ -755,7 +755,7 @@ public class ConfigGroupResourceProviderTest {
 
     // Read by hostname (hosts/host_name=h1)
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ConfigGroupResourceProvider.CONFIGGROUP_HOSTS_HOSTNAME_PROPERTY_ID)
         .equals("h1").toPredicate();
 
@@ -772,7 +772,7 @@ public class ConfigGroupResourceProviderTest {
 
     // Read by tag and hostname (hosts=h1) - Positive
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID)
         .equals("t4").and().property(ConfigGroupResourceProvider
             .CONFIGGROUP_HOSTS_PROPERTY_ID).equals(host1Id).toPredicate();
@@ -789,7 +789,7 @@ public class ConfigGroupResourceProviderTest {
 
     // Read by tag and hostname (hosts/host_name=h1) - Positive
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
-        .CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+        .CONFIGGROUP_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ConfigGroupResourceProvider.CONFIGGROUP_TAG_PROPERTY_ID)
         .equals("t4").and().property(ConfigGroupResourceProvider
             .CONFIGGROUP_HOSTS_HOSTNAME_PROPERTY_ID).equals("h1").toPredicate();
@@ -807,8 +807,8 @@ public class ConfigGroupResourceProviderTest {
     // Read by id
     predicate = new PredicateBuilder().property(ConfigGroupResourceProvider
         .CONFIGGROUP_ID_PROPERTY_ID).equals(11L).and().property
-        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100").toPredicate();
+        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID)
+        .equals(1L).toPredicate();
 
     NoSuchResourceException resourceException = null;
     try {
@@ -875,8 +875,8 @@ public class ConfigGroupResourceProviderTest {
     ((ObservableResourceProvider) resourceProvider).addObserver(observer);
 
     Predicate predicate = new PredicateBuilder().property
-        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100").and().property(ConfigGroupResourceProvider
+        (ConfigGroupResourceProvider.CONFIGGROUP_CLUSTER_ID_PROPERTY_ID)
+        .equals(1L).and().property(ConfigGroupResourceProvider
             .CONFIGGROUP_ID_PROPERTY_ID).equals(1L).toPredicate();
 
     SecurityContextHolder.getContext().setAuthentication(authentication);

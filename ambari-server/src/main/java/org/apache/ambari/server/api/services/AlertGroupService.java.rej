@@ -1,0 +1,39 @@
+***************
+*** 43,60 ****
+  public class AlertGroupService extends BaseService {
+  
+    /**
+-    * Cluster name for cluster-based requests
+     */
+-   private String m_clusterName = null;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName
+     */
+-   AlertGroupService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+    }
+  
+    @GET
+--- 43,60 ----
+  public class AlertGroupService extends BaseService {
+  
+    /**
++    * Cluster Id for cluster-based requests
+     */
++   private Long m_clusterId = null;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId
+     */
++   AlertGroupService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+    }
+  
+    @GET

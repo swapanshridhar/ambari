@@ -124,7 +124,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
 
   private static Set<String> pkPropertyIds =
     new HashSet<>(Arrays.asList(new String[]{
-      SERVICE_CLUSTER_NAME_PROPERTY_ID,
+      SERVICE_CLUSTER_ID_PROPERTY_ID,
       SERVICE_SERVICE_NAME_PROPERTY_ID}));
 
   /**
@@ -240,8 +240,8 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
 
     for (ServiceResponse response : responses) {
       Resource resource = new ResourceImpl(Resource.Type.Service);
-      setResourceProperty(resource, SERVICE_CLUSTER_NAME_PROPERTY_ID,
-          response.getClusterName(), requestedIds);
+      setResourceProperty(resource, SERVICE_CLUSTER_ID_PROPERTY_ID,
+          response.getClusterId(), requestedIds);
       setResourceProperty(resource, SERVICE_SERVICE_NAME_PROPERTY_ID,
           response.getServiceName(), requestedIds);
       setResourceProperty(resource, SERVICE_SERVICE_STATE_PROPERTY_ID,
@@ -420,7 +420,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
     validateCreateRequests(requests, clusters);
 
     for (ServiceRequest request : requests) {
-      Cluster cluster = clusters.getCluster(request.getClusterName());
+      Cluster cluster = clusters.getCluster(request.getClusterId());
 
       String desiredStack = request.getDesiredStack();
 
@@ -494,17 +494,16 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
   // Get services from the given request.
   private Set<ServiceResponse> getServices(ServiceRequest request)
       throws AmbariException {
-    if (request.getClusterName() == null
-        || request.getClusterName().isEmpty()) {
+    if (request.getClusterId() == null) {
       throw new AmbariException("Invalid arguments, cluster name"
           + " cannot be null");
     }
     Clusters clusters    = getManagementController().getClusters();
-    String   clusterName = request.getClusterName();
+    Long clusterId = request.getClusterId();
 
     final Cluster cluster;
     try {
-      cluster = clusters.getCluster(clusterName);
+      cluster = clusters.getCluster(clusterId);
     } catch (ObjectNotFoundException e) {
       throw new ParentObjectNotFoundException("Parent Cluster resource doesn't exist", e);
     }
@@ -562,8 +561,8 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
     Collection<ServiceComponentHost> ignoredScHosts =
       new ArrayList<>();
 
-    Set<String> clusterNames = new HashSet<>();
-    Map<String, Set<String>> serviceNames = new HashMap<>();
+    Set<Long> clusterIds = new HashSet<>();
+    Map<Long, Set<String>> serviceNames = new HashMap<>();
     Set<State> seenNewStates = new HashSet<>();
     Map<Service, Boolean> serviceCredentialStoreEnabledMap = new HashMap<>();
 
@@ -585,8 +584,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
     // We don't expect batch requests for different clusters, that's why
     // nothing bad should happen if value is overwritten few times
     for (ServiceRequest request : requests) {
-      if (request.getClusterName() == null
-          || request.getClusterName().isEmpty()
+      if (request.getClusterId() == null
           || request.getServiceName() == null
           || request.getServiceName().isEmpty()) {
         throw new IllegalArgumentException("Invalid arguments, cluster name"
@@ -755,7 +753,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
     }
 
 
-    Cluster cluster = clusters.getCluster(clusterNames.iterator().next());
+    Cluster cluster = clusters.getCluster(clusterIds.iterator().next());
 
     return controller.addStages(requestStages, cluster, requestProperties,
       null, changedServices, changedComps, changedScHosts,
@@ -885,17 +883,17 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
     Set<Service> removable = new HashSet<>();
 
     for (ServiceRequest serviceRequest : request) {
-      if (StringUtils.isEmpty(serviceRequest.getClusterName()) || StringUtils.isEmpty(serviceRequest.getServiceName())) {
+      if (null == serviceRequest.getClusterId() || StringUtils.isEmpty(serviceRequest.getServiceName())) {
         // FIXME throw correct error
         throw new AmbariException("invalid arguments");
       } else {
 
-        if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, getClusterResourceId(serviceRequest.getClusterName()), RoleAuthorization.SERVICE_ADD_DELETE_SERVICES)) {
+        if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, getClusterResourceId(serviceRequest.getClusterId()), RoleAuthorization.SERVICE_ADD_DELETE_SERVICES)) {
           throw new AuthorizationException("The user is not authorized to delete services");
         }
 
         Service service = clusters.getCluster(
-            serviceRequest.getClusterName()).getService(
+            serviceRequest.getClusterId()).getService(
                 serviceRequest.getServiceName());
 
         //
@@ -910,7 +908,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
           for (Map.Entry<String, ServiceComponentHost> entry : schHostMap.entrySet()) {
             ServiceComponentHost sch = entry.getValue();
             if (!sch.canBeRemoved()) {
-              String msg = "Cannot remove " + serviceRequest.getClusterName() + "/" + serviceRequest.getServiceName() +
+              String msg = "Cannot remove " + serviceRequest.getClusterId() + "/" + serviceRequest.getServiceName() +
                       ". " + sch.getServiceComponentName() + "on " + sch.getHost() + " is in " +
                       String.valueOf(sch.getDesiredState()) + " state.";
               LOG.error(msg);
@@ -921,7 +919,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
 
         if (!isServiceRemovable) {
           throw new AmbariException ("Cannot remove " +
-                  serviceRequest.getClusterName() + "/" + serviceRequest.getServiceName() +
+                  serviceRequest.getClusterId() + "/" + serviceRequest.getServiceName() +
                     ". " + "One or more host components are in a non-removable state.");
         }
 
@@ -1053,7 +1051,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
 
       Cluster cluster;
       try {
-        cluster = clusters.getCluster(clusterName);
+        cluster = clusters.getCluster(clusterId);
       } catch (ClusterNotFoundException e) {
         throw new ParentObjectNotFoundException("Attempted to add a service to a cluster which doesn't exist", e);
       }
@@ -1102,7 +1100,7 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
 
       if (!ambariMetaInfo.isValidService(stackId.getStackName(),
               stackId.getStackVersion(), request.getServiceName())) {
-        throw new IllegalArgumentException("Unsupported or invalid service in stack, clusterName=" + clusterName
+        throw new IllegalArgumentException("Unsupported or invalid service in stack, clusterId=" + clusterId
                 + ", serviceName=" + serviceName + ", stackInfo=" + stackId.getStackId());
       }
 
@@ -1126,9 +1124,9 @@ public class ServiceResourceProvider extends AbstractControllerResourceProvider 
 
     // Validate dups
     if (!duplicates.isEmpty()) {
-      String clusterName = requests.iterator().next().getClusterName();
+      Long clusterId = requests.iterator().next().getClusterId();
       String msg = "Attempted to create a service which already exists: "
-              + ", clusterName=" + clusterName  + " serviceName=" + StringUtils.join(duplicates, ",");
+              + ", clusterId=" + clusterId  + " serviceName=" + StringUtils.join(duplicates, ",");
 
       throw new DuplicateResourceException(msg);
     }

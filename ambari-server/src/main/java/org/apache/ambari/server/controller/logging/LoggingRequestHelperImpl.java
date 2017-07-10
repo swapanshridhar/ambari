@@ -438,7 +438,7 @@ public class LoggingRequestHelperImpl implements LoggingRequestHelper {
   private PrincipalKeyCredential getLogSearchCredentials() {
     try {
       Credential credential =
-        credentialStoreService.getCredential(cluster.getClusterName(), LOGSEARCH_ADMIN_CREDENTIAL_NAME);
+        credentialStoreService.getCredential(cluster.getClusterId(), LOGSEARCH_ADMIN_CREDENTIAL_NAME);
       if ((credential != null)  && (credential instanceof PrincipalKeyCredential)) {
         return (PrincipalKeyCredential)credential;
       }

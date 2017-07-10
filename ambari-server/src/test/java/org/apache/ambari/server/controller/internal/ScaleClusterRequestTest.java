@@ -333,7 +333,7 @@ public class ScaleClusterRequestTest {
   public static Map<String, Object> createScaleClusterPropertiesGroup1_HostName(String clusterName, String blueprintName) {
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    properties.put(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID, clusterName);
     properties.put(HostResourceProvider.BLUEPRINT_PROPERTY_ID, blueprintName);
     properties.put(HostResourceProvider.HOST_GROUP_PROPERTY_ID, GROUP1_NAME);
     properties.put(HostResourceProvider.HOST_NAME_PROPERTY_ID, HOST1_NAME);
@@ -344,7 +344,7 @@ public class ScaleClusterRequestTest {
   public static Map<String, Object> createScaleClusterPropertiesGroup1_HostCount(String clusterName, String blueprintName) {
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    properties.put(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID, clusterName);
     properties.put(HostResourceProvider.BLUEPRINT_PROPERTY_ID, blueprintName);
     properties.put(HostResourceProvider.HOST_GROUP_PROPERTY_ID, GROUP2_NAME);
     properties.put(HostResourceProvider.HOST_COUNT_PROPERTY_ID, 1);
@@ -355,7 +355,7 @@ public class ScaleClusterRequestTest {
   public static Map<String, Object> createScaleClusterPropertiesGroup1_HostCountAndPredicate(String clusterName, String blueprintName) {
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    properties.put(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID, clusterName);
     properties.put(HostResourceProvider.BLUEPRINT_PROPERTY_ID, blueprintName);
     properties.put(HostResourceProvider.HOST_GROUP_PROPERTY_ID, GROUP3_NAME);
     properties.put(HostResourceProvider.HOST_COUNT_PROPERTY_ID, 1);
@@ -367,7 +367,7 @@ public class ScaleClusterRequestTest {
   public static Map<String, Object> createScaleClusterPropertiesGroup1_HostCount2(String clusterName, String blueprintName) {
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    properties.put(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID, clusterName);
     properties.put(HostResourceProvider.BLUEPRINT_PROPERTY_ID, blueprintName);
     properties.put(HostResourceProvider.HOST_GROUP_PROPERTY_ID, GROUP3_NAME);
     properties.put(HostResourceProvider.HOST_COUNT_PROPERTY_ID, 2);
@@ -378,7 +378,7 @@ public class ScaleClusterRequestTest {
   public static Map<String, Object> createScaleClusterPropertiesGroup1_HostName2(String clusterName, String blueprintName) {
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    properties.put(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID, clusterName);
     properties.put(HostResourceProvider.BLUEPRINT_PROPERTY_ID, blueprintName);
     properties.put(HostResourceProvider.HOST_GROUP_PROPERTY_ID, GROUP1_NAME);
     properties.put(HostResourceProvider.HOST_NAME_PROPERTY_ID, HOST2_NAME);

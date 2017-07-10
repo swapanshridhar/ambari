@@ -113,7 +113,7 @@ public class ClientConfigResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(ClientConfigResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID, "c1");
+    properties.put(ClientConfigResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID, "HDFS_CLIENT");
     properties.put(ClientConfigResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID, "HDFS");
 
@@ -156,7 +156,7 @@ public class ClientConfigResourceProviderTest {
     Request request = PropertyHelper.getUpdateRequest(properties, null);
 
     Predicate predicate = new PredicateBuilder().property(
-            ClientConfigResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID).equals("c1").toPredicate();
+            ClientConfigResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID).equals("c1").toPredicate();
 
     try {
       provider.updateResources(request, predicate);
@@ -220,6 +220,7 @@ public class ClientConfigResourceProviderTest {
         managementController);
 
     String clusterName = "C1";
+    Long clusterId = 1L;
     String serviceName = "PIG";
     String componentName = "PIG";
     String displayName = "Pig Client";
@@ -393,12 +394,12 @@ public class ClientConfigResourceProviderTest {
     expectLastCall().once();
 
     // create the request
-    Request request = PropertyHelper.getReadRequest(ClientConfigResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID, "c1",
+    Request request = PropertyHelper.getReadRequest(ClientConfigResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID, "1",
       ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID,
       ClientConfigResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID);
 
-    Predicate predicate = new PredicateBuilder().property(ClientConfigResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID).
-      equals("c1").and().property(ClientConfigResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID).equals("PIG").toPredicate();
+    Predicate predicate = new PredicateBuilder().property(ClientConfigResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID).
+      equals(1L).and().property(ClientConfigResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID).equals("PIG").toPredicate();
 
     // replay
     replay(managementController, clusters, cluster, ambariMetaInfo, stackId, componentInfo, commandScriptDefinition,
@@ -466,16 +467,17 @@ public class ClientConfigResourceProviderTest {
         managementController);
 
     // create the request
-    Request request = PropertyHelper.getReadRequest(ClientConfigResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID, "c1",
+    Request request = PropertyHelper.getReadRequest(ClientConfigResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID, "1",
         ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID,
         ClientConfigResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID);
 
-    Predicate predicate = new PredicateBuilder().property(ClientConfigResourceProvider.COMPONENT_CLUSTER_NAME_PROPERTY_ID).
-      equals("c1").and().property(ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals("PIG").
+    Predicate predicate = new PredicateBuilder().property(ClientConfigResourceProvider.COMPONENT_CLUSTER_ID_PROPERTY_ID).
+      equals(1L).and().property(ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals("PIG").
       and().property(ClientConfigResourceProvider.COMPONENT_SERVICE_NAME_PROPERTY_ID).equals("PIG").
       toPredicate();
 
     String clusterName = "C1";
+    Long clusterId = 1L;
     String serviceName = "PIG";
     String componentName = "PIG";
     String displayName = "Pig Client";

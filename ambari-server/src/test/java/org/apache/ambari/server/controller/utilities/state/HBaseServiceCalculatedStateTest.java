@@ -54,7 +54,7 @@ public class HBaseServiceCalculatedStateTest extends GeneralServiceCalculatedSta
       hostAttributes.put("os_release_version", "6.3");
       host.setHostAttributes(hostAttributes);
       host.setState(HostState.HEALTHY);
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, (clusters.getCluster(clusterName)).getClusterId());
 
       ServiceComponentHost sch = clientComponent.addServiceComponentHost(hostName);
       sch.setVersion("2.1.1.0");

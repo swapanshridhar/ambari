@@ -83,7 +83,7 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
 
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID, 100L);
     properties.put(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID, "Host100");
     properties.put(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_PRINCIPAL_NAME_PROPERTY_ID, "principal@REALM");
     properties.put(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_PRINCIPAL_LOCAL_USERNAME_PROPERTY_ID, "userA");
@@ -92,8 +92,8 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
 
     Predicate predicate = new PredicateBuilder()
-        .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100")
+        .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID)
+        .equals(100L)
         .and()
         .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID)
         .equals("Host100")
@@ -115,8 +115,8 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
     ((ObservableResourceProvider) provider).addObserver(observer);
 
     Predicate predicate = new PredicateBuilder()
-        .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100")
+        .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID)
+        .equals(100L)
         .and()
         .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID)
         .equals("Host100")
@@ -209,7 +209,7 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
     activeIdentities.put("Host100", identities);
 
     KerberosHelper kerberosHelper = createStrictMock(KerberosHelper.class);
-    expect(kerberosHelper.getActiveIdentities("Cluster100", "Host100", null, null, true))
+    expect(kerberosHelper.getActiveIdentities(100L, "Host100", null, null, true))
         .andReturn(activeIdentities)
         .times(1);
 
@@ -238,7 +238,7 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
 
     Set<String> propertyIds = new HashSet<>();
 
-    propertyIds.add(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID);
     propertyIds.add(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_DESCRIPTION_PROPERTY_ID);
     propertyIds.add(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_PRINCIPAL_NAME_PROPERTY_ID);
@@ -253,8 +253,8 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
     propertyIds.add(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_KEYTAB_FILE_INSTALLED_PROPERTY_ID);
 
     Predicate predicate = new PredicateBuilder()
-        .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID)
-        .equals("Cluster100")
+        .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID)
+        .equals(100L)
         .and()
         .property(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID)
         .equals("Host100").toPredicate();
@@ -265,8 +265,8 @@ public class HostKerberosIdentityResourceProviderTest extends EasyMockSupport {
     Assert.assertEquals(3, resources.size());
 
     for (Resource resource : resources) {
-      Assert.assertEquals("Cluster100",
-          resource.getPropertyValue(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals(100L,
+          resource.getPropertyValue(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("Host100",
           resource.getPropertyValue(HostKerberosIdentityResourceProvider.KERBEROS_IDENTITY_HOST_NAME_PROPERTY_ID));
 

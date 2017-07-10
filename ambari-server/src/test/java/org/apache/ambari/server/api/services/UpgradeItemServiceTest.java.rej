@@ -1,0 +1,19 @@
+***************
+*** 49,56 ****
+    private class TestUpgradeItemService extends UpgradeItemService {
+      private Long m_upgradeItemId;
+  
+-     private TestUpgradeItemService(String clusterName, String upgradeId, String upgradeGroupId, Long upgradeItemId) {
+-       super(ApiVersion.Default, clusterName, upgradeId, upgradeGroupId);
+  
+        m_upgradeItemId = upgradeItemId;
+      }
+--- 49,56 ----
+    private class TestUpgradeItemService extends UpgradeItemService {
+      private Long m_upgradeItemId;
+  
++     private TestUpgradeItemService(Long clusterId, String upgradeId, String upgradeGroupId, Long upgradeItemId) {
++       super(ApiVersion.Default, clusterId, upgradeId, upgradeGroupId);
+  
+        m_upgradeItemId = upgradeItemId;
+      }

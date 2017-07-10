@@ -52,8 +52,8 @@ public class WorkflowResourceProvider extends
     AbstractJDBCResourceProvider<WorkflowResourceProvider.WorkflowFields> {
   private static final Logger LOG = LoggerFactory.getLogger(WorkflowResourceProvider.class);
 
-  protected static final String WORKFLOW_CLUSTER_NAME_PROPERTY_ID = PropertyHelper
-      .getPropertyId("Workflow", "cluster_name");
+  protected static final String WORKFLOW_CLUSTER_ID_PROPERTY_ID = PropertyHelper
+      .getPropertyId("Workflow", "cluster_id");
   protected static final String WORKFLOW_ID_PROPERTY_ID = PropertyHelper
       .getPropertyId("Workflow", "workflow_id");
   protected static final String WORKFLOW_NAME_PROPERTY_ID = PropertyHelper
@@ -80,7 +80,7 @@ public class WorkflowResourceProvider extends
       .getPropertyId("Workflow", "context");
 
   private static final Set<String> pkPropertyIds = new HashSet<>(
-    Arrays.asList(new String[]{WORKFLOW_CLUSTER_NAME_PROPERTY_ID,
+    Arrays.asList(new String[]{WORKFLOW_CLUSTER_ID_PROPERTY_ID,
       WORKFLOW_ID_PROPERTY_ID}));
 
   protected WorkflowFetcher workflowFetcher;
@@ -133,12 +133,11 @@ public class WorkflowResourceProvider extends
 
     Set<Map<String,Object>> predicatePropertieSet = getPropertyMaps(predicate);
     for (Map<String,Object> predicateProperties : predicatePropertieSet) {
-      String clusterName = (String) predicateProperties
-          .get(WORKFLOW_CLUSTER_NAME_PROPERTY_ID);
+      Long clusterId = MapUtils.parseLong(predicateProperties, WORKFLOW_CLUSTER_ID_PROPERTY_ID);
       String workflowId = (String) predicateProperties
           .get(WORKFLOW_ID_PROPERTY_ID);
       resourceSet.addAll(workflowFetcher.fetchWorkflows(requestedIds,
-          clusterName, workflowId));
+          clusterId, workflowId));
     }
     return resourceSet;
   }
@@ -165,7 +164,7 @@ public class WorkflowResourceProvider extends
   @Override
   public Map<Type,String> getKeyPropertyIds() {
     Map<Type,String> keyPropertyIds = new HashMap<>();
-    keyPropertyIds.put(Type.Cluster, WORKFLOW_CLUSTER_NAME_PROPERTY_ID);
+    keyPropertyIds.put(Type.Cluster, WORKFLOW_CLUSTER_ID_PROPERTY_ID);
     keyPropertyIds.put(Type.Workflow, WORKFLOW_ID_PROPERTY_ID);
     return keyPropertyIds;
   }
@@ -179,14 +178,14 @@ public class WorkflowResourceProvider extends
      * 
      * @param requestedIds
      *          fields to pull from db
-     * @param clusterName
-     *          the cluster name
+     * @param clusterId
+     *          the cluster Id
      * @param workflowId
      *          the workflow id
      * @return a set of workflow resources
      */
     Set<Resource> fetchWorkflows(Set<String> requestedIds,
-                                 String clusterName, String workflowId);
+                                 Long clusterId, String workflowId);
   }
 
   /**
@@ -245,15 +244,15 @@ public class WorkflowResourceProvider extends
 
     @Override
     public Set<Resource> fetchWorkflows(Set<String> requestedIds,
-        String clusterName, String workflowId) {
+        Long clusterId, String workflowId) {
       Set<Resource> workflows = new HashSet<>();
       ResultSet rs = null;
       try {
         rs = getResultSet(requestedIds, workflowId);
         while (rs.next()) {
           Resource resource = new ResourceImpl(Resource.Type.Workflow);
-          setResourceProperty(resource, WORKFLOW_CLUSTER_NAME_PROPERTY_ID,
-              clusterName, requestedIds);
+          setResourceProperty(resource, WORKFLOW_CLUSTER_ID_PROPERTY_ID,
+              clusterId, requestedIds);
           setString(resource, WORKFLOW_ID_PROPERTY_ID, rs, requestedIds);
           setString(resource, WORKFLOW_NAME_PROPERTY_ID, rs, requestedIds);
           setString(resource, WORKFLOW_USER_NAME_PROPERTY_ID, rs, requestedIds);

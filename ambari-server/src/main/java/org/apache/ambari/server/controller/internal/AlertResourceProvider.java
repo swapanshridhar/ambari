@@ -48,6 +48,7 @@ import org.apache.ambari.server.state.AlertState;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.Clusters;
 import org.apache.ambari.server.state.ConfigHelper;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -70,7 +71,7 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
   public static final String ALERT_DEFINITION_NAME = "Alert/definition_name";
   public static final String ALERT_TEXT = "Alert/text";
 
-  public static final String ALERT_CLUSTER_NAME = "Alert/cluster_name";
+  public static final String ALERT_CLUSTER_ID = "Alert/cluster_id";
   public static final String ALERT_COMPONENT = "Alert/component_name";
   public static final String ALERT_HOST = "Alert/host_name";
   public static final String ALERT_SERVICE = "Alert/service_name";
@@ -113,7 +114,7 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
     PROPERTY_IDS.add(ALERT_ORIGINAL_TIMESTAMP);
     PROPERTY_IDS.add(ALERT_DEFINITION_ID);
     PROPERTY_IDS.add(ALERT_DEFINITION_NAME);
-    PROPERTY_IDS.add(ALERT_CLUSTER_NAME);
+    PROPERTY_IDS.add(ALERT_CLUSTER_ID);
     PROPERTY_IDS.add(ALERT_LATEST_TIMESTAMP);
     PROPERTY_IDS.add(ALERT_MAINTENANCE_STATE);
     PROPERTY_IDS.add(ALERT_INSTANCE);
@@ -130,7 +131,7 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.Alert, ALERT_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_CLUSTER_ID);
     KEY_PROPERTY_IDS.put(Resource.Type.Service, ALERT_SERVICE);
     KEY_PROPERTY_IDS.put(Resource.Type.Host, ALERT_HOST);
   }
@@ -174,9 +175,9 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
 
-      String clusterName = (String) propertyMap.get(ALERT_CLUSTER_NAME);
+      Long clusterId = MapUtils.parseLong(propertyMap, ALERT_CLUSTER_ID);
 
-      if (null == clusterName || clusterName.isEmpty()) {
+      if (null == clusterId) {
         throw new IllegalArgumentException("Invalid argument, cluster name is required");
       }
 
@@ -186,13 +187,12 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
 
         if (null != entity) {
           AlertResourceProviderUtils.verifyViewAuthorization(entity);
-          results.add(toResource(false, clusterName, entity, requestPropertyIds));
+          results.add(toResource(false, clusterId, entity, requestPropertyIds));
         }
 
       } else {
         // Verify authorization to retrieve the requested data
         try {
-          Long clusterId = (StringUtils.isEmpty(clusterName)) ? null : getClusterId(clusterName);
           String definitionName = (String) propertyMap.get(ALERT_DEFINITION_NAME);
           String definitionId = (String) propertyMap.get(ALERT_DEFINITION_ID);
 
@@ -212,7 +212,7 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
           }
           else {
             // Make sure the user has the ability to view cluster-level alerts
-            AlertResourceProviderUtils.verifyViewAuthorization("", getClusterResourceId(clusterName));
+            AlertResourceProviderUtils.verifyViewAuthorization("", getClusterResourceId(clusterId));
           }
         } catch (AmbariException e) {
           throw new SystemException(e.getMessage(), e);
@@ -231,7 +231,7 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
         }
 
         for (AlertCurrentEntity entity : entities) {
-          results.add(toResource(true, clusterName, entity, requestPropertyIds));
+          results.add(toResource(true, clusterId, entity, requestPropertyIds));
         }
       }
     }
@@ -243,18 +243,18 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
    * Converts an entity to a resource.
    *
    * @param isCollection {@code true} if the response is for a collection
-   * @param clusterName the cluster name
+   * @param clusterId the cluster ID
    * @param entity the entity
    * @param requestedIds the requested ids
    * @return the resource
    */
-  private Resource toResource(boolean isCollection, String clusterName,
+  private Resource toResource(boolean isCollection, Long clusterId,
       AlertCurrentEntity entity, Set<String> requestedIds) {
     AlertHistoryEntity history = entity.getAlertHistory();
     AlertDefinitionEntity definition = history.getAlertDefinition();
 
     Resource resource = new ResourceImpl(Resource.Type.Alert);
-    setResourceProperty(resource, ALERT_CLUSTER_NAME, clusterName, requestedIds);
+    setResourceProperty(resource, ALERT_CLUSTER_ID, clusterId, requestedIds);
     setResourceProperty(resource, ALERT_ID, entity.getAlertId(), requestedIds);
     setResourceProperty(resource, ALERT_LATEST_TIMESTAMP, entity.getLatestTimestamp(), requestedIds);
     setResourceProperty(resource, ALERT_MAINTENANCE_STATE, entity.getMaintenanceState(), requestedIds);
@@ -273,7 +273,7 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
     setResourceProperty(resource, ALERT_SCOPE, definition.getScope(), requestedIds);
 
     // repeat tolerance values
-    int repeatTolerance = getRepeatTolerance(definition, clusterName);
+    int repeatTolerance = getRepeatTolerance(definition, clusterId);
     long occurrences = entity.getOccurrences();
     long remaining = (occurrences > repeatTolerance) ? 0 : (repeatTolerance - occurrences);
 
@@ -307,11 +307,11 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
    *
    * @param definition
    *          the definition (not {@code null}).
-   * @param clusterName
-   *          the name of the cluster (not {@code null}).
+   * @param clusterId
+   *          the Id of the cluster (not {@code null}).
    * @return the repeat tolerance for the alert
    */
-  private int getRepeatTolerance(AlertDefinitionEntity definition, String clusterName ){
+  private int getRepeatTolerance(AlertDefinitionEntity definition, Long clusterId){
 
     // if the definition overrides the global value, then use that
     if( definition.isRepeatToleranceEnabled() ){
@@ -320,12 +320,12 @@ public class AlertResourceProvider extends ReadOnlyResourceProvider implements
 
     int repeatTolerance = 1;
     try {
-      Cluster cluster = clusters.get().getCluster(clusterName);
+      Cluster cluster = clusters.get().getCluster(clusterId);
       String value = cluster.getClusterProperty(ConfigHelper.CLUSTER_ENV_ALERT_REPEAT_TOLERANCE, "1");
       repeatTolerance = NumberUtils.toInt(value, 1);
     } catch (AmbariException ambariException) {
       LOG.warn("Unable to read {}/{} from cluster {}, defaulting to 1", ConfigHelper.CLUSTER_ENV,
-          ConfigHelper.CLUSTER_ENV_ALERT_REPEAT_TOLERANCE, clusterName, ambariException);
+          ConfigHelper.CLUSTER_ENV_ALERT_REPEAT_TOLERANCE, clusterId, ambariException);
     }
 
     return repeatTolerance;

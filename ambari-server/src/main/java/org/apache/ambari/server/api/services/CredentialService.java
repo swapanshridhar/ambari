@@ -63,7 +63,7 @@ public class CredentialService extends BaseService {
   }
 
   /**
-   * Handles: GET  /clusters/{cluster_name}/credentials/{alias}
+   * Handles: GET  /clusters/{cluster_id}/credentials/{alias}
    * Get a specific credential.
    *
    * @param headers http headers
@@ -80,7 +80,7 @@ public class CredentialService extends BaseService {
   }
 
   /**
-   * Handles: POST /clusters/{cluster_name}/credentials/{alias}
+   * Handles: POST /clusters/{cluster_id}/credentials/{alias}
    * Create a specific credential.
    *
    * @param headers http headers
@@ -97,7 +97,7 @@ public class CredentialService extends BaseService {
   }
 
   /**
-   * Handles: PUT /clusters/{cluster_name}/credentials/{alias}
+   * Handles: PUT /clusters/{cluster_id}/credentials/{alias}
    * Create a specific credential.
    *
    * @param headers http headers
@@ -114,7 +114,7 @@ public class CredentialService extends BaseService {
   }
 
   /**
-   * Handles: DELETE /clusters/{cluster_name}/credentials/{alias}
+   * Handles: DELETE /clusters/{cluster_id}/credentials/{alias}
    * Delete a specific credential.
    *
    * @param headers http headers
@@ -138,7 +138,7 @@ public class CredentialService extends BaseService {
    */
   ResourceInstance createCredentialResource(String alias) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, this.clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Credential, alias);
 
     return createResource(Resource.Type.Credential, mapIds);

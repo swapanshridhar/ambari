@@ -59,6 +59,7 @@ import org.apache.ambari.server.state.alert.AlertDefinitionFactory;
 import org.apache.ambari.server.state.alert.AlertDefinitionHash;
 import org.apache.ambari.server.state.alert.Scope;
 import org.apache.ambari.server.state.alert.SourceType;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -75,7 +76,7 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
 
   protected static final String ALERT_DEF = "AlertDefinition";
 
-  protected static final String ALERT_DEF_CLUSTER_NAME = "AlertDefinition/cluster_name";
+  protected static final String ALERT_DEF_CLUSTER_ID = "AlertDefinition/cluster_id";
   protected static final String ALERT_DEF_ID = "AlertDefinition/id";
   protected static final String ALERT_DEF_NAME = "AlertDefinition/name";
   protected static final String ALERT_DEF_LABEL = "AlertDefinition/label";
@@ -141,7 +142,7 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
 
   static {
     // properties
-    PROPERTY_IDS.add(ALERT_DEF_CLUSTER_NAME);
+    PROPERTY_IDS.add(ALERT_DEF_CLUSTER_ID);
     PROPERTY_IDS.add(ALERT_DEF_SERVICE_NAME);
     PROPERTY_IDS.add(ALERT_DEF_COMPONENT_NAME);
     PROPERTY_IDS.add(ALERT_DEF_ID);
@@ -159,7 +160,7 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.AlertDefinition, ALERT_DEF_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_DEF_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_DEF_CLUSTER_ID);
   }
 
   /**
@@ -204,7 +205,7 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
       entities.add(entity);
 
       if (null == clusterName) {
-        clusterName = (String) requestMap.get(ALERT_DEF_CLUSTER_NAME);
+        clusterName = (String) requestMap.get(ALERT_DEF_CLUSTER_ID);
       }
     }
 
@@ -235,10 +236,9 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
     Set<Resource> results = new LinkedHashSet<>();
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = (String) propertyMap.get(ALERT_DEF_CLUSTER_NAME);
-
-      if (null == clusterName || clusterName.isEmpty()) {
-        throw new IllegalArgumentException("Invalid argument, cluster name is required");
+      Long clusterId = MapUtils.parseLong(propertyMap, ALERT_DEF_CLUSTER_ID);
+      if (null == clusterId) {
+        throw new IllegalArgumentException("Invalid argument, cluster id is required");
       }
 
       String id = (String) propertyMap.get(ALERT_DEF_ID);
@@ -246,12 +246,12 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
         AlertDefinitionEntity entity = alertDefinitionDAO.findById(Long.parseLong(id));
         if (null != entity) {
           AlertResourceProviderUtils.verifyViewAuthorization(entity);
-          results.add(toResource(clusterName, entity, requestPropertyIds));
+          results.add(toResource(clusterId, entity, requestPropertyIds));
         }
       } else {
         Cluster cluster = null;
         try {
-          cluster = getManagementController().getClusters().getCluster(clusterName);
+          cluster = getManagementController().getClusters().getCluster(clusterId);
         } catch (AmbariException e) {
           throw new NoSuchResourceException("Parent Cluster resource doesn't exist", e);
         }
@@ -269,7 +269,7 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
           if((StringUtils.isEmpty(serviceName) || "AMBARI".equals(serviceName))
               ? clusterLevelAuthorization
               : serviceLevelAuthorization) {
-            results.add(toResource(clusterName, entity, requestPropertyIds));
+            results.add(toResource(clusterId, entity, requestPropertyIds));
           }
         }
       }
@@ -413,7 +413,8 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
       bCreate = false;
     }
 
-    String clusterName = (String) requestMap.get(ALERT_DEF_CLUSTER_NAME);
+    Long clusterId = MapUtils.parseLong(requestMap, ALERT_DEF_CLUSTER_ID);
+
     String definitionName = (String) requestMap.get(ALERT_DEF_NAME);
     String serviceName = (String) requestMap.get(ALERT_DEF_SERVICE_NAME);
     String componentName = (String) requestMap.get(ALERT_DEF_COMPONENT_NAME);
@@ -469,9 +470,9 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
           requestMap.get(ALERT_DEF_REPEAT_TOLERANCE_ENABLED).toString());
     }
 
-    if (StringUtils.isEmpty(clusterName)) {
+    if (null == clusterId) {
       throw new IllegalArgumentException(
-          "Invalid argument, cluster name is required");
+          "Invalid argument, cluster id is required");
     }
 
     if (bCreate && !requestMap.containsKey(ALERT_DEF_INTERVAL)) {
@@ -545,8 +546,8 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
     }
 
     Clusters clusters = getManagementController().getClusters();
-    Cluster cluster = clusters.getCluster(clusterName);
-    Long clusterId = cluster.getClusterId();
+    Cluster cluster = clusters.getCluster(clusterId);
+    clusterId = cluster.getClusterId();
 
     boolean managed = false;
     boolean toggled = false;
@@ -710,11 +711,11 @@ public class AlertDefinitionResourceProvider extends AbstractControllerResourceP
     return categoryJson;
   }
 
-  private Resource toResource(String clusterName,
+  private Resource toResource(Long clusterId,
       AlertDefinitionEntity entity, Set<String> requestedIds) {
     Resource resource = new ResourceImpl(Resource.Type.AlertDefinition);
     resource.setProperty(ALERT_DEF_ID, entity.getDefinitionId());
-    resource.setProperty(ALERT_DEF_CLUSTER_NAME, clusterName);
+    resource.setProperty(ALERT_DEF_CLUSTER_ID, clusterId);
     resource.setProperty(ALERT_DEF_NAME, entity.getDefinitionName());
     resource.setProperty(ALERT_DEF_LABEL, entity.getLabel());
 

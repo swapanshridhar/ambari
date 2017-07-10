@@ -109,7 +109,7 @@ public class RequestScheduleResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     properties.put(RequestScheduleResourceProvider
-      .REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+      .REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(RequestScheduleResourceProvider
       .REQUEST_SCHEDULE_DESC_PROPERTY_ID, "some description");
     properties.put(RequestScheduleResourceProvider
@@ -209,7 +209,7 @@ public class RequestScheduleResourceProviderTest {
     expect(requestExecution.convertToResponseWithBody()).andReturn
       (requestScheduleResponse).anyTimes();
     expect(requestScheduleResponse.getId()).andReturn(25L).anyTimes();
-    expect(requestScheduleResponse.getClusterName()).andReturn("Cluster100")
+    expect(requestScheduleResponse.getClusterId()).andReturn(100L)
       .anyTimes();
 
     expect(cluster.getAllRequestExecutions()).andStubAnswer(new IAnswer<Map<Long, RequestExecution>>() {
@@ -230,7 +230,7 @@ public class RequestScheduleResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     properties.put(RequestScheduleResourceProvider
-      .REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+      .REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(RequestScheduleResourceProvider
       .REQUEST_SCHEDULE_DESC_PROPERTY_ID, "some description");
     properties.put(RequestScheduleResourceProvider
@@ -286,7 +286,7 @@ public class RequestScheduleResourceProviderTest {
 
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
     Predicate predicate = new PredicateBuilder().property
-      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID)
+      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID)
       .equals("Cluster100").and().property(RequestScheduleResourceProvider
         .REQUEST_SCHEDULE_ID_PROPERTY_ID).equals(25L).toPredicate();
 
@@ -318,7 +318,7 @@ public class RequestScheduleResourceProviderTest {
     expect(requestExecution.convertToResponseWithBody()).andReturn
       (requestScheduleResponse).anyTimes();
     expect(requestScheduleResponse.getId()).andReturn(25L).anyTimes();
-    expect(requestScheduleResponse.getClusterName()).andReturn("Cluster100")
+    expect(requestScheduleResponse.getClusterId()).andReturn(100L)
       .anyTimes();
 
     expect(cluster.getAllRequestExecutions()).andStubAnswer(new IAnswer<Map<Long, RequestExecution>>() {
@@ -339,13 +339,13 @@ public class RequestScheduleResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     properties.put(RequestScheduleResourceProvider
-      .REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+      .REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID, "Cluster100");
     properties.put(RequestScheduleResourceProvider
       .REQUEST_SCHEDULE_DESC_PROPERTY_ID, "some description");
 
     Set<String> propertyIds = new HashSet<>();
     propertyIds.add(RequestScheduleResourceProvider
-      .REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID);
+      .REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(RequestScheduleResourceProvider
       .REQUEST_SCHEDULE_ID_PROPERTY_ID);
 
@@ -353,7 +353,7 @@ public class RequestScheduleResourceProviderTest {
 
     // Read by id
     Predicate predicate = new PredicateBuilder().property
-      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID)
+      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID)
       .equals("Cluster100").and().property(RequestScheduleResourceProvider
         .REQUEST_SCHEDULE_ID_PROPERTY_ID).equals(25L).toPredicate();
 
@@ -366,7 +366,7 @@ public class RequestScheduleResourceProviderTest {
 
     // Read all
     predicate = new PredicateBuilder().property
-      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID)
+      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID)
       .equals("Cluster100").toPredicate();
 
     resources = resourceProvider.getResources(request, predicate);
@@ -409,7 +409,7 @@ public class RequestScheduleResourceProviderTest {
     ((ObservableResourceProvider) resourceProvider).addObserver(observer);
 
     Predicate predicate = new PredicateBuilder().property
-      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_NAME_PROPERTY_ID)
+      (RequestScheduleResourceProvider.REQUEST_SCHEDULE_CLUSTER_ID_PROPERTY_ID)
       .equals("Cluster100").and().property(RequestScheduleResourceProvider
         .REQUEST_SCHEDULE_ID_PROPERTY_ID).equals(1L).toPredicate();
 

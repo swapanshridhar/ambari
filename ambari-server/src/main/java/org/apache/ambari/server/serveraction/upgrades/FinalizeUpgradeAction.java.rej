@@ -1,0 +1,116 @@
+***************
+*** 147,153 ****
+        StackId clusterCurrentStackId = cluster.getCurrentStackVersion();
+  
+        ClusterVersionEntity upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-           clusterName, clusterDesiredStackId, version);
+  
+        if (upgradingClusterVersion == null) {
+          throw new AmbariException(MessageFormat.format(
+--- 147,153 ----
+        StackId clusterCurrentStackId = cluster.getCurrentStackVersion();
+  
+        ClusterVersionEntity upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++           cluster.getClusterId(), clusterDesiredStackId, version);
+  
+        if (upgradingClusterVersion == null) {
+          throw new AmbariException(MessageFormat.format(
+***************
+*** 157,163 ****
+        // Validate that all of the hosts with a version in the cluster have the
+        // version being upgraded to, and it is in an allowed state.
+        List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(
+-           clusterName, clusterDesiredStackId, version);
+  
+        // Will include hosts whose state is INSTALLED
+        Set<HostVersionEntity> hostVersionsAllowed = new HashSet<>();
+--- 157,163 ----
+        // Validate that all of the hosts with a version in the cluster have the
+        // version being upgraded to, and it is in an allowed state.
+        List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(
++           cluster.getClusterId(), clusterDesiredStackId, version);
+  
+        // Will include hosts whose state is INSTALLED
+        Set<HostVersionEntity> hostVersionsAllowed = new HashSet<>();
+***************
+*** 243,256 ****
+  
+        // we're guaranteed to be ready transition to upgraded now; ensure that
+        // the transition will be allowed if the cluster state is not upgraded
+-       upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(clusterName,
+            clusterDesiredStackId, version);
+  
+        if (RepositoryVersionState.INSTALLING == upgradingClusterVersion.getState()) {
+          cluster.transitionClusterVersion(clusterDesiredStackId, version, RepositoryVersionState.INSTALLED);
+  
+          upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-             clusterName, clusterDesiredStackId, version);
+        }
+  
+        // we cannot finalize since the cluster was not ready to move into the
+--- 243,256 ----
+  
+        // we're guaranteed to be ready transition to upgraded now; ensure that
+        // the transition will be allowed if the cluster state is not upgraded
++       upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(cluster.getClusterId(),
+            clusterDesiredStackId, version);
+  
+        if (RepositoryVersionState.INSTALLING == upgradingClusterVersion.getState()) {
+          cluster.transitionClusterVersion(clusterDesiredStackId, version, RepositoryVersionState.INSTALLED);
+  
+          upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++           cluster.getClusterId(), clusterDesiredStackId, version);
+        }
+  
+        // we cannot finalize since the cluster was not ready to move into the
+***************
+*** 361,367 ****
+        out.append(String.format("Searching for current version for %s\n",
+            clusterName));
+  
+-       ClusterVersionEntity clusterVersion = clusterVersionDAO.findByClusterAndStateCurrent(clusterName);
+        if (null == clusterVersion) {
+          throw new AmbariException("Could not find current cluster version");
+        }
+--- 361,367 ----
+        out.append(String.format("Searching for current version for %s\n",
+            clusterName));
+  
++       ClusterVersionEntity clusterVersion = clusterVersionDAO.findByClusterAndStateCurrent(cluster.getClusterId());
+        if (null == clusterVersion) {
+          throw new AmbariException("Could not find current cluster version");
+        }
+***************
+*** 382,388 ****
+        Set<String> badVersions = new HashSet<>();
+  
+        // update the cluster version
+-       for (ClusterVersionEntity cve : clusterVersionDAO.findByCluster(clusterName)) {
+          switch (cve.getState()) {
+            case INSTALL_FAILED:
+            case INSTALLED:
+--- 382,388 ----
+        Set<String> badVersions = new HashSet<>();
+  
+        // update the cluster version
++       for (ClusterVersionEntity cve : clusterVersionDAO.findByCluster(cluster.getClusterId())) {
+          switch (cve.getState()) {
+            case INSTALL_FAILED:
+            case INSTALLED:
+***************
+*** 403,409 ****
+        Set<String> badHosts = new HashSet<>();
+        for (String badVersion : badVersions) {
+          List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(
+-             clusterName, targetStackId, badVersion);
+  
+          for (HostVersionEntity hostVersion : hostVersions) {
+            badHosts.add(hostVersion.getHostName());
+--- 403,409 ----
+        Set<String> badHosts = new HashSet<>();
+        for (String badVersion : badVersions) {
+          List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(
++             cluster.getClusterId(), targetStackId, badVersion);
+  
+          for (HostVersionEntity hostVersion : hostVersions) {
+            badHosts.add(hostVersion.getHostName());

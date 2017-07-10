@@ -99,7 +99,7 @@ public class ClusterStackVersionResourceProvider extends AbstractControllerResou
   // ----- Property ID constants ---------------------------------------------
 
   protected static final String CLUSTER_STACK_VERSION_ID_PROPERTY_ID = PropertyHelper.getPropertyId("ClusterStackVersions", "id");
-  protected static final String CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("ClusterStackVersions", "cluster_name");
+  protected static final String CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId("ClusterStackVersions", "cluster_id");
   protected static final String CLUSTER_STACK_VERSION_STACK_PROPERTY_ID = PropertyHelper.getPropertyId("ClusterStackVersions", "stack");
   protected static final String CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID = PropertyHelper.getPropertyId("ClusterStackVersions", "version");
   protected static final String CLUSTER_STACK_VERSION_STATE_PROPERTY_ID = PropertyHelper.getPropertyId("ClusterStackVersions", "state");
@@ -134,19 +134,19 @@ public class ClusterStackVersionResourceProvider extends AbstractControllerResou
   private static final float INSTALL_PACKAGES_SUCCESS_FACTOR = 0.85f;
 
   private static Set<String> pkPropertyIds = Sets.newHashSet(
-      CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, CLUSTER_STACK_VERSION_ID_PROPERTY_ID,
+    CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, CLUSTER_STACK_VERSION_ID_PROPERTY_ID,
       CLUSTER_STACK_VERSION_STACK_PROPERTY_ID, CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID,
       CLUSTER_STACK_VERSION_STATE_PROPERTY_ID,
       CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
 
   private static Set<String> propertyIds = Sets.newHashSet(CLUSTER_STACK_VERSION_ID_PROPERTY_ID,
-      CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, CLUSTER_STACK_VERSION_STACK_PROPERTY_ID,
+    CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, CLUSTER_STACK_VERSION_STACK_PROPERTY_ID,
       CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID, CLUSTER_STACK_VERSION_HOST_STATES_PROPERTY_ID,
       CLUSTER_STACK_VERSION_STATE_PROPERTY_ID, CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID,
       CLUSTER_STACK_VERSION_STAGE_SUCCESS_FACTOR, CLUSTER_STACK_VERSION_FORCE);
 
   private static Map<Type, String> keyPropertyIds = ImmutableMap.<Type, String> builder()
-      .put(Type.Cluster, CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID)
+      .put(Type.Cluster, CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID)
       .put(Type.ClusterStackVersion, CLUSTER_STACK_VERSION_ID_PROPERTY_ID)
       .put(Type.Stack, CLUSTER_STACK_VERSION_STACK_PROPERTY_ID)
       .put(Type.StackVersion, CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID)
@@ -302,7 +302,7 @@ public class ClusterStackVersionResourceProvider extends AbstractControllerResou
     Map<String, Object> propertyMap = iterator.next();
 
     Set<String> requiredProperties = new HashSet<>();
-    requiredProperties.add(CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID);
+    requiredProperties.add(CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
     requiredProperties.add(CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
     requiredProperties.add(CLUSTER_STACK_VERSION_STACK_PROPERTY_ID);
     requiredProperties.add(CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID);
@@ -315,7 +315,7 @@ public class ClusterStackVersionResourceProvider extends AbstractControllerResou
       }
     }
 
-    clName = (String) propertyMap.get(CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID);
+    Long clusterId = MapUtils.parseLong(propertyMap, CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID);
     desiredRepoVersion = (String) propertyMap.get(CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID);
 
     Cluster cluster;
@@ -324,7 +324,7 @@ public class ClusterStackVersionResourceProvider extends AbstractControllerResou
 
     try {
       Clusters clusters = managementController.getClusters();
-      cluster = clusters.getCluster(clName);
+      cluster = clusters.getCluster(clusterId);
     } catch (AmbariException e) {
       throw new NoSuchParentResourceException(e.getMessage(), e);
     }
@@ -333,7 +333,7 @@ public class ClusterStackVersionResourceProvider extends AbstractControllerResou
     if (null != entity) {
       throw new IllegalArgumentException(String.format(
           "Cluster %s %s is in progress.  Cannot install packages.",
-          cluster.getClusterName(), entity.getDirection().getText(false)));
+          cluster.getClusterId(), entity.getDirection().getText(false)));
     }
 
     String stackName = (String) propertyMap.get(CLUSTER_STACK_VERSION_STACK_PROPERTY_ID);

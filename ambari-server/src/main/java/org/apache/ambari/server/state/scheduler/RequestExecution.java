@@ -31,10 +31,10 @@ public interface RequestExecution {
   Long getId();
 
   /**
-   * Cluster name to which request schedule belongs
+   * Cluster Id to which request schedule belongs
    * @return
    */
-  String getClusterName();
+  public Long getClusterId();
 
   /**
    * Get the batch of requests along with batch settings

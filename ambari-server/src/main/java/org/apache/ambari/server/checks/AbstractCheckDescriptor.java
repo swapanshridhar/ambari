@@ -125,7 +125,7 @@ public abstract class AbstractCheckDescriptor {
    */
   @Experimental(feature = ExperimentalFeature.PATCH_UPGRADES)
   public boolean isApplicable(PrereqCheckRequest request, List<String> requiredServices, boolean requiredAll) throws AmbariException {
-    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterName());
+    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterId());
     Set<String> services = cluster.getServices().keySet();
 
     // default return value depends on assign inside check block
@@ -218,8 +218,8 @@ public abstract class AbstractCheckDescriptor {
    */
   protected String getProperty(PrereqCheckRequest request, String configType, String propertyName)
       throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     final Map<String, DesiredConfig> desiredConfigs = cluster.getDesiredConfigs();
     final DesiredConfig desiredConfig = desiredConfigs.get(configType);
 

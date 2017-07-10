@@ -304,25 +304,25 @@ public class AbstractResourceProviderTest {
     }
 
     public static ConfigurationRequest getConfigurationRequest(
-        String clusterName, String type, String tag, Map<String, String> configs, Map<String, Map<String, String>> configAttributes)
+        Long clusterId, String type, String tag, Map<String, String> configs, Map<String, Map<String, String>> configAttributes)
     {
-      EasyMock.reportMatcher(new ConfigurationRequestMatcher(clusterName, type, tag, configs, configAttributes));
+      EasyMock.reportMatcher(new ConfigurationRequestMatcher(clusterId, type, tag, configs, configAttributes));
       return null;
     }
 
-    public static Set<HostRequest> getHostRequestSet(String hostname, String clusterName,
+    public static Set<HostRequest> getHostRequestSet(String hostname, Long clusterId,
                                                      Map<String, String> hostAttributes)
     {
-      EasyMock.reportMatcher(new HostRequestSetMatcher(hostname, clusterName, hostAttributes));
+      EasyMock.reportMatcher(new HostRequestSetMatcher(hostname, clusterId, hostAttributes));
       return null;
     }
 
     public static Set<ServiceComponentHostRequest> getHostComponentRequestSet(
-        String clusterName, String serviceName, String componentName, String hostName,
+        Long clusterId, String serviceName, String componentName, String hostName,
         Map<String, String> configVersions, String desiredState)
     {
       EasyMock.reportMatcher(new HostComponentRequestSetMatcher(
-          clusterName, serviceName, componentName, hostName, configVersions, desiredState));
+          clusterId, serviceName, componentName, hostName, configVersions, desiredState));
       return null;
     }
 
@@ -431,14 +431,14 @@ public class AbstractResourceProviderTest {
    */
   public static class ConfigurationRequestMatcher extends ConfigurationRequest implements IArgumentMatcher {
 
-    public ConfigurationRequestMatcher(String clusterName, String type, String tag, Map<String, String> configs, Map<String, Map<String, String>> configsAttributes) {
-      super(clusterName, type, tag, configs, configsAttributes);
+    public ConfigurationRequestMatcher(Long clusterId, String type, String tag, Map<String, String> configs, Map<String, Map<String, String>> configsAttributes) {
+      super(clusterId, type, tag, configs, configsAttributes);
     }
 
     @Override
     public boolean matches(Object o) {
       return o instanceof ConfigurationRequest &&
-          eq(((ConfigurationRequest) o).getClusterName(), getClusterName()) &&
+          eq(((ConfigurationRequest) o).getClusterId(), getClusterId()) &&
           eq(((ConfigurationRequest) o).getType(), getType()) &&
           eq(((ConfigurationRequest) o).getVersionTag(), getVersionTag()) &&
           eq(((ConfigurationRequest) o).getProperties(), getProperties()) &&
@@ -497,10 +497,10 @@ public class AbstractResourceProviderTest {
 
     private final ServiceComponentHostRequest hostComponentRequest;
 
-    public HostComponentRequestSetMatcher(String clusterName, String serviceName, String componentName, String hostName,
+    public HostComponentRequestSetMatcher(Long clusterId, String serviceName, String componentName, String hostName,
                                       Map<String, String> configVersions, String desiredState) {
       hostComponentRequest =
-          new ServiceComponentHostRequest(clusterName, serviceName, componentName,
+          new ServiceComponentHostRequest(clusterId, serviceName, componentName,
               hostName, desiredState);
       add(hostComponentRequest);
     }
@@ -521,7 +521,7 @@ public class AbstractResourceProviderTest {
       Object request = set.iterator().next();
 
       return request instanceof ServiceComponentHostRequest &&
-          eq(((ServiceComponentHostRequest) request).getClusterName(), hostComponentRequest.getClusterName()) &&
+          eq(((ServiceComponentHostRequest) request).getClusterId(), hostComponentRequest.getClusterId()) &&
           eq(((ServiceComponentHostRequest) request).getServiceName(), hostComponentRequest.getServiceName()) &&
           eq(((ServiceComponentHostRequest) request).getComponentName(), hostComponentRequest.getComponentName()) &&
           eq(((ServiceComponentHostRequest) request).getHostname(), hostComponentRequest.getHostname()) &&

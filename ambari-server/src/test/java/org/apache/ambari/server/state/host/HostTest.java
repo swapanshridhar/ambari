@@ -379,7 +379,7 @@ public class HostTest {
     host.setHostAttributes(hostAttributes);
 
     c1.setDesiredStackVersion(stackId);
-    clusters.mapHostToCluster("h1", "c1");
+    clusters.mapHostToCluster("h1", (clusters.getCluster("c1").getClusterId()));
 
     ConfigFactory configFactory = injector.getInstance(ConfigFactory.class);
     Config config = configFactory.createNew(c1, "global", "v1",
@@ -433,7 +433,7 @@ public class HostTest {
 
     helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
     c1.setDesiredStackVersion(stackId);
-    clusters.mapHostToCluster("h1", "c1");
+    clusters.mapHostToCluster("h1", (clusters.getCluster("c1").getClusterId()));
 
     HostEntity entity = hostDAO.findByName("h1");
     HostStateEntity stateEntity = entity.getHostStateEntity();

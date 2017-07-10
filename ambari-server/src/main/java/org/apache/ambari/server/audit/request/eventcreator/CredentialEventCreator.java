@@ -83,7 +83,7 @@ public class CredentialEventCreator implements RequestAuditEventCreator {
       .withResultStatus(result.getStatus())
       .withUrl(request.getURI())
       .withRemoteIp(request.getRemoteAddress())
-      .withClusterName(RequestAuditEventCreatorHelper.getProperty(request, CredentialResourceProvider.CREDENTIAL_CLUSTER_NAME_PROPERTY_ID))
+      .withClusterId(Long.parseLong(RequestAuditEventCreatorHelper.getProperty(request, CredentialResourceProvider.CREDENTIAL_CLUSTER_ID_PROPERTY_ID)))
       .withType(RequestAuditEventCreatorHelper.getProperty(request, CredentialResourceProvider.CREDENTIAL_TYPE_PROPERTY_ID))
       .withAlias(RequestAuditEventCreatorHelper.getProperty(request, CredentialResourceProvider.CREDENTIAL_ALIAS_PROPERTY_ID))
       .withPrincipal(RequestAuditEventCreatorHelper.getProperty(request, CredentialResourceProvider.CREDENTIAL_PRINCIPAL_PROPERTY_ID))

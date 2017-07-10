@@ -231,7 +231,7 @@ public class ClusterImplTest {
     Host host2 = clusters.getHost(hostName2);
     host2.setHostAttributes(ImmutableMap.of("os_family", "centos", "os_release_version", "6.0"));
 
-    clusters.mapAndPublishHostsToCluster(Sets.newHashSet(hostName1, hostName2), clusterName);
+    clusters.mapAndPublishHostsToCluster(Sets.newHashSet(hostName1, hostName2), clusters.getCluster(clusterName).getClusterId());
 
     Service hdfs = cluster.addService("HDFS", repositoryVersion);
 
@@ -289,7 +289,7 @@ public class ClusterImplTest {
     Host host2 = clusters.getHost(hostName2);
     host2.setHostAttributes(ImmutableMap.of("os_family", "centos", "os_release_version", "6.0"));
 
-    clusters.mapAndPublishHostsToCluster(Sets.newHashSet(hostName1, hostName2), clusterName);
+    clusters.mapAndPublishHostsToCluster(Sets.newHashSet(hostName1, hostName2), clusters.getCluster(clusterName).getClusterId());
 
     // When
     clusters.deleteHost(hostToDelete);
@@ -328,7 +328,7 @@ public class ClusterImplTest {
     Host host2 = clusters.getHost(hostName2);
     host2.setHostAttributes(ImmutableMap.of("os_family", "centos", "os_release_version", "6.0"));
 
-    clusters.mapAndPublishHostsToCluster(Sets.newHashSet(hostName1, hostName2), clusterName);
+    clusters.mapAndPublishHostsToCluster(Sets.newHashSet(hostName1, hostName2), clusters.getCluster(clusterName).getClusterId());
 
     // When
     int clusterSize = cluster.getClusterSize();

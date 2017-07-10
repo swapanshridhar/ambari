@@ -78,7 +78,7 @@ public class FinalizeKerberosServerActionTest extends EasyMockSupport {
     PrincipalKeyCredential principleKeyCredential = createMock(PrincipalKeyCredential.class);
 
     KerberosHelper kerberosHelper = injector.getInstance(KerberosHelper.class);
-    expect(kerberosHelper.getKDCAdministratorCredentials(clusterName)).andReturn(principleKeyCredential).anyTimes();
+    expect(kerberosHelper.getKDCAdministratorCredentials(1L)).andReturn(principleKeyCredential).anyTimes();
 
     replayAll();
 

@@ -33,7 +33,7 @@ import org.apache.ambari.server.utils.SecretReference;
  */
 public class ConfigurationResponse {
 
-  private final String clusterName;
+  private final Long clusterId;
 
   private final StackId stackId;
 
@@ -51,11 +51,11 @@ public class ConfigurationResponse {
 
   private Map<PropertyInfo.PropertyType, Set<String>> propertiesTypes;
 
-  public ConfigurationResponse(String clusterName, StackId stackId,
+  public ConfigurationResponse(Long clusterId, StackId stackId,
       String type, String versionTag, Long version,
       Map<String, String> configs,
       Map<String, Map<String, String>> configAttributes) {
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.stackId = stackId;
     this.configs = configs;
     this.type = type;
@@ -66,12 +66,12 @@ public class ConfigurationResponse {
     SecretReference.replacePasswordsWithReferencesForCustomProperties(configAttributes, configs, type, version);
   }
 
-  public ConfigurationResponse(String clusterName, StackId stackId,
+  public ConfigurationResponse(Long clusterId, StackId stackId,
                                String type, String versionTag, Long version,
                                Map<String, String> configs,
                                Map<String, Map<String, String>> configAttributes,
                                Map<PropertyInfo.PropertyType, Set<String>> propertiesTypes) {
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.stackId = stackId;
     this.configs = configs;
     this.type = type;
@@ -87,11 +87,11 @@ public class ConfigurationResponse {
   /**
    * Constructor.
    *
-   * @param clusterName
+   * @param clusterId
    * @param config
    */
-  public ConfigurationResponse(String clusterName, Config config) {
-    this(clusterName, config.getStackId(), config.getType(), config.getTag(),
+  public ConfigurationResponse(Long clusterId, Config config) {
+    this(clusterId, config.getStackId(), config.getType(), config.getTag(),
         config.getVersion(), config.getProperties(),
         config.getPropertiesAttributes(), config.getPropertiesTypes());
   }
@@ -140,10 +140,10 @@ public class ConfigurationResponse {
   }
 
   /**
-   * @return the clusterName
+   * @return the clusterId
    */
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   public Long getVersion() {
@@ -174,7 +174,7 @@ public class ConfigurationResponse {
 
     ConfigurationResponse that = (ConfigurationResponse) o;
 
-    if (clusterName != null ? !clusterName.equals(that.clusterName) : that.clusterName != null) {
+    if (clusterId != null ? !clusterId.equals(that.clusterId) : that.clusterId != null) {
       return false;
     }
 
@@ -195,7 +195,7 @@ public class ConfigurationResponse {
 
   @Override
   public int hashCode() {
-    int result = clusterName != null ? clusterName.hashCode() : 0;
+    int result = clusterId != null ? clusterId.hashCode() : 0;
     result = 31 * result + (stackId != null ? stackId.hashCode() : 0);
     result = 31 * result + (type != null ? type.hashCode() : 0);
     result = 31 * result + (version != null ? version.hashCode() : 0);

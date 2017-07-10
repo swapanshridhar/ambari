@@ -1,0 +1,52 @@
+***************
+*** 40,55 ****
+   */
+  public class UpgradeService extends BaseService {
+  
+-   private String m_clusterName = null;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName the cluster name (not {@code null}).
+     */
+-   UpgradeService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+    }
+  
+    @POST
+--- 40,55 ----
+   */
+  public class UpgradeService extends BaseService {
+  
++   private Long m_clusterId = null;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId the cluster Id (not {@code null}).
+     */
++   UpgradeService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+    }
+  
+    @POST
+***************
+*** 92,98 ****
+     */
+    @Path("{upgradeId}/upgrade_groups")
+    public UpgradeGroupService getUpgradeGroupHandler(@PathParam("upgradeId") String upgradeId) {
+-     return new UpgradeGroupService(m_apiVersion, m_clusterName, upgradeId);
+    }
+  
+  
+--- 92,98 ----
+     */
+    @Path("{upgradeId}/upgrade_groups")
+    public UpgradeGroupService getUpgradeGroupHandler(@PathParam("upgradeId") String upgradeId) {
++     return new UpgradeGroupService(m_apiVersion, m_clusterId, upgradeId);
+    }
+  
+  

@@ -50,7 +50,7 @@ public class LoggingRequestHelperFactoryImpl implements LoggingRequestHelperFact
   private Configuration ambariServerConfiguration;
 
   @Override
-  public LoggingRequestHelper getHelper(AmbariManagementController ambariManagementController, String clusterName) {
+  public LoggingRequestHelper getHelper(AmbariManagementController ambariManagementController, Long clusterId) {
 
     if (ambariServerConfiguration == null) {
       LOG.error("Ambari Server configuration object not available, cannot create request helper");
@@ -61,7 +61,7 @@ public class LoggingRequestHelperFactoryImpl implements LoggingRequestHelperFact
       ambariManagementController.getClusters();
 
     try {
-      Cluster cluster = clusters.getCluster(clusterName);
+      Cluster cluster = clusters.getCluster(clusterId);
       if (cluster != null) {
 
         boolean isLogSearchEnabled =
@@ -109,7 +109,7 @@ public class LoggingRequestHelperFactoryImpl implements LoggingRequestHelperFact
         return loggingRequestHelper;
       }
     } catch (AmbariException ambariException) {
-      LOG.error("Error occurred while trying to obtain the cluster, cluster name = " + clusterName, ambariException);
+      LOG.error("Error occurred while trying to obtain the cluster, cluster ID = " + clusterId, ambariException);
     }
 
 

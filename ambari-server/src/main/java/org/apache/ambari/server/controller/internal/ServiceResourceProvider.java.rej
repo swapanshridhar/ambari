@@ -1,0 +1,200 @@
+***************
+*** 72,77 ****
+  import org.apache.ambari.server.state.ServiceInfo;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.ambari.server.state.State;
+  import org.apache.commons.lang.StringUtils;
+  import org.apache.commons.lang.Validate;
+  
+--- 72,78 ----
+  import org.apache.ambari.server.state.ServiceInfo;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.ambari.server.state.State;
++ import org.apache.ambari.server.utils.MapUtils;
+  import org.apache.commons.lang.StringUtils;
+  import org.apache.commons.lang.Validate;
+  
+***************
+*** 88,94 ****
+    // ----- Property ID constants ---------------------------------------------
+  
+    // Services
+-   public static final String SERVICE_CLUSTER_NAME_PROPERTY_ID    = PropertyHelper.getPropertyId("ServiceInfo", "cluster_name");
+    public static final String SERVICE_SERVICE_NAME_PROPERTY_ID    = PropertyHelper.getPropertyId("ServiceInfo", "service_name");
+    public static final String SERVICE_SERVICE_STATE_PROPERTY_ID   = PropertyHelper.getPropertyId("ServiceInfo", "state");
+    public static final String SERVICE_MAINTENANCE_STATE_PROPERTY_ID = PropertyHelper.getPropertyId("ServiceInfo", "maintenance_state");
+--- 89,95 ----
+    // ----- Property ID constants ---------------------------------------------
+  
+    // Services
++   public static final String SERVICE_CLUSTER_ID_PROPERTY_ID      = PropertyHelper.getPropertyId("ServiceInfo", "cluster_id");
+    public static final String SERVICE_SERVICE_NAME_PROPERTY_ID    = PropertyHelper.getPropertyId("ServiceInfo", "service_name");
+    public static final String SERVICE_SERVICE_STATE_PROPERTY_ID   = PropertyHelper.getPropertyId("ServiceInfo", "state");
+    public static final String SERVICE_MAINTENANCE_STATE_PROPERTY_ID = PropertyHelper.getPropertyId("ServiceInfo", "maintenance_state");
+***************
+*** 375,382 ****
+     * @return the service request object
+     */
+    private ServiceRequest getRequest(Map<String, Object> properties) {
+      ServiceRequest svcRequest = new ServiceRequest(
+-         (String) properties.get(SERVICE_CLUSTER_NAME_PROPERTY_ID),
+          (String) properties.get(SERVICE_SERVICE_NAME_PROPERTY_ID),
+          (String) properties.get(SERVICE_SERVICE_STATE_PROPERTY_ID),
+          (String) properties.get(SERVICE_CREDENTIAL_STORE_ENABLED_PROPERTY_ID));
+--- 376,384 ----
+     * @return the service request object
+     */
+    private ServiceRequest getRequest(Map<String, Object> properties) {
++     Long clusterId = MapUtils.parseLong(properties, SERVICE_CLUSTER_ID_PROPERTY_ID);
+      ServiceRequest svcRequest = new ServiceRequest(
++         clusterId,
+          (String) properties.get(SERVICE_SERVICE_NAME_PROPERTY_ID),
+          (String) properties.get(SERVICE_SERVICE_STATE_PROPERTY_ID),
+          (String) properties.get(SERVICE_CREDENTIAL_STORE_ENABLED_PROPERTY_ID));
+***************
+*** 594,622 ****
+        }
+  
+        LOG.info("Received a updateService request"
+-           + ", clusterName=" + request.getClusterName()
+            + ", serviceName=" + request.getServiceName()
+            + ", request=" + request.toString());
+  
+-       clusterNames.add(request.getClusterName());
+  
+-       if (clusterNames.size() > 1) {
+          throw new IllegalArgumentException("Updates to multiple clusters is not"
+              + " supported");
+        }
+  
+-       if (!serviceNames.containsKey(request.getClusterName())) {
+-         serviceNames.put(request.getClusterName(), new HashSet<String>());
+        }
+-       if (serviceNames.get(request.getClusterName())
+            .contains(request.getServiceName())) {
+          // TODO throw single exception
+          throw new IllegalArgumentException("Invalid request contains duplicate"
+              + " service names");
+        }
+-       serviceNames.get(request.getClusterName()).add(request.getServiceName());
+  
+-       Cluster cluster = clusters.getCluster(request.getClusterName());
+        Service s = cluster.getService(request.getServiceName());
+        State oldState = s.getDesiredState();
+        State newState = null;
+--- 594,622 ----
+        }
+  
+        LOG.info("Received a updateService request"
++           + ", clusterId=" + request.getClusterId()
+            + ", serviceName=" + request.getServiceName()
+            + ", request=" + request.toString());
+  
++       clusterIds.add(request.getClusterId());
+  
++       if (clusterIds.size() > 1) {
+          throw new IllegalArgumentException("Updates to multiple clusters is not"
+              + " supported");
+        }
+  
++       if (!serviceNames.containsKey(request.getClusterId())) {
++         serviceNames.put(request.getClusterId(), new HashSet<String>());
+        }
++       if (serviceNames.get(request.getClusterId())
+            .contains(request.getServiceName())) {
+          // TODO throw single exception
+          throw new IllegalArgumentException("Invalid request contains duplicate"
+              + " service names");
+        }
++       serviceNames.get(request.getClusterId()).add(request.getServiceName());
+  
++       Cluster cluster = clusters.getCluster(request.getClusterId());
+        Service s = cluster.getService(request.getServiceName());
+        State oldState = s.getDesiredState();
+        State newState = null;
+***************
+*** 678,684 ****
+        if (newState == null) {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Nothing to do for new updateService request"
+-               + ", clusterName=" + request.getClusterName()
+                + ", serviceName=" + request.getServiceName()
+                + ", newDesiredState=null");
+          }
+--- 678,684 ----
+        if (newState == null) {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Nothing to do for new updateService request"
++               + ", clusterId=" + request.getClusterId()
+                + ", serviceName=" + request.getServiceName()
+                + ", newDesiredState=null");
+          }
+***************
+*** 1014,1046 ****
+            throws AuthorizationException, AmbariException {
+  
+      AmbariMetaInfo ambariMetaInfo = getManagementController().getAmbariMetaInfo();
+-     Map<String, Set<String>> serviceNames = new HashMap<>();
+      Set<String> duplicates = new HashSet<>();
+      for (ServiceRequest request : requests) {
+-       final String clusterName = request.getClusterName();
+        final String serviceName = request.getServiceName();
+-       Validate.notEmpty(clusterName, "Cluster name should be provided when creating a service");
+        Validate.notEmpty(serviceName, "Service name should be provided when creating a service");
+  
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Received a createService request"
+-                 + ", clusterName=" + clusterName + ", serviceName=" + serviceName + ", request=" + request);
+        }
+  
+-       if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, getClusterResourceId(clusterName), RoleAuthorization.SERVICE_ADD_DELETE_SERVICES)) {
+          throw new AuthorizationException("The user is not authorized to create services");
+        }
+  
+-       if (!serviceNames.containsKey(clusterName)) {
+-         serviceNames.put(clusterName, new HashSet<String>());
+        }
+  
+-       if (serviceNames.get(clusterName).contains(serviceName)) {
+          // throw error later for dup
+          duplicates.add(serviceName);
+          continue;
+        }
+-       serviceNames.get(clusterName).add(serviceName);
+  
+        if (StringUtils.isNotEmpty(request.getDesiredState())) {
+          State state = State.valueOf(request.getDesiredState());
+--- 1014,1046 ----
+            throws AuthorizationException, AmbariException {
+  
+      AmbariMetaInfo ambariMetaInfo = getManagementController().getAmbariMetaInfo();
++     Map<Long, Set<String>> serviceNames = new HashMap<>();
+      Set<String> duplicates = new HashSet<>();
+      for (ServiceRequest request : requests) {
++       final Long clusterId = request.getClusterId();
+        final String serviceName = request.getServiceName();
++       Validate.notNull(clusterId, "Cluster id should be provided when creating a service");
+        Validate.notEmpty(serviceName, "Service name should be provided when creating a service");
+  
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Received a createService request"
++                 + ", clusterId=" + clusterId + ", serviceName=" + serviceName + ", request=" + request);
+        }
+  
++       if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, getClusterResourceId(clusterId), RoleAuthorization.SERVICE_ADD_DELETE_SERVICES)) {
+          throw new AuthorizationException("The user is not authorized to create services");
+        }
+  
++       if (!serviceNames.containsKey(clusterId)) {
++         serviceNames.put(clusterId, new HashSet<String>());
+        }
+  
++       if (serviceNames.get(clusterId).contains(serviceName)) {
+          // throw error later for dup
+          duplicates.add(serviceName);
+          continue;
+        }
++       serviceNames.get(clusterId).add(serviceName);
+  
+        if (StringUtils.isNotEmpty(request.getDesiredState())) {
+          State state = State.valueOf(request.getDesiredState());

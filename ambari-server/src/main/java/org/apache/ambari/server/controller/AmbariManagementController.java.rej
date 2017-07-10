@@ -1,0 +1,25 @@
+***************
+*** 891,901 ****
+     * Gets the LoggingService instance from the dependency injection framework.
+     *
+     * @param apiVersion API version
+-    * @param clusterName the cluster name associated with this LoggingService instance
+     *
+     * @return an instance of LoggingService associated with the specified cluster.
+     */
+-   LoggingService getLoggingService(ApiVersion apiVersion, String clusterName);
+  
+  
+    /**
+--- 891,901 ----
+     * Gets the LoggingService instance from the dependency injection framework.
+     *
+     * @param apiVersion API version
++    * @param clusterId the cluster ID associated with this LoggingService instance
+     *
+     * @return an instance of LoggingService associated with the specified cluster.
+     */
++   LoggingService getLoggingService(ApiVersion apiVersion, Long clusterId);
+  
+  
+    /**

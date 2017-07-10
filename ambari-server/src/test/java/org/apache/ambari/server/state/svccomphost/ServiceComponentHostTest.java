@@ -105,6 +105,7 @@ public class ServiceComponentHostTest {
   private HostComponentStateDAO hostComponentStateDAO;
 
   private String clusterName = "c1";
+  private Long clusterId = 1L;
   private String hostName1 = "h1";
   private Map<String, String> hostAttributes = new HashMap<>();
   private RepositoryVersionEntity repositoryVersion;
@@ -123,7 +124,7 @@ public class ServiceComponentHostTest {
 
     Set<String> hostNames = new HashSet<>();
     hostNames.add(hostName1);
-    addHostsToCluster(clusterName, hostAttributes, hostNames);
+    addHostsToCluster(clusterId, hostAttributes, hostNames);
 
     repositoryVersion = helper.getOrCreateRepositoryVersion(stackId, stackId.getStackVersion());
   }
@@ -141,7 +142,7 @@ public class ServiceComponentHostTest {
     return clusterEntity;
   }
 
-  private void addHostsToCluster(String clusterName, Map<String, String> hostAttributes, Set<String> hostNames) throws AmbariException {
+  private void addHostsToCluster(Long clusterId, Map<String, String> hostAttributes, Set<String> hostNames) throws AmbariException {
     ClusterEntity clusterEntity = clusterDAO.findByName(clusterName);
 
     List<HostEntity> hostEntities = new ArrayList<>();
@@ -154,7 +155,7 @@ public class ServiceComponentHostTest {
     clusterEntity.setHostEntities(hostEntities);
     clusterDAO.merge(clusterEntity);
 
-    clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostNames, clusterId);
   }
 
   private ServiceComponentHost createNewServiceComponentHost(String clusterName,
@@ -575,7 +576,7 @@ public class ServiceComponentHostTest {
     Assert.assertEquals("HDFS", r.getServiceName());
     Assert.assertEquals("DATANODE", r.getComponentName());
     Assert.assertEquals(hostName1, r.getHostname());
-    Assert.assertEquals(clusterName, r.getClusterName());
+    Assert.assertEquals(clusterName, r.getClusterId());
     Assert.assertEquals(State.INSTALLED.toString(), r.getDesiredState());
     Assert.assertEquals(State.INSTALLING.toString(), r.getLiveState());
     Assert.assertEquals(repositoryVersion.getStackId().toString(), r.getDesiredStackVersion());
@@ -703,7 +704,7 @@ public class ServiceComponentHostTest {
     final String hostName = "h3";
     Set<String> hostNames = new HashSet<>();
     hostNames.add(hostName);
-    addHostsToCluster(clusterName, hostAttributes, hostNames);
+    addHostsToCluster(clusterId, hostAttributes, hostNames);
 
     final HostEntity hostEntity = hostDAO.findByName(hostName);
     Assert.assertNotNull(hostEntity.getHostId());
@@ -894,7 +895,7 @@ public class ServiceComponentHostTest {
     final String hostName = "h3";
     Set<String> hostNames = new HashSet<>();
     hostNames.add(hostName);
-    addHostsToCluster(clusterName, hostAttributes, hostNames);
+    addHostsToCluster(clusterId, hostAttributes, hostNames);
 
     Cluster cluster = clusters.getCluster(clusterName);
 
@@ -1021,7 +1022,7 @@ public class ServiceComponentHostTest {
     final String hostName = "h3";
     Set<String> hostNames = new HashSet<>();
     hostNames.add(hostName);
-    addHostsToCluster(clusterName, hostAttributes, hostNames);
+    addHostsToCluster(clusterId, hostAttributes, hostNames);
 
     Cluster cluster = clusters.getCluster(clusterName);
 
@@ -1066,7 +1067,7 @@ public class ServiceComponentHostTest {
     final String hostName = "h3";
     Set<String> hostNames = new HashSet<>();
     hostNames.add(hostName);
-    addHostsToCluster(clusterName, hostAttributes, hostNames);
+    addHostsToCluster(clusterId, hostAttributes, hostNames);
 
     Cluster cluster = clusters.getCluster(clusterName);
 

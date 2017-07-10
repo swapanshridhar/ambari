@@ -65,7 +65,7 @@ public class GroupPrivilegeResourceProvider extends ReadOnlyResourceProvider {
   protected static final String PRIVILEGE_VIEW_NAME_PROPERTY_ID = ViewPrivilegeResourceProvider.PRIVILEGE_VIEW_NAME_PROPERTY_ID;
   protected static final String PRIVILEGE_VIEW_VERSION_PROPERTY_ID = ViewPrivilegeResourceProvider.PRIVILEGE_VIEW_VERSION_PROPERTY_ID;
   protected static final String PRIVILEGE_INSTANCE_NAME_PROPERTY_ID = ViewPrivilegeResourceProvider.PRIVILEGE_INSTANCE_NAME_PROPERTY_ID;
-  protected static final String PRIVILEGE_CLUSTER_NAME_PROPERTY_ID = ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID;
+  protected static final String PRIVILEGE_CLUSTER_ID_PROPERTY_ID = ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID;
   protected static final String PRIVILEGE_TYPE_PROPERTY_ID = AmbariPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID;
   protected static final String PRIVILEGE_GROUP_NAME_PROPERTY_ID = "PrivilegeInfo/group_name";
 
@@ -107,7 +107,7 @@ public class GroupPrivilegeResourceProvider extends ReadOnlyResourceProvider {
     propertyIds.add(PRIVILEGE_VIEW_NAME_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_VIEW_VERSION_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_INSTANCE_NAME_PROPERTY_ID);
-    propertyIds.add(PRIVILEGE_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(PRIVILEGE_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_TYPE_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_GROUP_NAME_PROPERTY_ID);
   }

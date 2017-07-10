@@ -42,9 +42,9 @@ import org.apache.ambari.server.controller.spi.Resource;
 public class HostKerberosIdentityService extends BaseService {
 
   /**
-   * Parent cluster id.
+   * Parent cluster Id.
    */
-  private String clusterName;
+  private Long clusterId;
 
   /**
    * Relevant hostname
@@ -86,11 +86,11 @@ public class HostKerberosIdentityService extends BaseService {
       mediaType = null;
     }
 
-    return handleRequest(headers, body, ui, Request.Type.GET, mediaType, createResource(clusterName, hostName, identityID));
+    return handleRequest(headers, body, ui, Request.Type.GET, mediaType, createResource(clusterId, hostName, identityID));
   }
 
   /**
-   * Handles GET: /clusters/{clusterID}/services/{serviceID}/components/{componentID}/kerberos_identities
+   * Handles GET: /clusters/{clusterId}/services/{serviceID}/components/{componentID}/kerberos_identities
    * Get all Kerberos identities for a service.
    *
    * @param headers http headers
@@ -106,14 +106,14 @@ public class HostKerberosIdentityService extends BaseService {
   /**
    * Create a kerberos identity resource instance.
    *
-   * @param clusterName cluster name
+   * @param clusterId cluster ID
    * @param hostName    host name
    * @param identityId  Kerberos identity id
    * @return a component resource instance
    */
-  ResourceInstance createResource(String clusterName, String hostName, String identityId) {
+  ResourceInstance createResource(Long clusterId, String hostName, String identityId) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Host, hostName);
     mapIds.put(Resource.Type.HostKerberosIdentity, identityId);
 

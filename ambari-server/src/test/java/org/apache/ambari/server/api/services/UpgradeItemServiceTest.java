@@ -38,7 +38,7 @@ public class UpgradeItemServiceTest extends BaseServiceTest {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
 
     //updateServices
-    UpgradeItemService service = new TestUpgradeItemService("clusterName", "upgradeId", "upgradeGroupId", 99L);
+    UpgradeItemService service = new TestUpgradeItemService(1L, "upgradeId", "upgradeGroupId", 99L);
     Method m = service.getClass().getMethod("updateUpgradeItem", String.class, HttpHeaders.class, UriInfo.class, Long.class);
     Object[] args = new Object[] {"body", getHttpHeaders(), getUriInfo(), 99L};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));

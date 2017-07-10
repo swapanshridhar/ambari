@@ -1,0 +1,19 @@
+***************
+*** 68,75 ****
+  
+    private class TestClusterPrivilegeService extends ClusterPrivilegeService {
+  
+-     private TestClusterPrivilegeService(String clusterName) {
+-       super(ApiVersion.Default, clusterName);
+      }
+  
+      @Override
+--- 68,75 ----
+  
+    private class TestClusterPrivilegeService extends ClusterPrivilegeService {
+  
++     private TestClusterPrivilegeService(Long clusterId) {
++       super(ApiVersion.Default, clusterId);
+      }
+  
+      @Override

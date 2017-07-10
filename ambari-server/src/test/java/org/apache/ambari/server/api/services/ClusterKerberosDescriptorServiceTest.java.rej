@@ -1,0 +1,19 @@
+***************
+*** 63,70 ****
+    private class TestService extends ClusterKerberosDescriptorService {
+      private String type;
+  
+-     private TestService(String type) {
+-       super(ApiVersion.Default, "C1");
+        this.type = type;
+      }
+  
+--- 65,72 ----
+    private class TestService extends ClusterKerberosDescriptorService {
+      private String type;
+  
++     private TestService(Long clusterId) {
++       super(ApiVersion.Default, clusterId);
+        this.type = type;
+      }
+  

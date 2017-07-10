@@ -29,93 +29,93 @@ public interface CredentialStoreService {
    * <p/>
    * The supplied key will be converted into UTF-8 bytes before being stored.
    *
-   * @param clusterName         the name of the cluster the credential is related to
+   * @param clusterId           the ID of the cluster the credential is related to
    * @param alias               a string declaring the alias (or name) of the credential
    * @param credential          the credential value to store
    * @param credentialStoreType a CredentialStoreType indicating which credential store facility to use
    * @throws AmbariException if an error occurs while storing the new credential
    */
-  void setCredential(String clusterName, String alias, Credential credential, CredentialStoreType credentialStoreType) throws AmbariException;
+  void setCredential(Long clusterId, String alias, Credential credential, CredentialStoreType credentialStoreType) throws AmbariException;
 
   /**
    * Retrieves the specified credential looking in the temporary and then the persistent CredentialStore
    *
-   * @param clusterName the name of the cluster the credential is related to
+   * @param clusterId   the ID of the cluster the credential is related to
    * @param alias       a string declaring the alias (or name) of the credential
    * @return the requested Credential
    * @throws AmbariException if an error occurs while retrieving the credential
    */
-  Credential getCredential(String clusterName, String alias) throws AmbariException;
+  Credential getCredential(Long clusterId, String alias) throws AmbariException;
 
   /**
    * Retrieves the specified credential looking in ether the persistent or the temporary CredentialStore
    *
-   * @param clusterName         the name of the cluster this credential is related to
+   * @param clusterId           the ID of the cluster this credential is related to
    * @param alias               a string declaring the alias (or name) of the credential
    * @param credentialStoreType a CredentialStoreType indicating which credential store facility to use
    * @return the requested Credential
    * @throws AmbariException if an error occurs while retrieving the credential
    */
-  Credential getCredential(String clusterName, String alias, CredentialStoreType credentialStoreType) throws AmbariException;
+  Credential getCredential(Long clusterId, String alias, CredentialStoreType credentialStoreType) throws AmbariException;
 
   /**
    * Removes the specified credential from all CredentialStores
    *
-   * @param clusterName the name of the cluster this credential is related to
+   * @param clusterId   the ID of the cluster this credential is related to
    * @param alias       a string declaring the alias (or name) of the credential
    * @throws AmbariException if an error occurs while removing the credential
    */
-  void removeCredential(String clusterName, String alias) throws AmbariException;
+  void removeCredential(Long clusterId, String alias) throws AmbariException;
 
   /**
    * Removes the specified credential from ether the persistent or the temporary CredentialStore
    *
-   * @param clusterName         the name of the cluster this credential is related to
+   * @param clusterId           the ID of the cluster this credential is related to
    * @param alias               a string declaring the alias (or name) of the credential
    * @param credentialStoreType a CredentialStoreType indicating which credential store facility to use
    * @throws AmbariException if an error occurs while removing the credential
    */
-  void removeCredential(String clusterName, String alias, CredentialStoreType credentialStoreType) throws AmbariException;
+  void removeCredential(Long clusterId, String alias, CredentialStoreType credentialStoreType) throws AmbariException;
 
   /**
    * Tests to see if the requested alias exists in any CredentialStore
    *
-   * @param clusterName the name of the cluster this credential is related to
+   * @param clusterId   the ID of the cluster this credential is related to
    * @param alias       a string declaring the alias (or name) of the credential
    * @return true if it exists; otherwise false
    * @throws AmbariException if an error occurs while searching for the credential
    */
-  boolean containsCredential(String clusterName, String alias) throws AmbariException;
+  boolean containsCredential(Long clusterId, String alias) throws AmbariException;
 
   /**
    * Tests to see if the requested alias exists in ether the persistent or the temporary CredentialStore
    *
-   * @param clusterName         the name of the cluster this credential is related to
+   * @param clusterId           the ID of the cluster this credential is related to
    * @param alias               a string declaring the alias (or name) of the credential
    * @param credentialStoreType a CredentialStoreType indicating which credential store facility to use
    * @return true if it exists; otherwise false
    * @throws AmbariException if an error occurs while searching for the credential
    */
-  boolean containsCredential(String clusterName, String alias, CredentialStoreType credentialStoreType) throws AmbariException;
+  boolean containsCredential(Long clusterId, String alias, CredentialStoreType credentialStoreType) throws AmbariException;
 
   /**
    * Gets the type of the credential store used to store the requested credential
    *
-   * @param clusterName the name of the cluster this credential is related to
+   * @param clusterId   the ID of the cluster this credential is related to
    * @param alias       a string declaring the alias (or name) of the credential
    * @return a CredentialStoreType
    * @throws AmbariException if an error occurs while searching for the credential
    */
-  CredentialStoreType getCredentialStoreType(String clusterName, String alias) throws AmbariException;
+  CredentialStoreType getCredentialStoreType(Long clusterId, String alias) throws AmbariException;
 
   /**
    * Maps the existing alias names to their relevant credential store types.
    *
-   * @param clusterName the name of the cluster this credential is related to
+   * @param clusterId the ID of the cluster this credential is related to
    * @return a map of alias names to CredentialStoreTypes
    * @throws AmbariException if an error occurs while searching for the credentials
    */
-  Map<String, CredentialStoreType> listCredentials(String clusterName) throws AmbariException;
+  Map<String, CredentialStoreType> listCredentials(Long clusterId) throws AmbariException;
 
   /**
    * Tests this CredentialStoreService to check if it has been properly initialized

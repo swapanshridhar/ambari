@@ -38,7 +38,7 @@ public class AddCredentialRequestAuditEvent extends RequestAuditEvent {
     /**
      * Cluster name
      */
-    private String clusterName;
+    private Long clusterId;
 
     /**
      * Principal
@@ -75,8 +75,8 @@ public class AddCredentialRequestAuditEvent extends RequestAuditEvent {
         .append(principal)
         .append("), Alias(")
         .append(alias)
-        .append("), Cluster name(")
-        .append(clusterName)
+        .append("), Cluster Id(")
+        .append(clusterId)
         .append(")");
     }
 
@@ -85,8 +85,8 @@ public class AddCredentialRequestAuditEvent extends RequestAuditEvent {
       return this;
     }
 
-    public AddCredentialAuditEventBuilder withClusterName(String clusterName) {
-      this.clusterName = clusterName;
+    public AddCredentialAuditEventBuilder withClusterId(Long clusterId) {
+      this.clusterId = clusterId;
       return this;
     }
 

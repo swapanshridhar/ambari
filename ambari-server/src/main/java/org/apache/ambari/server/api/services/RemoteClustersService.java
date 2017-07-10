@@ -122,11 +122,11 @@ public class RemoteClustersService extends BaseService {
   /**
    * Create a Remote Cluster resource.
    *
-   * @param clusterName Name of the Cluster
+   * @param clusterId cluster Id
    *
    * @return a RemoteCluster resource Instance
    */
-  private ResourceInstance createRemoteClusterResource(String clusterName) {
-    return createResource(Resource.Type.RemoteCluster,Collections.singletonMap(Resource.Type.RemoteCluster, clusterName));
+  private ResourceInstance createRemoteClusterResource(Long clusterId) {
+    return createResource(Resource.Type.RemoteCluster,Collections.singletonMap(Resource.Type.RemoteCluster, clusterId.toString()));
   }
 }

@@ -149,7 +149,7 @@ public class ServiceResourceProviderTest {
     Map<String, Object> properties = new LinkedHashMap<>();
 
     // add properties to the request map
-    properties.put(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID, "Service100");
     properties.put(ServiceResourceProvider.SERVICE_SERVICE_STATE_PROPERTY_ID, "INIT");
     properties.put(ServiceResourceProvider.SERVICE_DESIRED_STACK_PROPERTY_ID, "HDP-1.1");
@@ -259,19 +259,19 @@ public class ServiceResourceProviderTest {
 
     Set<String> propertyIds = new HashSet<>();
 
-    propertyIds.add(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID);
 
     // create the request
-    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").toPredicate();
+    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).toPredicate();
     Request request = PropertyHelper.getReadRequest("ServiceInfo");
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Assert.assertEquals(5, resources.size());
     Set<String> names = new HashSet<>();
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID);
-      Assert.assertEquals("Cluster100", clusterName);
+      Long clusterId = (Long) resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID);
+      Assert.assertEquals(Long.valueOf(1), clusterId);
       names.add((String) resource.getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
     }
     // Make sure that all of the response objects got moved into resources
@@ -280,7 +280,7 @@ public class ServiceResourceProviderTest {
     }
 
     // get service named Service102
-    predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and().
+    predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and().
         property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals("Service102").toPredicate();
     request = PropertyHelper.getReadRequest("ServiceInfo");
     resources = provider.getResources(request, predicate);
@@ -289,7 +289,7 @@ public class ServiceResourceProviderTest {
     Assert.assertEquals("Service102", resources.iterator().next().getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
 
     // get services where state == "INIT"
-    predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and().
+    predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and().
         property(ServiceResourceProvider.SERVICE_SERVICE_STATE_PROPERTY_ID).equals("INIT").toPredicate();
     request = PropertyHelper.getReadRequest(propertyIds);
     resources = provider.getResources(request, predicate);
@@ -297,7 +297,7 @@ public class ServiceResourceProviderTest {
     Assert.assertEquals(3, resources.size());
     names = new HashSet<>();
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       names.add((String) resource.getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
     }
@@ -359,14 +359,14 @@ public class ServiceResourceProviderTest {
     f.set(provider, kerberosHeper);
 
     // create the request
-    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and().
+    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and().
         property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals("KERBEROS").toPredicate();
     Request request = PropertyHelper.getReadRequest("ServiceInfo", "Services");
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      Assert.assertEquals("Cluster100", resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals(1L, resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("KERBEROS", resource.getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
       Assert.assertEquals("OK", resource.getPropertyValue("Services/attributes/kdc_validation_result"));
       Assert.assertEquals("", resource.getPropertyValue("Services/attributes/kdc_validation_failure_details"));
@@ -428,14 +428,14 @@ public class ServiceResourceProviderTest {
     f.set(provider, kerberosHelper);
 
     // create the request
-    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and().
+    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and().
         property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals("KERBEROS").toPredicate();
     Request request = PropertyHelper.getReadRequest("ServiceInfo");
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      Assert.assertEquals("Cluster100", resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals(1L, resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("KERBEROS", resource.getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
     }
 
@@ -495,14 +495,14 @@ public class ServiceResourceProviderTest {
     f.set(provider, kerberosHeper);
 
     // create the request
-    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and().
+    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and().
         property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals("KERBEROS").toPredicate();
     Request request = PropertyHelper.getReadRequest("ServiceInfo", "Services");
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      Assert.assertEquals("Cluster100", resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals(1L, resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("KERBEROS", resource.getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
       Assert.assertEquals("INVALID_CREDENTIALS", resource.getPropertyValue("Services/attributes/kdc_validation_result"));
       Assert.assertEquals("Invalid KDC administrator credentials.", resource.getPropertyValue("Services/attributes/kdc_validation_failure_details"));
@@ -564,14 +564,14 @@ public class ServiceResourceProviderTest {
     f.set(provider, kerberosHeper);
 
     // create the request
-    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and().
+    Predicate predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and().
         property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals("KERBEROS").toPredicate();
     Request request = PropertyHelper.getReadRequest("ServiceInfo", "Services");
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      Assert.assertEquals("Cluster100", resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals(1L, resource.getPropertyValue(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("KERBEROS", resource.getPropertyValue(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID));
       Assert.assertEquals("MISSING_CREDENTIALS", resource.getPropertyValue("Services/attributes/kdc_validation_result"));
       Assert.assertEquals("Missing KDC administrator credentials.", resource.getPropertyValue("Services/attributes/kdc_validation_failure_details"));
@@ -677,7 +677,7 @@ public class ServiceResourceProviderTest {
     Request request = PropertyHelper.getUpdateRequest(properties, mapRequestProps);
 
     // update the service named Service102
-    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").
+    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).
         and().property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals("Service102").toPredicate();
     provider.updateResources(request, predicate);
 
@@ -817,13 +817,13 @@ public class ServiceResourceProviderTest {
 
     // update the service named Service102
     Predicate  predicate1 = new PredicateBuilder().property
-      (ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").
+      (ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).
       and().property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).
       equals("Service102").and().property("params/reconfigure_client").
       equals("true").toPredicate();
 
     Predicate  predicate2 = new PredicateBuilder().property
-      (ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").
+      (ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).
       and().property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).
       equals("Service102").and().property("params/reconfigure_client").equals
       ("false").toPredicate();
@@ -882,7 +882,7 @@ public class ServiceResourceProviderTest {
     ((ObservableResourceProvider)provider).addObserver(observer);
 
     // delete the service named Service100
-    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals(serviceName).toPredicate();
     provider.deleteResources(new RequestImpl(null, null, null, null), predicate);
 
@@ -930,7 +930,7 @@ public class ServiceResourceProviderTest {
     ((ObservableResourceProvider)provider).addObserver(observer);
 
     // delete the service named Service100
-    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals(serviceName).toPredicate();
     provider.deleteResources(new RequestImpl(null, null, null, null), predicate);
 
@@ -989,7 +989,7 @@ public class ServiceResourceProviderTest {
     ((ObservableResourceProvider)provider).addObserver(observer);
 
     // delete the service named Service100
-    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").and()
+    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(1L).and()
         .property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals(serviceName).toPredicate();
 
     try {
@@ -1050,6 +1050,7 @@ public class ServiceResourceProviderTest {
     schMap3.put("Host3", sch3);
 
     String clusterName = "Cluster100";
+    Long clusterId = 1L;
     String serviceName = "Service100";
 
     // set expectations
@@ -1099,7 +1100,7 @@ public class ServiceResourceProviderTest {
     ((ObservableResourceProvider)provider).addObserver(observer);
 
     // delete the service named Service100
-    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID).equals(clusterName).and()
+    Predicate  predicate = new PredicateBuilder().property(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID).equals(clusterId).and()
             .property(ServiceResourceProvider.SERVICE_SERVICE_NAME_PROPERTY_ID).equals(serviceName).toPredicate();
     provider.deleteResources(new RequestImpl(null, null, null, null), predicate);
 

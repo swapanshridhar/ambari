@@ -30,9 +30,9 @@ import org.apache.ambari.server.controller.spi.Resource;
 public class ClusterPrivilegeService extends PrivilegeService {
 
   /**
-   * The cluster name.
+   * The cluster Id.
    */
-  private String clusterName;
+  private Long clusterId;
 
 
   // ----- Constructors ------------------------------------------------------
@@ -51,7 +51,7 @@ public class ClusterPrivilegeService extends PrivilegeService {
   @Override
   protected ResourceInstance createPrivilegeResource(String privilegeId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.ClusterPrivilege, privilegeId);
 
     return createResource(Resource.Type.ClusterPrivilege, mapIds);

@@ -159,7 +159,7 @@ public class ServiceRequest {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("clusterName=").append(clusterName)
+    sb.append("clusterId=").append(clusterId)
       .append(", serviceName=").append(serviceName)
       .append(", desiredState=").append(desiredState)
       .append(", credentialStoreEnabled=").append(credentialStoreEnabled)

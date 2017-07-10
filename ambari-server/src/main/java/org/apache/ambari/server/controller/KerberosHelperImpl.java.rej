@@ -1,0 +1,32 @@
+***************
+*** 2234,2240 ****
+     * @param cluster         the relevant Cluster
+     * @param requestId       the relevant request Id
+     * @param requestContext  a String describing the stage
+-    * @param clusterHostInfo JSON-encoded clusterHostInfo structure
+     * @param commandParams   JSON-encoded command parameters
+     * @param hostParams      JSON-encoded host parameters
+     * @return a newly created Stage
+--- 2234,2239 ----
+     * @param cluster         the relevant Cluster
+     * @param requestId       the relevant request Id
+     * @param requestContext  a String describing the stage
+     * @param commandParams   JSON-encoded command parameters
+     * @param hostParams      JSON-encoded host parameters
+     * @return a newly created Stage
+***************
+*** 2262,2268 ****
+     * @param cluster           the relevant Cluster
+     * @param requestId         the relevant request Id
+     * @param requestContext    a String describing the stage
+-    * @param clusterHostInfo   JSON-encoded clusterHostInfo structure
+     * @param commandParams     JSON-encoded command parameters
+     * @param hostParams        JSON-encoded host parameters
+     * @param actionClass       The ServeAction class that implements the action to invoke
+--- 2261,2266 ----
+     * @param cluster           the relevant Cluster
+     * @param requestId         the relevant request Id
+     * @param requestContext    a String describing the stage
+     * @param commandParams     JSON-encoded command parameters
+     * @param hostParams        JSON-encoded host parameters
+     * @param actionClass       The ServeAction class that implements the action to invoke

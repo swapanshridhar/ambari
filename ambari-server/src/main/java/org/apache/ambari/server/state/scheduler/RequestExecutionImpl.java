@@ -141,8 +141,8 @@ public class RequestExecutionImpl implements RequestExecution {
   }
 
   @Override
-  public String getClusterName() {
-    return cluster.getClusterName();
+  public Long getClusterId() {
+    return cluster.getClusterId();
   }
 
   @Override
@@ -170,7 +170,7 @@ public class RequestExecutionImpl implements RequestExecution {
     readWriteLock.readLock().lock();
     try{
       RequestScheduleResponse response = new RequestScheduleResponse(
-        getId(), getClusterName(), getDescription(), getStatus(),
+        getId(), getClusterId(), getDescription(), getStatus(),
         getLastExecutionStatus(), getBatch(), getSchedule(),
         requestScheduleEntity.getCreateUser(),
         DateUtils.convertToReadableTime(requestScheduleEntity.getCreateTimestamp()),

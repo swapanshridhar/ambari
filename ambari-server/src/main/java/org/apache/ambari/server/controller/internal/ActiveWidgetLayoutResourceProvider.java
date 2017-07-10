@@ -65,13 +65,13 @@ public class ActiveWidgetLayoutResourceProvider extends AbstractControllerResour
   // ----- Property ID constants ---------------------------------------------
 
   public static final String WIDGETLAYOUT_ID_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetLayoutInfo", "id");
-  public static final String WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetLayoutInfo", "cluster_name");
-  public static final String WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetLayoutInfo", "section_name");
-  public static final String WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID                 = PropertyHelper.getPropertyId("WidgetLayoutInfo", "layout_name");
-  public static final String WIDGETLAYOUT_SCOPE_PROPERTY_ID                  = PropertyHelper.getPropertyId("WidgetLayoutInfo", "scope");
-  public static final String WIDGETLAYOUT_WIDGETS_PROPERTY_ID                   = PropertyHelper.getPropertyId("WidgetLayoutInfo", "widgets");
-  public static final String WIDGETLAYOUT_USERNAME_PROPERTY_ID                   = PropertyHelper.getPropertyId("WidgetLayoutInfo", "user_name");
-  public static final String WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID                   = PropertyHelper.getPropertyId("WidgetLayoutInfo", "display_name");
+  public static final String WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID         = PropertyHelper.getPropertyId("WidgetLayoutInfo", "cluster_id");
+  public static final String WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID       = PropertyHelper.getPropertyId("WidgetLayoutInfo", "section_name");
+  public static final String WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID        = PropertyHelper.getPropertyId("WidgetLayoutInfo", "layout_name");
+  public static final String WIDGETLAYOUT_SCOPE_PROPERTY_ID              = PropertyHelper.getPropertyId("WidgetLayoutInfo", "scope");
+  public static final String WIDGETLAYOUT_WIDGETS_PROPERTY_ID            = PropertyHelper.getPropertyId("WidgetLayoutInfo", "widgets");
+  public static final String WIDGETLAYOUT_USERNAME_PROPERTY_ID           = PropertyHelper.getPropertyId("WidgetLayoutInfo", "user_name");
+  public static final String WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID       = PropertyHelper.getPropertyId("WidgetLayoutInfo", "display_name");
   public static final String WIDGETLAYOUT = "WidgetLayouts";
   public static final String ID = "id";
 
@@ -89,7 +89,7 @@ public class ActiveWidgetLayoutResourceProvider extends AbstractControllerResour
     propertyIds.add(WIDGETLAYOUT_ID_PROPERTY_ID);
     propertyIds.add(WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID);
     propertyIds.add(WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID);
-    propertyIds.add(WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(WIDGETLAYOUT_WIDGETS_PROPERTY_ID);
     propertyIds.add(WIDGETLAYOUT_SCOPE_PROPERTY_ID);
     propertyIds.add(WIDGETLAYOUT_USERNAME_PROPERTY_ID);

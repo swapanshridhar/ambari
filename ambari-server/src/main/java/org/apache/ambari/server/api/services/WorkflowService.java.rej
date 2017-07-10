@@ -1,0 +1,84 @@
+***************
+*** 38,54 ****
+   * Service responsible for workflow resource requests.
+   */
+  public class WorkflowService extends BaseService {
+-   private String clusterName;
+  
+    /**
+     * Constructor.
+     * 
+-    * @param clusterName
+     *          cluster id
+     */
+-   public WorkflowService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+--- 38,54 ----
+   * Service responsible for workflow resource requests.
+   */
+  public class WorkflowService extends BaseService {
++   private Long clusterId;
+  
+    /**
+     * Constructor.
+     * 
++    * @param clusterId
+     *          cluster id
+     */
++   public WorkflowService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    /**
+***************
+*** 91,112 ****
+     */
+    @Path("{workflowId}/jobs")
+    public JobService getJobHandler(@PathParam("workflowId") String workflowId) {
+-     return new JobService(m_apiVersion, clusterName, workflowId);
+    }
+  
+    /**
+     * Create a workflow resource instance.
+     * 
+-    * @param clusterName
+-    *          cluster name
+     * @param workflowId
+     *          workflow id
+     * 
+     * @return a workflow resource instance
+     */
+-   ResourceInstance createWorkflowResource(String clusterName, String workflowId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.Workflow, workflowId);
+      return createResource(Resource.Type.Workflow, mapIds);
+    }
+--- 91,112 ----
+     */
+    @Path("{workflowId}/jobs")
+    public JobService getJobHandler(@PathParam("workflowId") String workflowId) {
++     return new JobService(m_apiVersion, clusterId, workflowId);
+    }
+  
+    /**
+     * Create a workflow resource instance.
+     * 
++    * @param clusterId
++    *          cluster Id
+     * @param workflowId
+     *          workflow id
+     * 
+     * @return a workflow resource instance
+     */
++   ResourceInstance createWorkflowResource(Long clusterId, String workflowId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.Workflow, workflowId);
+      return createResource(Resource.Type.Workflow, mapIds);
+    }

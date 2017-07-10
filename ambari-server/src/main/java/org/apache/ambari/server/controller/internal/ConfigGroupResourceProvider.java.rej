@@ -1,0 +1,112 @@
+***************
+*** 317,334 ****
+      if (requests != null) {
+        for (ConfigGroupRequest request : requests) {
+          LOG.debug("Received a Config group request with"
+-           + ", clusterName = " + request.getClusterName()
+            + ", groupId = " + request.getId()
+            + ", groupName = " + request.getGroupName()
+            + ", tag = " + request.getTag());
+  
+-         if (request.getClusterName() == null) {
+            LOG.warn("Cluster name is a required field.");
+            continue;
+          }
+  
+          Cluster cluster = getManagementController().getClusters().getCluster
+-           (request.getClusterName());
+          Map<Long, ConfigGroup> configGroupMap = cluster.getConfigGroups();
+  
+          // By group id
+--- 318,335 ----
+      if (requests != null) {
+        for (ConfigGroupRequest request : requests) {
+          LOG.debug("Received a Config group request with"
++           + ", clusterId = " + request.getClusterId()
+            + ", groupId = " + request.getId()
+            + ", groupName = " + request.getGroupName()
+            + ", tag = " + request.getTag());
+  
++         if (request.getClusterId() == null) {
+            LOG.warn("Cluster name is a required field.");
+            continue;
+          }
+  
+          Cluster cluster = getManagementController().getClusters().getCluster
++           (request.getClusterId());
+          Map<Long, ConfigGroup> configGroupMap = cluster.getConfigGroups();
+  
+          // By group id
+***************
+*** 460,475 ****
+  
+      Cluster cluster;
+      try {
+-       cluster = clusters.getCluster(request.getClusterName());
+      } catch (ClusterNotFoundException e) {
+        throw new ParentObjectNotFoundException(
+          "Attempted to delete a config group from a cluster which doesn't " +
+            "exist", e);
+      }
+  
+-     configLogger.info("User {} is deleting configuration group {} for tag {} in cluster {}",
+        getManagementController().getAuthName(), request.getGroupName(), request.getTag(),
+-       cluster.getClusterName());
+  
+      ConfigGroup configGroup = cluster.getConfigGroups().get(request.getId());
+  
+--- 461,476 ----
+  
+      Cluster cluster;
+      try {
++       cluster = clusters.getCluster(request.getClusterId());
+      } catch (ClusterNotFoundException e) {
+        throw new ParentObjectNotFoundException(
+          "Attempted to delete a config group from a cluster which doesn't " +
+            "exist", e);
+      }
+  
++     configLogger.info("User {} is deleting configuration group {} for tag {} in clusterId {}",
+        getManagementController().getAuthName(), request.getGroupName(), request.getTag(),
++       cluster.getClusterId());
+  
+      ConfigGroup configGroup = cluster.getConfigGroups().get(request.getId());
+  
+***************
+*** 493,510 ****
+    }
+  
+    private void validateRequest(ConfigGroupRequest request) {
+-     if (request.getClusterName() == null
+-       || request.getClusterName().isEmpty()
+        || request.getGroupName() == null
+        || request.getGroupName().isEmpty()
+        || request.getTag() == null
+        || request.getTag().isEmpty()) {
+  
+-       LOG.debug("Received a config group request with cluster name = " +
+-         request.getClusterName() + ", group name = " + request.getGroupName()
+          + ", tag = " + request.getTag());
+  
+-       throw new IllegalArgumentException("Cluster name, group name and tag need to be provided.");
+  
+      }
+    }
+--- 494,510 ----
+    }
+  
+    private void validateRequest(ConfigGroupRequest request) {
++     if (request.getClusterId() == null
+        || request.getGroupName() == null
+        || request.getGroupName().isEmpty()
+        || request.getTag() == null
+        || request.getTag().isEmpty()) {
+  
++       LOG.debug("Received a config group request with cluster id = " +
++         request.getClusterId() + ", group name = " + request.getGroupName()
+          + ", tag = " + request.getTag());
+  
++       throw new IllegalArgumentException("Cluster id, group name and tag need to be provided.");
+  
+      }
+    }

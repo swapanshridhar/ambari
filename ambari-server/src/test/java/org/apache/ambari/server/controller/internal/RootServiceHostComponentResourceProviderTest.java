@@ -88,7 +88,7 @@ public class RootServiceHostComponentResourceProviderTest {
 
     expect(host1.convertToResponse()).andReturn(hostResponse1).anyTimes();
 
-    expect(hostResponse1.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(hostResponse1.getClusterId()).andReturn(1L).anyTimes();
     expect(hostResponse1.getHostname()).andReturn("Host100").anyTimes();
     expect(hostResponse1.getHealthReport()).andReturn("HEALTHY").anyTimes();
 

@@ -101,14 +101,14 @@ public class AlertSummaryPropertyProvider extends BaseProvider implements Proper
       // These can be determined in 1 SQL call per cluster, and results used multiple times.
       Map<Long, Map<String, AlertSummaryDTO>> perHostSummaryMap = new HashMap<>();
       Map<Long, AlertHostSummaryDTO> hostsSummaryMap = new HashMap<>();
-      Map<String, Cluster> resourcesClusterMap = new HashMap<>();
+      Map<Long, Cluster> resourcesClusterMap = new HashMap<>();
       for (Resource res : resources) {
-        String clusterName = (String) res.getPropertyValue(m_clusterPropertyId);
-        if (clusterName == null || resourcesClusterMap.containsKey(clusterName)) {
+        Long clusterId = (Long) res.getPropertyValue(m_clusterPropertyId);
+        if (clusterId == null || resourcesClusterMap.containsKey(clusterId)) {
           continue;
         }
-        Cluster cluster = s_clusters.get().getCluster(clusterName);
-        resourcesClusterMap.put(clusterName, cluster);
+        Cluster cluster = s_clusters.get().getCluster(clusterId);
+        resourcesClusterMap.put(clusterId, cluster);
       }
       for (Cluster cluster : resourcesClusterMap.values()) {
         long clusterId = cluster.getClusterId();
@@ -147,18 +147,18 @@ public class AlertSummaryPropertyProvider extends BaseProvider implements Proper
     AlertSummaryDTO summary = null;
     AlertHostSummaryDTO hostSummary = null;
 
-    String clusterName = (String) resource.getPropertyValue(m_clusterPropertyId);
+    Long clusterId = (Long) resource.getPropertyValue(m_clusterPropertyId);
 
-    if (null == clusterName) {
+    if (null == clusterId) {
       return;
     }
 
     String typeId = null == m_typeIdPropertyId ? null : (String) resource.getPropertyValue(m_typeIdPropertyId);
-    Cluster cluster = s_clusters.get().getCluster(clusterName);
+    Cluster cluster = s_clusters.get().getCluster(clusterId);
 
     switch (m_resourceType.getInternalType()) {
       case Cluster:
-        long clusterId = cluster.getClusterId();
+        clusterId = cluster.getClusterId();
 
         // only make the calculation if asked
         if (BaseProvider.isPropertyRequested(ALERTS_SUMMARY, requestedIds)) {
@@ -180,7 +180,7 @@ public class AlertSummaryPropertyProvider extends BaseProvider implements Proper
         summary = s_dao.findCurrentCounts(cluster.getClusterId(), typeId, null);
         break;
       case Host:
-      if (perHostSummaryMap.containsKey(cluster.getClusterId()) && 
+      if (perHostSummaryMap.containsKey(cluster.getClusterId()) &&
           perHostSummaryMap.get(cluster.getClusterId()).containsKey(typeId)) {
         summary = perHostSummaryMap.get(cluster.getClusterId()).get(typeId);
       } else {

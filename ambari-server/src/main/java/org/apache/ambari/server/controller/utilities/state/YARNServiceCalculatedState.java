@@ -50,7 +50,7 @@ public final class YARNServiceCalculatedState extends DefaultServiceCalculatedSt
         StackId stackId = service.getDesiredStackId();
 
 
-        ServiceComponentHostRequest request = new ServiceComponentHostRequest(clusterName,
+        ServiceComponentHostRequest request = new ServiceComponentHostRequest(cluster.getClusterId(),
           serviceName, null, null, null);
 
         Set<ServiceComponentHostResponse> hostComponentResponses =

@@ -46,6 +46,7 @@ import org.apache.ambari.server.orm.entities.AlertHistoryEntity;
 import org.apache.ambari.server.orm.entities.AlertNoticeEntity;
 import org.apache.ambari.server.orm.entities.AlertTargetEntity;
 import org.apache.ambari.server.orm.entities.ClusterEntity;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.inject.Inject;
@@ -63,7 +64,7 @@ public class AlertNoticeResourceProvider extends AbstractControllerResourceProvi
   public static final String ALERT_NOTICE_TARGET_ID = "AlertNotice/target_id";
   public static final String ALERT_NOTICE_TARGET_NAME = "AlertNotice/target_name";
   public static final String ALERT_NOTICE_HISTORY_ID = "AlertNotice/history_id";
-  public static final String ALERT_NOTICE_CLUSTER_NAME = "AlertNotice/cluster_name";
+  public static final String ALERT_NOTICE_CLUSTER_ID = "AlertNotice/cluster_id";
 
   private static final Set<String> PK_PROPERTY_IDS = new HashSet<>(
     Arrays.asList(ALERT_NOTICE_ID));
@@ -94,11 +95,11 @@ public class AlertNoticeResourceProvider extends AbstractControllerResourceProvi
     PROPERTY_IDS.add(ALERT_NOTICE_TARGET_ID);
     PROPERTY_IDS.add(ALERT_NOTICE_TARGET_NAME);
     PROPERTY_IDS.add(ALERT_NOTICE_HISTORY_ID);
-    PROPERTY_IDS.add(ALERT_NOTICE_CLUSTER_NAME);
+    PROPERTY_IDS.add(ALERT_NOTICE_CLUSTER_ID);
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.AlertNotice, ALERT_NOTICE_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_NOTICE_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_NOTICE_CLUSTER_ID);
   }
 
   /**
@@ -158,8 +159,8 @@ public class AlertNoticeResourceProvider extends AbstractControllerResourceProvi
     Set<Map<String, Object>> propertyMaps = getPropertyMaps(predicate);
     for (Map<String, Object> propertyMap : propertyMaps) {
       try {
-        String clusterName = (String) propertyMap.get(ALERT_NOTICE_CLUSTER_NAME);
-        Long clusterResourceId = (StringUtils.isEmpty(clusterName)) ? null : getClusterResourceId(clusterName);
+        Long clusterId = MapUtils.parseLong(propertyMap, ALERT_NOTICE_CLUSTER_ID);
+        Long clusterResourceId = (null == clusterId) ? null : getClusterResourceId(clusterId);
         String serviceName = (String) propertyMap.get(ALERT_NOTICE_SERVICE_NAME);
 
         if (clusterResourceId == null) {
@@ -240,8 +241,8 @@ public class AlertNoticeResourceProvider extends AbstractControllerResourceProvi
         history.getAlertId(), requestedIds);
 
     if (null != cluster) {
-      setResourceProperty(resource, ALERT_NOTICE_CLUSTER_NAME,
-          cluster.getClusterName(), requestedIds);
+      setResourceProperty(resource, ALERT_NOTICE_CLUSTER_ID,
+          cluster.getClusterId(), requestedIds);
     }
 
     return resource;

@@ -45,6 +45,7 @@ import org.apache.ambari.server.orm.dao.AlertsDAO;
 import org.apache.ambari.server.orm.entities.AlertDefinitionEntity;
 import org.apache.ambari.server.orm.entities.AlertHistoryEntity;
 import org.apache.ambari.server.orm.entities.ClusterEntity;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.inject.Inject;
@@ -59,7 +60,7 @@ public class AlertHistoryResourceProvider extends ReadOnlyResourceProvider imple
   public static final String ALERT_HISTORY_DEFINITION_ID = "AlertHistory/definition_id";
   public static final String ALERT_HISTORY_DEFINITION_NAME = "AlertHistory/definition_name";
   public static final String ALERT_HISTORY_ID = "AlertHistory/id";
-  public static final String ALERT_HISTORY_CLUSTER_NAME = "AlertHistory/cluster_name";
+  public static final String ALERT_HISTORY_CLUSTER_ID = "AlertHistory/cluster_id";
   public static final String ALERT_HISTORY_SERVICE_NAME = "AlertHistory/service_name";
   public static final String ALERT_HISTORY_COMPONENT_NAME = "AlertHistory/component_name";
   public static final String ALERT_HISTORY_HOSTNAME = "AlertHistory/host_name";
@@ -97,7 +98,7 @@ public class AlertHistoryResourceProvider extends ReadOnlyResourceProvider imple
     PROPERTY_IDS.add(ALERT_HISTORY_DEFINITION_ID);
     PROPERTY_IDS.add(ALERT_HISTORY_DEFINITION_NAME);
     PROPERTY_IDS.add(ALERT_HISTORY_ID);
-    PROPERTY_IDS.add(ALERT_HISTORY_CLUSTER_NAME);
+    PROPERTY_IDS.add(ALERT_HISTORY_CLUSTER_ID);
     PROPERTY_IDS.add(ALERT_HISTORY_SERVICE_NAME);
     PROPERTY_IDS.add(ALERT_HISTORY_COMPONENT_NAME);
     PROPERTY_IDS.add(ALERT_HISTORY_HOSTNAME);
@@ -109,7 +110,7 @@ public class AlertHistoryResourceProvider extends ReadOnlyResourceProvider imple
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.AlertHistory, ALERT_HISTORY_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_HISTORY_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_HISTORY_CLUSTER_ID);
     KEY_PROPERTY_IDS.put(Resource.Type.Service, ALERT_HISTORY_SERVICE_NAME);
     KEY_PROPERTY_IDS.put(Resource.Type.Host, ALERT_HISTORY_HOSTNAME);
   }
@@ -171,8 +172,7 @@ public class AlertHistoryResourceProvider extends ReadOnlyResourceProvider imple
     Set<Map<String, Object>> propertyMaps = getPropertyMaps(predicate);
     for(Map<String, Object> propertyMap: propertyMaps) {
       try {
-        String clusterName = (String) propertyMap.get(ALERT_HISTORY_CLUSTER_NAME);
-        Long clusterId = (StringUtils.isEmpty(clusterName)) ? null : getClusterId(clusterName);
+        Long clusterId = MapUtils.parseLong(propertyMap, ALERT_HISTORY_CLUSTER_ID);
         String definitionName = (String) propertyMap.get(ALERT_HISTORY_DEFINITION_NAME);
         String definitionId = (String) propertyMap.get(ALERT_HISTORY_DEFINITION_ID);
 
@@ -192,7 +192,7 @@ public class AlertHistoryResourceProvider extends ReadOnlyResourceProvider imple
         }
         else {
           // Make sure the user has the ability to view cluster-level alerts
-          AlertResourceProviderUtils.verifyViewAuthorization("", getClusterResourceId(clusterName));
+          AlertResourceProviderUtils.verifyViewAuthorization("", getClusterResourceId(clusterId));
         }
       } catch (AmbariException e) {
         throw new SystemException(e.getMessage(), e);
@@ -245,8 +245,8 @@ public class AlertHistoryResourceProvider extends ReadOnlyResourceProvider imple
     resource.setProperty(ALERT_HISTORY_ID, entity.getAlertId());
 
     if (null != cluster) {
-      setResourceProperty(resource, ALERT_HISTORY_CLUSTER_NAME,
-          cluster.getClusterName(), requestedIds);
+      setResourceProperty(resource, ALERT_HISTORY_CLUSTER_ID,
+          cluster.getClusterId(), requestedIds);
     }
 
     setResourceProperty(resource, ALERT_HISTORY_DEFINITION_ID, definition.getDefinitionId(), requestedIds);

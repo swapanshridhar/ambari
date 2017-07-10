@@ -101,7 +101,7 @@ public class ExecutionScheduleManager {
   protected static final String BATCH_REQUEST_JOB_PREFIX = "BatchRequestJob";
   protected static final String REQUEST_EXECUTION_TRIGGER_PREFIX =
     "RequestExecution";
-  protected static final String DEFAULT_API_PATH = "api/v1";
+  protected static final String DEFAULT_API_PATH = "api/v2";
 
   public static final String USER_ID_HEADER = "X-Authenticated-User-ID";
 
@@ -391,8 +391,8 @@ public class ExecutionScheduleManager {
               requestExecution.getId())
             .usingJobData(BatchRequestJob.BATCH_REQUEST_BATCH_ID_KEY,
               batchRequest.getOrderId())
-            .usingJobData(BatchRequestJob.BATCH_REQUEST_CLUSTER_NAME_KEY,
-              requestExecution.getClusterName())
+            .usingJobData(BatchRequestJob.BATCH_REQUEST_CLUSTER_ID_KEY,
+              requestExecution.getClusterId())
             .usingJobData(BatchRequestJob.NEXT_EXECUTION_SEPARATION_SECONDS,
               separationSeconds != null ? separationSeconds : 0)
             .storeDurably()
@@ -514,14 +514,14 @@ public class ExecutionScheduleManager {
    */
   public Long executeBatchRequest(long executionId,
                                   long batchId,
-                                  String clusterName) throws AmbariException {
+                                  Long clusterId) throws AmbariException {
 
     String type = null;
     String uri = null;
     String body = null;
 
     try {
-      RequestExecution requestExecution = clusters.getCluster(clusterName).getAllRequestExecutions().get(executionId);
+      RequestExecution requestExecution = clusters.getCluster(clusterId).getAllRequestExecutions().get(executionId);
       BatchRequest batchRequest = requestExecution.getBatchRequest(batchId);
       type = batchRequest.getType();
       uri = batchRequest.getUri();
@@ -530,7 +530,7 @@ public class ExecutionScheduleManager {
 
       BatchRequestResponse batchRequestResponse = performApiRequest(uri, body, type, requestExecution.getAuthenticatedUserId());
 
-      updateBatchRequest(executionId, batchId, clusterName, batchRequestResponse, false);
+      updateBatchRequest(executionId, batchId, clusterId, batchRequestResponse, false);
 
       if (batchRequestResponse.getRequestId() != null) {
         actionDBAccessor.setSourceScheduleForRequest(batchRequestResponse.getRequestId(), executionId);
@@ -548,13 +548,13 @@ public class ExecutionScheduleManager {
    * @return
    * @throws AmbariException
    */
-  public BatchRequestResponse getBatchRequestResponse(Long requestId, String clusterName)
+  public BatchRequestResponse getBatchRequestResponse(Long requestId, Long clusterId)
     throws AmbariException {
 
     StrBuilder sb = new StrBuilder();
     sb.append(DEFAULT_API_PATH)
       .append("/clusters/")
-      .append(clusterName)
+      .append(clusterId)
       .append("/requests/")
       .append(requestId);
 
@@ -634,11 +634,11 @@ public class ExecutionScheduleManager {
     return batchRequestResponse;
   }
 
-  public void updateBatchRequest(long executionId, long batchId, String clusterName,
+  public void updateBatchRequest(long executionId, long batchId, Long clusterId,
                                  BatchRequestResponse batchRequestResponse,
                                  boolean statusOnly) throws AmbariException {
 
-    Cluster cluster = clusters.getCluster(clusterName);
+    Cluster cluster = clusters.getCluster(clusterId);
     RequestExecution requestExecution = cluster.getAllRequestExecutions().get(executionId);
 
     if (requestExecution == null) {
@@ -690,15 +690,15 @@ public class ExecutionScheduleManager {
    * Check if the allowed threshold for failed tasks has exceeded.
    * This needs to be an absolute value of tasks.
    * @param executionId
-   * @param clusterName
+   * @param clusterId
    * @param taskCounts
    * @return
    * @throws AmbariException
    */
   public boolean hasToleranceThresholdExceeded(Long executionId,
-      String clusterName, Map<String, Integer> taskCounts) throws AmbariException {
+      Long clusterId, Map<String, Integer> taskCounts) throws AmbariException {
 
-    Cluster cluster = clusters.getCluster(clusterName);
+    Cluster cluster = clusters.getCluster(clusterId);
     RequestExecution requestExecution = cluster.getAllRequestExecutions().get(executionId);
 
     if (requestExecution == null) {
@@ -722,13 +722,13 @@ public class ExecutionScheduleManager {
    * If the trigger will never fire again.
    *
    * @param executionId
-   * @param clusterName
+   * @param clusterId
    * @throws AmbariException
    */
-  public void finalizeBatch(long executionId, String clusterName)
+  public void finalizeBatch(long executionId, Long clusterId)
     throws AmbariException {
 
-    Cluster cluster = clusters.getCluster(clusterName);
+    Cluster cluster = clusters.getCluster(clusterId);
     RequestExecution requestExecution = cluster.getAllRequestExecutions().get(executionId);
 
     if (requestExecution == null) {

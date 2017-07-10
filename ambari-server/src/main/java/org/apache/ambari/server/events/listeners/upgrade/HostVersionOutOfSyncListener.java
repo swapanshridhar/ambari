@@ -113,7 +113,7 @@ public class HostVersionOutOfSyncListener {
     try {
       Cluster cluster = clusters.get().getClusterById(event.getClusterId());
       List<HostVersionEntity> hostVersionEntities =
-          hostVersionDAO.get().findByClusterAndHost(cluster.getClusterName(), event.getHostName());
+          hostVersionDAO.get().findByClusterAndHost(cluster.getClusterId(), event.getHostName());
 
       for (HostVersionEntity hostVersionEntity : hostVersionEntities) {
         StackEntity hostStackEntity = hostVersionEntity.getRepositoryVersion().getStack();
@@ -162,7 +162,7 @@ public class HostVersionOutOfSyncListener {
     try {
       Cluster cluster = clusters.get().getClusterById(event.getClusterId());
       List<HostVersionEntity> hostVersionEntities =
-          hostVersionDAO.get().findByClusterAndHost(cluster.getClusterName(), event.getHostName());
+          hostVersionDAO.get().findByClusterAndHost(cluster.getClusterId(), event.getHostName());
 
       for (HostVersionEntity hostVersionEntity : hostVersionEntities) {
         HostEntity hostEntity = hostVersionEntity.getHostEntity();
@@ -239,7 +239,7 @@ public class HostVersionOutOfSyncListener {
       }
       for (String hostName : affectedHosts.keySet()) {
         List<HostVersionEntity> hostVersionEntities =
-            hostVersionDAO.get().findByClusterAndHost(cluster.getClusterName(), hostName);
+            hostVersionDAO.get().findByClusterAndHost(cluster.getClusterId(), hostName);
         for (HostVersionEntity hostVersionEntity : hostVersionEntities) {
           RepositoryVersionEntity repositoryVersion = hostVersionEntity.getRepositoryVersion();
           // If added components do not advertise version, it makes no sense to mark version OUT_OF_SYNC

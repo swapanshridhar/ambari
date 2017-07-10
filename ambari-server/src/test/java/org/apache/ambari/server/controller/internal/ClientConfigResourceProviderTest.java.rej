@@ -1,0 +1,34 @@
+***************
+*** 249,255 ****
+      HashMap<String, ServiceOsSpecific> serviceOsSpecificHashMap = new HashMap<>();
+      serviceOsSpecificHashMap.put("key",serviceOsSpecific);
+  
+-     ServiceComponentHostResponse shr1 = new ServiceComponentHostResponse(clusterName, serviceName, componentName, displayName, hostName, publicHostname,desiredState, "", null, null, null);
+  
+      Set<ServiceComponentHostResponse> responses = new LinkedHashSet<>();
+      responses.add(shr1);
+--- 250,256 ----
+      HashMap<String, ServiceOsSpecific> serviceOsSpecificHashMap = new HashMap<>();
+      serviceOsSpecificHashMap.put("key",serviceOsSpecific);
+  
++     ServiceComponentHostResponse shr1 = new ServiceComponentHostResponse(clusterId, serviceName, componentName, displayName, hostName, publicHostname,desiredState, "", null, null, null);
+  
+      Set<ServiceComponentHostResponse> responses = new LinkedHashSet<>();
+      responses.add(shr1);
+***************
+*** 506,512 ****
+      HashMap<String, ServiceOsSpecific> serviceOsSpecificHashMap = new HashMap<>();
+      serviceOsSpecificHashMap.put("key",serviceOsSpecific);
+  
+-     ServiceComponentHostResponse shr1 = new ServiceComponentHostResponse(clusterName, serviceName, componentName, displayName, hostName, publicHostName, desiredState, "", null, null, null);
+  
+      Set<ServiceComponentHostResponse> responses = new LinkedHashSet<>();
+      responses.add(shr1);
+--- 508,514 ----
+      HashMap<String, ServiceOsSpecific> serviceOsSpecificHashMap = new HashMap<>();
+      serviceOsSpecificHashMap.put("key",serviceOsSpecific);
+  
++     ServiceComponentHostResponse shr1 = new ServiceComponentHostResponse(clusterId, serviceName, componentName, displayName, hostName, publicHostName, desiredState, "", null, null, null);
+  
+      Set<ServiceComponentHostResponse> responses = new LinkedHashSet<>();
+      responses.add(shr1);

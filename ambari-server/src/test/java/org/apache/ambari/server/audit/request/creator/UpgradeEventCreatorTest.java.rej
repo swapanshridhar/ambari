@@ -1,0 +1,17 @@
+***************
+*** 50,56 ****
+      AuditEvent event = AuditEventCreatorTestHelper.getEvent(creator, request, result);
+  
+      String actual = event.getAuditMessage();
+-     String expected = "User(" + userName + "), RemoteIp(1.2.3.4), Operation(Upgrade addition), RequestType(POST), url(http://example.com:8080/api/v1/test), ResultStatus(200 OK), Repository version(1.9), Upgrade type(ROLLING), Cluster name(mycluster)";
+  
+      Assert.assertTrue("Class mismatch", event instanceof AddUpgradeRequestAuditEvent);
+      Assert.assertEquals(expected, actual);
+--- 50,56 ----
+      AuditEvent event = AuditEventCreatorTestHelper.getEvent(creator, request, result);
+  
+      String actual = event.getAuditMessage();
++     String expected = "User(" + userName + "), RemoteIp(1.2.3.4), Operation(Upgrade addition), RequestType(POST), url(http://example.com:8080/api/v1/test), ResultStatus(200 OK), Repository version(1.9), Upgrade type(ROLLING), Cluster Id(1)";
+  
+      Assert.assertTrue("Class mismatch", event instanceof AddUpgradeRequestAuditEvent);
+      Assert.assertEquals(expected, actual);

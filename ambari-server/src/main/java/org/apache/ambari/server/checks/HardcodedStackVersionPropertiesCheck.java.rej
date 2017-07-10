@@ -1,0 +1,17 @@
+***************
+*** 71,77 ****
+      RepositoryVersionEntity rve = repositoryVersionDaoProvider.get().
+        findByStackNameAndVersion(stackName, request.getRepositoryVersion());
+  
+-     Cluster cluster = m_clusters.get().getCluster(request.getClusterName());
+  
+      String currentHdpVersion = cluster.getCurrentClusterVersion().getRepositoryVersion().getVersion();
+  
+--- 71,77 ----
+      RepositoryVersionEntity rve = repositoryVersionDaoProvider.get().
+        findByStackNameAndVersion(stackName, request.getRepositoryVersion());
+  
++     Cluster cluster = m_clusters.get().getCluster(request.getClusterId());
+  
+      String currentHdpVersion = cluster.getCurrentClusterVersion().getRepositoryVersion().getVersion();
+  

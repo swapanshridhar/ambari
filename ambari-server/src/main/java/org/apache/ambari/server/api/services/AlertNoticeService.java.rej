@@ -1,0 +1,37 @@
+***************
+*** 38,54 ****
+   */
+  public class AlertNoticeService extends BaseService {
+  
+-   private String clusterName = null;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName
+-    *          the cluster name (not {@code null}).
+     */
+-   AlertNoticeService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    @GET
+--- 38,54 ----
+   */
+  public class AlertNoticeService extends BaseService {
+  
++   private Long clusterId = null;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId
++    *          the cluster Id (not {@code null}).
+     */
++   AlertNoticeService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    @GET

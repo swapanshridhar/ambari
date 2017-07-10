@@ -1,0 +1,88 @@
+***************
+*** 666,672 ****
+      /**
+       * cluster name property name
+       */
+-     private static final String CLUSTER_NAME = PropertyHelper.getPropertyId("Artifacts", "cluster_name");
+  
+      @Override
+      public void setManagementController(AmbariManagementController controller) {
+--- 667,673 ----
+      /**
+       * cluster name property name
+       */
++     private static final String CLUSTER_ID = PropertyHelper.getPropertyId("Artifacts", "cluster_id");
+  
+      @Override
+      public void setManagementController(AmbariManagementController controller) {
+***************
+*** 680,686 ****
+  
+      @Override
+      public String getFKPropertyName() {
+-       return CLUSTER_NAME;
+      }
+  
+      @Override
+--- 681,687 ----
+  
+      @Override
+      public String getFKPropertyName() {
++       return CLUSTER_ID;
+      }
+  
+      @Override
+***************
+*** 707,714 ****
+      public boolean instanceExists(Map<Resource.Type, String> keyMap,
+                                    Map<String, Object> properties) throws AmbariException {
+        try {
+-         String clusterName = String.valueOf(properties.get(CLUSTER_NAME));
+-         controller.getClusters().getCluster(clusterName);
+          return true;
+        } catch (ObjectNotFoundException e) {
+          // doesn't exist
+--- 708,715 ----
+      public boolean instanceExists(Map<Resource.Type, String> keyMap,
+                                    Map<String, Object> properties) throws AmbariException {
+        try {
++         Long clusterId = MapUtils.parseLong(properties, CLUSTER_ID);
++         controller.getClusters().getCluster(clusterId);
+          return true;
+        } catch (ObjectNotFoundException e) {
+          // doesn't exist
+***************
+*** 763,778 ****
+  
+      @Override
+      public Map<Resource.Type, String> getForeignKeyInfo() {
+-       return Collections.singletonMap(Resource.Type.Cluster, "Artifacts/cluster_name");
+      }
+  
+      @Override
+      public boolean instanceExists(Map<Resource.Type, String> keyMap,
+                                    Map<String, Object> properties) throws AmbariException {
+  
+-       String clusterName = String.valueOf(properties.get(keyMap.get(Resource.Type.Cluster)));
+        try {
+-         Cluster cluster = controller.getClusters().getCluster(clusterName);
+          cluster.getService(String.valueOf(properties.get(SERVICE_NAME)));
+          return true;
+        } catch (ObjectNotFoundException e) {
+--- 764,779 ----
+  
+      @Override
+      public Map<Resource.Type, String> getForeignKeyInfo() {
++       return Collections.singletonMap(Resource.Type.Cluster, "Artifacts/cluster_id");
+      }
+  
+      @Override
+      public boolean instanceExists(Map<Resource.Type, String> keyMap,
+                                    Map<String, Object> properties) throws AmbariException {
+  
++       Long clusterId = MapUtils.parseLong(properties, keyMap.get(Resource.Type.Cluster));
+        try {
++         Cluster cluster = controller.getClusters().getCluster(clusterId);
+          cluster.getService(String.valueOf(properties.get(SERVICE_NAME)));
+          return true;
+        } catch (ObjectNotFoundException e) {

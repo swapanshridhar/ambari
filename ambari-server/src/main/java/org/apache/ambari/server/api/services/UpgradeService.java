@@ -100,7 +100,7 @@ public class UpgradeService extends BaseService {
    */
   private ResourceInstance createResourceInstance(Long upgradeId) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, m_clusterName);
+    mapIds.put(Resource.Type.Cluster, m_clusterId.toString());
 
     if (null != upgradeId) {
       mapIds.put(Resource.Type.Upgrade, upgradeId.toString());

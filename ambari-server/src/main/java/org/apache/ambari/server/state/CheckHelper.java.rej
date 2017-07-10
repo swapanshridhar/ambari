@@ -1,0 +1,17 @@
+***************
+*** 113,119 ****
+          request.addResult(checkDescriptor.getDescription(), prerequisiteCheck.getStatus());
+        } catch (ClusterNotFoundException ex) {
+          prerequisiteCheck.setStatus(PrereqCheckStatus.FAIL);
+-         prerequisiteCheck.setFailReason("Cluster with name " + clusterName + " doesn't exists");
+          prerequisiteCheckResults.add(prerequisiteCheck);
+  
+          request.addResult(checkDescriptor.getDescription(), prerequisiteCheck.getStatus());
+--- 113,119 ----
+          request.addResult(checkDescriptor.getDescription(), prerequisiteCheck.getStatus());
+        } catch (ClusterNotFoundException ex) {
+          prerequisiteCheck.setStatus(PrereqCheckStatus.FAIL);
++         prerequisiteCheck.setFailReason("Cluster with id " + clusterId + " doesn't exists");
+          prerequisiteCheckResults.add(prerequisiteCheck);
+  
+          request.addResult(checkDescriptor.getDescription(), prerequisiteCheck.getStatus());

@@ -196,10 +196,10 @@ public class UpgradeHelperTest extends EasyMockSupport {
     final Direction upgradeDirection = Direction.UPGRADE;
     final UpgradeType upgradeType = UpgradeType.ROLLING;
 
-    makeCluster();
+    Cluster c = makeCluster();
     try {
       String preferredUpgradePackName = "upgrade_test";
-      UpgradePack up = m_upgradeHelper.suggestUpgradePack(clusterName, upgradeFromVersion, upgradeToVersion, upgradeDirection, upgradeType, preferredUpgradePackName);
+      UpgradePack up = m_upgradeHelper.suggestUpgradePack(c.getClusterId(), upgradeFromVersion, upgradeToVersion, upgradeDirection, upgradeType, preferredUpgradePackName);
       assertEquals(upgradeType, up.getType());
     } catch (AmbariException e){
       assertTrue(false);
@@ -694,7 +694,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
     hiveConfigs.put("condition", "1");
 
     ConfigurationRequest configurationRequest = new ConfigurationRequest();
-    configurationRequest.setClusterName(cluster.getClusterName());
+    configurationRequest.setClusterId(cluster.getClusterId());
     configurationRequest.setType("hive-site");
     configurationRequest.setVersionTag("version2");
     configurationRequest.setProperties(hiveConfigs);
@@ -939,7 +939,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
     hiveConfigs.put("ifFooKey", "ifFooValue");
 
     ConfigurationRequest configurationRequest = new ConfigurationRequest();
-    configurationRequest.setClusterName(cluster.getClusterName());
+    configurationRequest.setClusterId(cluster.getClusterId());
     configurationRequest.setType("hive-site");
     configurationRequest.setVersionTag("version2");
     configurationRequest.setProperties(hiveConfigs);
@@ -1253,7 +1253,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // !!! add services
@@ -1306,7 +1306,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
     hiveConfigs.put("hive.server2.thrift.port", "10001");
 
     ConfigurationRequest configurationRequest = new ConfigurationRequest();
-    configurationRequest.setClusterName(clusterName);
+    configurationRequest.setClusterId(c.getClusterId());
     configurationRequest.setType("hive-site");
     configurationRequest.setVersionTag("version1");
     configurationRequest.setProperties(hiveConfigs);
@@ -1473,7 +1473,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // !!! add services
@@ -1545,7 +1545,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // !!! add services
@@ -1612,7 +1612,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // Add services
@@ -1681,7 +1681,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // Add services
@@ -1743,7 +1743,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
     // grab the right pack
     String preferredUpgradePackName = "upgrade_grouping_rolling";
-    UpgradePack upgradePack = m_upgradeHelper.suggestUpgradePack(clusterName, upgradeFromVersion,
+    UpgradePack upgradePack = m_upgradeHelper.suggestUpgradePack(cluster.getClusterId(), upgradeFromVersion,
         upgradeToVersion, upgradeDirection, upgradeType, preferredUpgradePackName);
 
     assertEquals(upgradeType, upgradePack.getType());
@@ -1801,7 +1801,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // !!! add storm
@@ -1906,7 +1906,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
       hostAttributes.put("os_release_version", "6");
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // !!! add services
@@ -2090,7 +2090,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
 
       host.setHostAttributes(hostAttributes);
 
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, c.getClusterId());
     }
 
     // add ZK Server to both hosts, and then Nimbus to only 1 - this will test
@@ -2226,7 +2226,7 @@ public class UpgradeHelperTest extends EasyMockSupport {
     Map<String, String> fooConfigs = new HashMap<>();
     fooConfigs.put("foo-property", "foo-value");
     ConfigurationRequest configurationRequest = new ConfigurationRequest();
-    configurationRequest.setClusterName(cluster.getClusterName());
+    configurationRequest.setClusterId(cluster.getClusterId());
     configurationRequest.setType("foo-site");
     configurationRequest.setVersionTag("version1");
     configurationRequest.setProperties(fooConfigs);

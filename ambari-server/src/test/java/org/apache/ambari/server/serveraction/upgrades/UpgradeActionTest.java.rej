@@ -1,0 +1,149 @@
+***************
+*** 269,275 ****
+      hostVersionDAO.create(entity);
+  
+      // verify the UPGRADED host versions were created successfully
+-     List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(clusterName,
+              targetStack, targetRepo);
+  
+      assertEquals(1, hostVersions.size());
+--- 269,275 ----
+      hostVersionDAO.create(entity);
+  
+      // verify the UPGRADED host versions were created successfully
++     List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(c.getClusterId(),
+              targetStack, targetRepo);
+  
+      assertEquals(1, hostVersions.size());
+***************
+*** 393,398 ****
+      String sourceRepo = HDP_2_1_1_0;
+      String targetRepo = HDP_2_1_1_1;
+  
+      makeDowngradeCluster(sourceStack, sourceRepo, targetStack, targetRepo);
+  
+      Map<String, String> commandParams = new HashMap<>();
+--- 393,399 ----
+      String sourceRepo = HDP_2_1_1_0;
+      String targetRepo = HDP_2_1_1_1;
+  
++     Cluster c = clusters.getCluster(clusterName);
+      makeDowngradeCluster(sourceStack, sourceRepo, targetStack, targetRepo);
+  
+      Map<String, String> commandParams = new HashMap<>();
+***************
+*** 415,421 ****
+      assertNotNull(report);
+      assertEquals(HostRoleStatus.COMPLETED.name(), report.getStatus());
+  
+-     for (HostVersionEntity entity : hostVersionDAO.findByClusterAndHost(clusterName, "h1")) {
+        if (entity.getRepositoryVersion().getVersion().equals(sourceRepo)) {
+          assertEquals(RepositoryVersionState.CURRENT, entity.getState());
+        } else if (entity.getRepositoryVersion().getVersion().equals(targetRepo)) {
+--- 416,422 ----
+      assertNotNull(report);
+      assertEquals(HostRoleStatus.COMPLETED.name(), report.getStatus());
+  
++     for (HostVersionEntity entity : hostVersionDAO.findByClusterAndHost(c.getClusterId(), "h1")) {
+        if (entity.getRepositoryVersion().getVersion().equals(sourceRepo)) {
+          assertEquals(RepositoryVersionState.CURRENT, entity.getState());
+        } else if (entity.getRepositoryVersion().getVersion().equals(targetRepo)) {
+***************
+*** 423,429 ****
+        }
+      }
+  
+-     for (ClusterVersionEntity entity : clusterVersionDAO.findByCluster(clusterName)) {
+        if (entity.getRepositoryVersion().getVersion().equals(sourceRepo)) {
+          assertEquals(RepositoryVersionState.CURRENT, entity.getState());
+        } else if (entity.getRepositoryVersion().getVersion().equals(targetRepo)) {
+--- 424,430 ----
+        }
+      }
+  
++     for (ClusterVersionEntity entity : clusterVersionDAO.findByCluster(c.getClusterId())) {
+        if (entity.getRepositoryVersion().getVersion().equals(sourceRepo)) {
+          assertEquals(RepositoryVersionState.CURRENT, entity.getState());
+        } else if (entity.getRepositoryVersion().getVersion().equals(targetRepo)) {
+***************
+*** 698,704 ****
+  
+      HostVersionDAO dao = m_injector.getInstance(HostVersionDAO.class);
+  
+-     List<HostVersionEntity> hosts = dao.findByClusterStackAndVersion(clusterName, targetStack, targetRepo);
+      assertFalse(hosts.isEmpty());
+      for (HostVersionEntity hve : hosts) {
+        assertTrue(hve.getState() == RepositoryVersionState.INSTALLED);
+--- 699,705 ----
+  
+      HostVersionDAO dao = m_injector.getInstance(HostVersionDAO.class);
+  
++     List<HostVersionEntity> hosts = dao.findByClusterStackAndVersion(cluster.getClusterId(), targetStack, targetRepo);
+      assertFalse(hosts.isEmpty());
+      for (HostVersionEntity hve : hosts) {
+        assertTrue(hve.getState() == RepositoryVersionState.INSTALLED);
+***************
+*** 724,730 ****
+      configs = cluster.getAllConfigs();
+      assertEquals(4, configs.size());
+  
+-     hosts = dao.findByClusterStackAndVersion(clusterName, targetStack, targetRepo);
+      assertFalse(hosts.isEmpty());
+      for (HostVersionEntity hve : hosts) {
+        assertTrue(hve.getState() == RepositoryVersionState.INSTALLED);
+--- 725,731 ----
+      configs = cluster.getAllConfigs();
+      assertEquals(4, configs.size());
+  
++     hosts = dao.findByClusterStackAndVersion(cluster.getClusterId(), targetStack, targetRepo);
+      assertFalse(hosts.isEmpty());
+      for (HostVersionEntity hve : hosts) {
+        assertTrue(hve.getState() == RepositoryVersionState.INSTALLED);
+***************
+*** 733,739 ****
+  
+    /**
+     * Tests that finalization can occur when the cluster state is
+-    * {@link RepositoryVersionState#UPGRADING} if all of the hosts and components
+     * are reporting correct versions and states.
+     *
+     * @throws Exception
+--- 734,740 ----
+  
+    /**
+     * Tests that finalization can occur when the cluster state is
++    *  if all of the hosts and components
+     * are reporting correct versions and states.
+     *
+     * @throws Exception
+***************
+*** 772,785 ****
+      // inject an unhappy path where the cluster repo version is still UPGRADING
+      // even though all of the hosts are UPGRADED
+      ClusterVersionEntity upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-             clusterName, HDP_22_STACK, targetRepo);
+  
+      upgradingClusterVersion.setState(RepositoryVersionState.INSTALLING);
+      upgradingClusterVersion = clusterVersionDAO.merge(upgradingClusterVersion);
+  
+      // verify the conditions for the test are met properly
+-     upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(clusterName, HDP_22_STACK, targetRepo);
+-     List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(clusterName, HDP_22_STACK, targetRepo);
+  
+      assertEquals(RepositoryVersionState.INSTALLING, upgradingClusterVersion.getState());
+      assertTrue(hostVersions.size() > 0);
+--- 773,786 ----
+      // inject an unhappy path where the cluster repo version is still UPGRADING
+      // even though all of the hosts are UPGRADED
+      ClusterVersionEntity upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++          cluster.getClusterId(), HDP_22_STACK, targetRepo);
+  
+      upgradingClusterVersion.setState(RepositoryVersionState.INSTALLING);
+      upgradingClusterVersion = clusterVersionDAO.merge(upgradingClusterVersion);
+  
+      // verify the conditions for the test are met properly
++     upgradingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(cluster.getClusterId(), HDP_22_STACK, targetRepo);
++     List<HostVersionEntity> hostVersions = hostVersionDAO.findByClusterStackAndVersion(cluster.getClusterId(), HDP_22_STACK, targetRepo);
+  
+      assertEquals(RepositoryVersionState.INSTALLING, upgradingClusterVersion.getState());
+      assertTrue(hostVersions.size() > 0);

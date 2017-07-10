@@ -1,0 +1,39 @@
+***************
+*** 86,103 ****
+    }
+  
+    private class TestHostService extends HostService {
+-     private String m_clusterId;
+      private String m_hostId;
+  
+-     private TestHostService(String clusterId, String hostId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+        m_hostId = hostId;
+      }
+  
+      @Override
+-     ResourceInstance createHostResource(String clusterName, String hostName, UriInfo ui) {
+-       assertEquals(m_clusterId, clusterName);
+        assertEquals(m_hostId, hostName);
+        return getTestResource();
+      }
+--- 86,103 ----
+    }
+  
+    private class TestHostService extends HostService {
++     private Long m_clusterId;
+      private String m_hostId;
+  
++     private TestHostService(Long clusterId, String hostId) {
+        super(ApiVersion.Default, clusterId);
+        m_clusterId = clusterId;
+        m_hostId = hostId;
+      }
+  
+      @Override
++     ResourceInstance createHostResource(Long clusterId, String hostName, UriInfo ui) {
++       assertEquals(m_clusterId, clusterId);
+        assertEquals(m_hostId, hostName);
+        return getTestResource();
+      }

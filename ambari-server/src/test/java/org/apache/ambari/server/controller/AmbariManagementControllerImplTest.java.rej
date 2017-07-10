@@ -1,0 +1,34 @@
+***************
+*** 2092,2098 ****
+      expect(configuration.areHostsSysPrepped()).andReturn("true");
+      expect(configuration.getDatabaseConnectorNames()).andReturn(new HashMap<String, String>()).anyTimes();
+      expect(configuration.getPreviousDatabaseConnectorNames()).andReturn(new HashMap<String, String>()).anyTimes();
+-     expect(clusterVersionDAO.findByClusterAndStateCurrent(clusterName)).andReturn(clusterVersionEntity).anyTimes();
+      expect(clusterVersionEntity.getRepositoryVersion()).andReturn(repositoryVersionEntity).anyTimes();
+      expect(repositoryVersionEntity.getVersion()).andReturn("1234").anyTimes();
+      expect(configHelper.getPropertyValuesWithPropertyType(stackId,
+--- 2092,2098 ----
+      expect(configuration.areHostsSysPrepped()).andReturn("true");
+      expect(configuration.getDatabaseConnectorNames()).andReturn(new HashMap<String, String>()).anyTimes();
+      expect(configuration.getPreviousDatabaseConnectorNames()).andReturn(new HashMap<String, String>()).anyTimes();
++     expect(clusterVersionDAO.findByClusterAndStateCurrent(1L)).andReturn(clusterVersionEntity).anyTimes();
+      expect(clusterVersionEntity.getRepositoryVersion()).andReturn(repositoryVersionEntity).anyTimes();
+      expect(repositoryVersionEntity.getVersion()).andReturn("1234").anyTimes();
+      expect(configHelper.getPropertyValuesWithPropertyType(stackId,
+***************
+*** 2350,2356 ****
+      Injector injector = createNiceMock(Injector.class);
+  
+      ClusterVersionDAO clusterVersionDAO = createNiceMock(ClusterVersionDAO.class);
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+          anyObject(StackId.class), anyObject(String.class))).andReturn(null).once();
+  
+      RepositoryVersionEntity repoVersion = createNiceMock(RepositoryVersionEntity.class);
+--- 2350,2356 ----
+      Injector injector = createNiceMock(Injector.class);
+  
+      ClusterVersionDAO clusterVersionDAO = createNiceMock(ClusterVersionDAO.class);
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+          anyObject(StackId.class), anyObject(String.class))).andReturn(null).once();
+  
+      RepositoryVersionEntity repoVersion = createNiceMock(RepositoryVersionEntity.class);

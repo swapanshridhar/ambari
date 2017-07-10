@@ -28,6 +28,7 @@ import org.apache.ambari.server.audit.event.AuditEvent;
 import org.apache.ambari.server.audit.event.request.AddCredentialRequestAuditEvent;
 import org.apache.ambari.server.audit.request.eventcreator.CredentialEventCreator;
 import org.apache.ambari.server.controller.internal.CredentialResourceProvider;
+import org.apache.ambari.server.controller.internal.HostComponentResourceProvider;
 import org.apache.ambari.server.controller.spi.Resource;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class CredentialEventCreatorTest extends AuditEventCreatorTestBase{
     CredentialEventCreator creator = new CredentialEventCreator();
 
     Map<String,Object> properties = new HashMap<>();
-    properties.put(CredentialResourceProvider.CREDENTIAL_CLUSTER_NAME_PROPERTY_ID, "mycluster");
+    properties.put(CredentialResourceProvider.CREDENTIAL_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(CredentialResourceProvider.CREDENTIAL_TYPE_PROPERTY_ID, "USER");
     properties.put(CredentialResourceProvider.CREDENTIAL_ALIAS_PROPERTY_ID, "Alias");
     properties.put(CredentialResourceProvider.CREDENTIAL_PRINCIPAL_PROPERTY_ID, "newuser");
@@ -51,7 +52,7 @@ public class CredentialEventCreatorTest extends AuditEventCreatorTestBase{
     AuditEvent event = AuditEventCreatorTestHelper.getEvent(creator, request, result);
 
     String actual = event.getAuditMessage();
-    String expected = "User(" + userName + "), RemoteIp(1.2.3.4), Operation(Credential addition), RequestType(POST), url(http://example.com:8080/api/v1/test), ResultStatus(200 OK), Type(USER), Principal(newuser), Alias(Alias), Cluster name(mycluster)";
+    String expected = "User(" + userName + "), RemoteIp(1.2.3.4), Operation(Credential addition), RequestType(POST), url(http://example.com:8080/api/v1/test), ResultStatus(200 OK), Type(USER), Principal(newuser), Alias(Alias), Cluster Id(1)";
 
     Assert.assertTrue("Class mismatch", event instanceof AddCredentialRequestAuditEvent);
     Assert.assertEquals(expected, actual);

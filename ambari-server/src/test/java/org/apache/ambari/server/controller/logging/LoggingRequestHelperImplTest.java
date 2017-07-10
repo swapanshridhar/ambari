@@ -512,7 +512,7 @@ public class LoggingRequestHelperImplTest {
     expect(networkConnectionMock.readQueryResponseFromServer(capture(captureURLConnection))).andReturn(new StringBuffer(TEST_JSON_INPUT_TWO_LIST_ENTRIES)).atLeastOnce();
     // the credential store service should be consulted in this case, in order
     // to attempt to obtain the LogSearch credential from the store
-    expect(credentialStoreServiceMock.getCredential(expectedClusterName, "logsearch.admin.credential")).andReturn(new PrincipalKeyCredential(EXPECTED_USER_NAME, EXPECTED_ADMIN_PASSWORD)).atLeastOnce();
+    expect(credentialStoreServiceMock.getCredential(clusterMock.getClusterId(), "logsearch.admin.credential")).andReturn(new PrincipalKeyCredential(EXPECTED_USER_NAME, EXPECTED_ADMIN_PASSWORD)).atLeastOnce();
 
     // expect that basic authentication is setup, with the expected encoded credentials
     networkConnectionMock.setupBasicAuthentication(capture(captureURLConnectionForAuthentication), eq(EXPECTED_ENCODED_CREDENTIALS));

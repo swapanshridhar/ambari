@@ -1,0 +1,34 @@
+***************
+*** 164,170 ****
+      cluster.addDesiredConfig("_test", Collections.singleton(config));
+  
+  
+-     clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+      Service hdfs = cluster.addService(serviceName);
+      hdfs.addServiceComponent(Role.DATANODE.name());
+      hdfs.getServiceComponent(Role.DATANODE.name()).addServiceComponentHost(hostname1);
+--- 165,171 ----
+      cluster.addDesiredConfig("_test", Collections.singleton(config));
+  
+  
++     clusters.mapAndPublishHostsToCluster(hostNames, cluster.getClusterId());
+      Service hdfs = cluster.addService(serviceName);
+      hdfs.addServiceComponent(Role.DATANODE.name());
+      hdfs.getServiceComponent(Role.DATANODE.name()).addServiceComponentHost(hostname1);
+***************
+*** 253,259 ****
+      cluster.addDesiredConfig("_test", Collections.singleton(hadoopEnvConfig));
+  
+  
+-     clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+      Service hdfs = cluster.addService(serviceName);
+      hdfs.addServiceComponent(Role.DATANODE.name());
+      hdfs.getServiceComponent(Role.DATANODE.name()).addServiceComponentHost
+--- 254,260 ----
+      cluster.addDesiredConfig("_test", Collections.singleton(hadoopEnvConfig));
+  
+  
++     clusters.mapAndPublishHostsToCluster(hostNames, cluster.getClusterId());
+      Service hdfs = cluster.addService(serviceName);
+      hdfs.addServiceComponent(Role.DATANODE.name());
+      hdfs.getServiceComponent(Role.DATANODE.name()).addServiceComponentHost

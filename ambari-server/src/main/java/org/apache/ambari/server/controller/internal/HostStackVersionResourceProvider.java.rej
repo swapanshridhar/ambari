@@ -1,0 +1,16 @@
+***************
+*** 65,70 ****
+  import org.apache.ambari.server.state.ServiceOsSpecific;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.ambari.server.state.repository.VersionDefinitionXml;
+  import org.apache.ambari.server.utils.StageUtils;
+  import org.apache.commons.lang.BooleanUtils;
+  import org.apache.commons.lang.StringUtils;
+--- 65,71 ----
+  import org.apache.ambari.server.state.ServiceOsSpecific;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.ambari.server.state.repository.VersionDefinitionXml;
++ import org.apache.ambari.server.utils.MapUtils;
+  import org.apache.ambari.server.utils.StageUtils;
+  import org.apache.commons.lang.BooleanUtils;
+  import org.apache.commons.lang.StringUtils;

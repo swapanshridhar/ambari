@@ -1,0 +1,84 @@
+***************
+*** 41,57 ****
+   */
+  public class ConfigGroupService extends BaseService {
+    /**
+-    * Parent cluster name.
+     */
+-   private String m_clusterName;
+  
+    /**
+     * Constructor
+-    * @param m_clusterName
+     */
+-   public ConfigGroupService(ApiVersion apiVersion, String m_clusterName) {
+      super(apiVersion);
+-     this.m_clusterName = m_clusterName;
+    }
+  
+    /**
+--- 41,57 ----
+   */
+  public class ConfigGroupService extends BaseService {
+    /**
++    * Parent cluster Id.
+     */
++   private Long m_clusterId;
+  
+    /**
+     * Constructor
++    * @param m_clusterId
+     */
++   public ConfigGroupService(ApiVersion apiVersion, Long m_clusterId) {
+      super(apiVersion);
++     this.m_clusterId = m_clusterId;
+    }
+  
+    /**
+***************
+*** 136,157 ****
+                                      @Context UriInfo ui,
+                                      @PathParam("groupId") String groupId) {
+      return handleRequest(headers, null, ui, Request.Type.DELETE,
+-       createConfigGroupResource(m_clusterName, groupId));
+    }
+  
+  
+    /**
+     * Create a request resource instance.
+     *
+-    * @param clusterName  cluster name
+     * @param groupId    config group id
+     *
+     * @return a request resource instance
+     */
+-   ResourceInstance createConfigGroupResource(String clusterName,
+                                               String groupId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.ConfigGroup, groupId);
+  
+      return createResource(Resource.Type.ConfigGroup, mapIds);
+--- 136,157 ----
+                                      @Context UriInfo ui,
+                                      @PathParam("groupId") String groupId) {
+      return handleRequest(headers, null, ui, Request.Type.DELETE,
++       createConfigGroupResource(m_clusterId, groupId));
+    }
+  
+  
+    /**
+     * Create a request resource instance.
+     *
++    * @param clusterId  cluster Id
+     * @param groupId    config group id
+     *
+     * @return a request resource instance
+     */
++   ResourceInstance createConfigGroupResource(Long clusterId,
+                                               String groupId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.ConfigGroup, groupId);
+  
+      return createResource(Resource.Type.ConfigGroup, mapIds);

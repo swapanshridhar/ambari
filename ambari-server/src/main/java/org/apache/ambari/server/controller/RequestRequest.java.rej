@@ -1,0 +1,27 @@
+***************
+*** 46,57 ****
+      return status;
+    }
+  
+-   public String getClusterName() {
+-     return clusterName;
+    }
+  
+-   public void setClusterName(String clusterName) {
+-     this.clusterName = clusterName;
+    }
+  
+    public long getRequestId() {
+--- 46,57 ----
+      return status;
+    }
+  
++   public Long getClusterName() {
++     return clusterId;
+    }
+  
++   public void setClusterName(Long clusterId) {
++     this.clusterId = clusterId;
+    }
+  
+    public long getRequestId() {

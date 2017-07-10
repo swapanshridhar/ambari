@@ -274,7 +274,7 @@ public class Request {
 
       RequestOperationLevelEntity operationLevelEntity = new RequestOperationLevelEntity();
       operationLevelEntity.setLevel(operationLevel.getLevel().toString());
-      operationLevelEntity.setClusterName(operationLevel.getClusterName());
+      operationLevelEntity.setClusterId(operationLevel.getClusterId());
       operationLevelEntity.setServiceName(operationLevel.getServiceName());
       operationLevelEntity.setHostComponentName(operationLevel.getHostComponentName());
       operationLevelEntity.setHostId(hostId);
@@ -464,7 +464,7 @@ public class Request {
 
       level = new RequestOperationLevel(
           Resource.Type.valueOf(operationLevelEntity.getLevel()),
-          operationLevelEntity.getClusterName(),
+          operationLevelEntity.getClusterId(),
           operationLevelEntity.getServiceName(),
           operationLevelEntity.getHostComponentName(),
           hostName);

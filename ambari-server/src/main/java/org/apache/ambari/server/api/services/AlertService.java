@@ -81,7 +81,7 @@ public class AlertService extends BaseService {
    */
   private ResourceInstance createResourceInstance(Long alertId) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Service, serviceName);
     mapIds.put(Resource.Type.Host, hostName);
     mapIds.put(Resource.Type.Alert, null == alertId ? null : alertId.toString());

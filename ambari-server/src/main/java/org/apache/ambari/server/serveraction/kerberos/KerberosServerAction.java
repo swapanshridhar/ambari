@@ -299,6 +299,31 @@ public abstract class KerberosServerAction extends AbstractServerAction {
   }
 
   /**
+   * Returns the relevant cluster's id
+   * <p/>
+   * Using the data from the execution command, retrieve the relevant cluster's name.
+   *
+   * @return Cluster ID
+   * @throws AmbariException if the cluster's name is not available
+   */
+  protected Long getClusterId() throws AmbariException {
+
+    Cluster cluster = getCluster();
+
+    if (cluster == null) {
+      throw new AmbariException("Failed to retrieve the cluster from the execution command");
+    }
+
+    Long clusterId = cluster.getClusterId();
+
+    if ((clusterId == null)) {
+      throw new AmbariException("Failed to retrieve the cluster id from the execution command");
+    }
+
+    return clusterId;
+  }
+
+  /**
    * Returns the relevant Cluster object
    *
    * @return the relevant Cluster
@@ -358,7 +383,7 @@ public abstract class KerberosServerAction extends AbstractServerAction {
 
     if (commandParameters != null) {
       // Grab the relevant data from this action's command parameters map
-      PrincipalKeyCredential administratorCredential = kerberosHelper.getKDCAdministratorCredentials(getClusterName());
+      PrincipalKeyCredential administratorCredential = kerberosHelper.getKDCAdministratorCredentials(getClusterId());
       String defaultRealm = getDefaultRealm(commandParameters);
       KDCType kdcType = getKDCType(commandParameters);
       String dataDirectoryPath = getDataDirectoryPath(commandParameters);

@@ -1,0 +1,131 @@
+***************
+*** 72,86 ****
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster id
+     */
+-   public RequestService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+    }
+  
+    /**
+-    * Handles URL: /clusters/{clusterID}/requests/{requestID} or
+     * /requests/{requestId}
+     * Get a specific request.
+     *
+--- 72,86 ----
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster id
+     */
++   public RequestService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+    }
+  
+    /**
++    * Handles URL: /clusters/{clusterId}/requests/{requestID} or
+     * /requests/{requestId}
+     * Get a specific request.
+     *
+***************
+*** 153,159 ****
+     */
+    @Path("{requestId}/stages")
+    public StageService getStageHandler(@PathParam("requestId") String requestId) {
+-     return new StageService(m_apiVersion, m_clusterName, requestId);
+    }
+  
+    /**
+--- 153,159 ----
+     */
+    @Path("{requestId}/stages")
+    public StageService getStageHandler(@PathParam("requestId") String requestId) {
++     return new StageService(m_apiVersion, m_clusterId, requestId);
+    }
+  
+    /**
+***************
+*** 161,167 ****
+     */
+    @Path("{requestId}/tasks")
+    public TaskService getTaskHandler(@PathParam("requestId") String requestId) {
+-     return new TaskService(m_apiVersion, m_clusterName, requestId, null);
+    }
+  
+    /**
+--- 161,167 ----
+     */
+    @Path("{requestId}/tasks")
+    public TaskService getTaskHandler(@PathParam("requestId") String requestId) {
++     return new TaskService(m_apiVersion, m_clusterId, requestId, null);
+    }
+  
+    /**
+***************
+*** 178,184 ****
+    @Produces("text/plain")
+    public Response updateRequests(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+                                   @PathParam("requestId") String requestId) {
+-     return handleRequest(headers, body, ui, Request.Type.PUT, createRequestResource(m_clusterName, requestId));
+    }
+  
+    /**
+--- 178,184 ----
+    @Produces("text/plain")
+    public Response updateRequests(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+                                   @PathParam("requestId") String requestId) {
++     return handleRequest(headers, body, ui, Request.Type.PUT, createRequestResource(m_clusterId, requestId));
+    }
+  
+    /**
+***************
+*** 194,215 ****
+    @Produces("text/plain")
+    public Response createRequests(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+-     return handleRequest(headers, body, ui, Request.Type.POST, createRequestResource(m_clusterName, null));
+    }
+  
+    /**
+     * Create a request resource instance.
+     *
+-    * @param clusterName  cluster name
+     * @param requestId    request id
+     *
+     * @return a request resource instance
+     */
+-   ResourceInstance createRequestResource(String clusterName, String requestId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+      
+-     if (null != clusterName)
+-       mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.Request, requestId);
+  
+      return createResource(Resource.Type.Request, mapIds);
+--- 194,215 ----
+    @Produces("text/plain")
+    public Response createRequests(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
++     return handleRequest(headers, body, ui, Request.Type.POST, createRequestResource(m_clusterId, null));
+    }
+  
+    /**
+     * Create a request resource instance.
+     *
++    * @param clusterId    cluster ID
+     * @param requestId    request id
+     *
+     * @return a request resource instance
+     */
++   ResourceInstance createRequestResource(Long clusterId, String requestId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+      
++     if (null != clusterId)
++       mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.Request, requestId);
+  
+      return createResource(Resource.Type.Request, mapIds);

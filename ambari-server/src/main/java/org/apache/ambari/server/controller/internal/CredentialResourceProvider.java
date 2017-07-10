@@ -44,6 +44,7 @@ import org.apache.ambari.server.security.credential.Credential;
 import org.apache.ambari.server.security.credential.PrincipalKeyCredential;
 import org.apache.ambari.server.security.encryption.CredentialStoreService;
 import org.apache.ambari.server.security.encryption.CredentialStoreType;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.inject.Inject;
@@ -59,6 +60,7 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
   // ----- Property ID constants ---------------------------------------------
 
   public static final String CREDENTIAL_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("Credential", "cluster_name");
+  public static final String CREDENTIAL_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId("Credential", "cluster_id");
   public static final String CREDENTIAL_ALIAS_PROPERTY_ID = PropertyHelper.getPropertyId("Credential", "alias");
   public static final String CREDENTIAL_PRINCIPAL_PROPERTY_ID = PropertyHelper.getPropertyId("Credential", "principal");
   public static final String CREDENTIAL_KEY_PROPERTY_ID = PropertyHelper.getPropertyId("Credential", "key");
@@ -71,12 +73,12 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
   static {
     Set<String> set;
     set = new HashSet<>();
-    set.add(CREDENTIAL_CLUSTER_NAME_PROPERTY_ID);
+    set.add(CREDENTIAL_CLUSTER_ID_PROPERTY_ID);
     set.add(CREDENTIAL_ALIAS_PROPERTY_ID);
     PK_PROPERTY_IDS = Collections.unmodifiableSet(set);
 
     set = new HashSet<>();
-    set.add(CREDENTIAL_CLUSTER_NAME_PROPERTY_ID);
+    set.add(CREDENTIAL_CLUSTER_ID_PROPERTY_ID);
     set.add(CREDENTIAL_ALIAS_PROPERTY_ID);
     set.add(CREDENTIAL_PRINCIPAL_PROPERTY_ID);
     set.add(CREDENTIAL_KEY_PROPERTY_ID);
@@ -84,7 +86,7 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
     PROPERTY_IDS = Collections.unmodifiableSet(set);
 
     HashMap<Type, String> map = new HashMap<>();
-    map.put(Type.Cluster, CREDENTIAL_CLUSTER_NAME_PROPERTY_ID);
+    map.put(Type.Cluster, CREDENTIAL_CLUSTER_ID_PROPERTY_ID);
     map.put(Type.Credential, CREDENTIAL_ALIAS_PROPERTY_ID);
     KEY_PROPERTY_IDS = Collections.unmodifiableMap(map);
   }
@@ -134,17 +136,16 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
     boolean sendNotFoundErrorIfEmpty = false;
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = (String) propertyMap.get(CREDENTIAL_CLUSTER_NAME_PROPERTY_ID);
-
-      if (null == clusterName || clusterName.isEmpty()) {
-        throw new IllegalArgumentException("Invalid argument, cluster name is required");
+      Long clusterId = MapUtils.parseLong(propertyMap, CREDENTIAL_CLUSTER_ID_PROPERTY_ID);
+      if (null == clusterId) {
+        throw new IllegalArgumentException("Invalid argument, cluster id is required");
       }
 
       String alias = (String) propertyMap.get(CREDENTIAL_ALIAS_PROPERTY_ID);
       if (!StringUtils.isEmpty(alias)) {
         try {
-          if (credentialStoreService.containsCredential(clusterName, alias)) {
-            resources.add(toResource(clusterName, alias, credentialStoreService.getCredentialStoreType(clusterName, alias), requestedIds));
+          if (credentialStoreService.containsCredential(clusterId, alias)) {
+            resources.add(toResource(clusterId, alias, credentialStoreService.getCredentialStoreType(clusterId, alias), requestedIds));
           }
           else {
             // Only throw a NoSuchResourceException if a specific item is being requested and it
@@ -159,10 +160,10 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
         }
       } else {
         try {
-          Map<String, CredentialStoreType> results = credentialStoreService.listCredentials(clusterName);
+          Map<String, CredentialStoreType> results = credentialStoreService.listCredentials(clusterId);
           if (results != null) {
             for (Map.Entry<String, CredentialStoreType> entry : results.entrySet()) {
-              resources.add(toResource(clusterName, entry.getKey(), entry.getValue(), requestedIds));
+              resources.add(toResource(clusterId, entry.getKey(), entry.getValue(), requestedIds));
             }
           }
         } catch (AmbariException e) {
@@ -273,18 +274,22 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
   }
 
   /**
-   * Retrieves the <code>Credential/cluster_name</code> property from the property map
+   * Retrieves the <code>Credential/cluster_id</code> property from the property map
    *
    * @param properties a map of properties
-   * @return the cluster name
-   * @throws IllegalArgumentException if <code>Credential/cluster_name</code> is not in the map or
+   * @return the cluster id
+   * @throws IllegalArgumentException if <code>Credential/cluster_id</code> is not in the map or
    *                                  <code>null</code>
    */
-  private String getClusterName(Map<String, Object> properties) throws IllegalArgumentException {
-    if (properties.get(CREDENTIAL_CLUSTER_NAME_PROPERTY_ID) == null) {
-      throw new IllegalArgumentException("Property " + CREDENTIAL_CLUSTER_NAME_PROPERTY_ID + " must be provided");
+  private Long getClusterId(Map<String, Object> properties) throws IllegalArgumentException {
+    if (properties.get(CREDENTIAL_CLUSTER_ID_PROPERTY_ID) == null) {
+      throw new IllegalArgumentException("Property " + CREDENTIAL_CLUSTER_ID_PROPERTY_ID + " must be provided");
     } else {
-      return String.valueOf(properties.get(CREDENTIAL_CLUSTER_NAME_PROPERTY_ID));
+      Long clusterId = MapUtils.parseLong(properties, CREDENTIAL_CLUSTER_ID_PROPERTY_ID);
+      if (clusterId == null) {
+        throw new IllegalArgumentException("Property " + CREDENTIAL_CLUSTER_ID_PROPERTY_ID + " must be provided");
+      }
+      return clusterId;
     }
   }
 
@@ -329,15 +334,15 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
   /**
    * Creates a new resource from the given cluster name, alias, and persist values.
    *
-   * @param clusterName         a cluster name
+   * @param clusterId           a cluster ID
    * @param alias               an alias
    * @param credentialStoreType the relevant credential store type
    * @param requestedIds        the properties to include in the resulting resource instance
    * @return a resource
    */
-  private Resource toResource(String clusterName, String alias, CredentialStoreType credentialStoreType, Set<String> requestedIds) {
+  private Resource toResource(Long clusterId, String alias, CredentialStoreType credentialStoreType, Set<String> requestedIds) {
     Resource resource = new ResourceImpl(Type.Credential);
-    setResourceProperty(resource, CREDENTIAL_CLUSTER_NAME_PROPERTY_ID, clusterName, requestedIds);
+    setResourceProperty(resource, CREDENTIAL_CLUSTER_ID_PROPERTY_ID, clusterId, requestedIds);
     setResourceProperty(resource, CREDENTIAL_ALIAS_PROPERTY_ID, alias, requestedIds);
     setResourceProperty(resource, CREDENTIAL_TYPE_PROPERTY_ID, credentialStoreType.name().toLowerCase(), requestedIds);
     return resource;
@@ -360,14 +365,14 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
 
       validateForCreateOrModify(credentialStoreType);
 
-      String clusterName = getClusterName(properties);
+      Long clusterId = getClusterId(properties);
       String alias = getAlias(properties);
 
-      if (credentialStoreService.containsCredential(clusterName, alias)) {
+      if (credentialStoreService.containsCredential(clusterId, alias)) {
         throw new AmbariException("A credential with the alias of " + alias + " already exists");
       }
 
-      credentialStoreService.setCredential(clusterName, alias, createCredential(properties), credentialStoreType);
+      credentialStoreService.setCredential(clusterId, alias, createCredential(properties), credentialStoreType);
       return alias;
     }
   }
@@ -385,16 +390,16 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
 
     @Override
     public String invoke() throws AmbariException {
-      String clusterName = getClusterName(properties);
+      Long clusterId = getClusterId(properties);
       String alias = getAlias(properties);
 
       CredentialStoreType credentialStoreType = properties.containsKey(CREDENTIAL_TYPE_PROPERTY_ID)
           ? getCredentialStoreType(properties)
-          : credentialStoreService.getCredentialStoreType(clusterName, alias);
+          : credentialStoreService.getCredentialStoreType(clusterId, alias);
 
       validateForCreateOrModify(credentialStoreType);
 
-      Credential credential = credentialStoreService.getCredential(clusterName, alias);
+      Credential credential = credentialStoreService.getCredential(clusterId, alias);
       if (credential instanceof PrincipalKeyCredential) {
         PrincipalKeyCredential principalKeyCredential = (PrincipalKeyCredential) credential;
 
@@ -402,7 +407,7 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
 
         // Make sure the credential to update is removed from the persisted or temporary store... the
         // updated data may change the persistence type.
-        credentialStoreService.removeCredential(clusterName, alias);
+        credentialStoreService.removeCredential(clusterId, alias);
 
         if (properties.containsKey(CREDENTIAL_PRINCIPAL_PROPERTY_ID)) {
           credentialProperties.put(CREDENTIAL_PRINCIPAL_PROPERTY_ID, properties.get(CREDENTIAL_PRINCIPAL_PROPERTY_ID));
@@ -419,7 +424,7 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
           }
         }
 
-        credentialStoreService.setCredential(clusterName, alias, createCredential(credentialProperties), credentialStoreType);
+        credentialStoreService.setCredential(clusterId, alias, createCredential(credentialProperties), credentialStoreType);
         return alias;
       } else {
         return null;
@@ -440,9 +445,9 @@ public class CredentialResourceProvider extends AbstractControllerResourceProvid
 
     @Override
     public String invoke() throws AmbariException {
-      String clusterName = getClusterName(properties);
+      Long clusterId = getClusterId(properties);
       String alias = getAlias(properties);
-      credentialStoreService.removeCredential(clusterName, alias);
+      credentialStoreService.removeCredential(clusterId, alias);
       return alias;
     }
   }

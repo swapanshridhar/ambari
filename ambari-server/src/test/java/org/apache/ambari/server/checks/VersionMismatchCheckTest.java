@@ -45,6 +45,7 @@ import com.google.inject.Provider;
  */
 public class VersionMismatchCheckTest {
   private static final String CLUSTER_NAME = "cluster1";
+  private static final Long CLUSTER_ID = 1L;
   private static final String FIRST_SERVICE_NAME = "service1";
   private static final String FIRST_SERVICE_COMPONENT_NAME = "component1";
   private static final String FIRST_SERVICE_COMPONENT_HOST_NAME = "host1";
@@ -82,8 +83,8 @@ public class VersionMismatchCheckTest {
   public void testWarningWhenHostWithVersionMismatchExists() throws Exception {
     when(firstServiceComponentHosts.get(FIRST_SERVICE_COMPONENT_HOST_NAME).getUpgradeState()).thenReturn(VERSION_MISMATCH);
 
-    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_NAME);
-    versionMismatchCheck.perform(check, new PrereqCheckRequest(CLUSTER_NAME));
+    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_ID);
+    versionMismatchCheck.perform(check, new PrereqCheckRequest(CLUSTER_ID));
     Assert.assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
   }
 
@@ -91,8 +92,8 @@ public class VersionMismatchCheckTest {
   public void testWarningWhenHostWithVersionMismatchDoesNotExist() throws Exception {
     when(firstServiceComponentHosts.get(FIRST_SERVICE_COMPONENT_HOST_NAME).getUpgradeState()).thenReturn(IN_PROGRESS);
 
-    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_NAME);
-    versionMismatchCheck.perform(check, new PrereqCheckRequest(CLUSTER_NAME));
+    PrerequisiteCheck check = new PrerequisiteCheck(null, CLUSTER_ID);
+    versionMismatchCheck.perform(check, new PrereqCheckRequest(CLUSTER_ID));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 }

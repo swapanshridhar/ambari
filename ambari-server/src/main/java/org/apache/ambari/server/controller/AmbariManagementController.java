@@ -92,7 +92,7 @@ public interface AmbariManagementController {
    * @throws AmbariException thrown if the cluster cannot be created
    * @throws AuthorizationException thrown if the authenticated user is not authorized to perform this operation
    */
-  void createCluster(ClusterRequest request) throws AmbariException, AuthorizationException;
+  ClusterResponse createCluster(ClusterRequest request) throws AmbariException, AuthorizationException;
 
   /**
    * Create the host component defined by the attributes in the given request object.
@@ -839,11 +839,11 @@ public interface AmbariManagementController {
   /**
    * Register a change in rack information for the hosts of the given cluster.
    *
-   * @param clusterName  the name of the cluster
+   * @param clusterId  the ID of the cluster
    *
    * @throws AmbariException if an error occurs during the rack change registration
    */
-  void registerRackChange(String clusterName) throws AmbariException;
+  void registerRackChange(Long clusterId) throws AmbariException;
 
   /**
    * Initialize cluster scoped widgets and widgetLayouts for different stack

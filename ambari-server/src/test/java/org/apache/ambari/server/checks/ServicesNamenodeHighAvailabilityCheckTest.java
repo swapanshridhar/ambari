@@ -71,10 +71,10 @@ public class ServicesNamenodeHighAvailabilityCheckTest {
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
     Mockito.when(clusters.getCluster("cluster")).thenReturn(cluster);
 
-    Assert.assertTrue(servicesNamenodeHighAvailabilityCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertTrue(servicesNamenodeHighAvailabilityCheck.isApplicable(new PrereqCheckRequest(1L)));
 
     services.remove("HDFS");
-    Assert.assertFalse(servicesNamenodeHighAvailabilityCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertFalse(servicesNamenodeHighAvailabilityCheck.isApplicable(new PrereqCheckRequest(1L)));
   }
 
   @Test
@@ -92,12 +92,12 @@ public class ServicesNamenodeHighAvailabilityCheckTest {
     Mockito.when(config.getProperties()).thenReturn(properties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    servicesNamenodeHighAvailabilityCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesNamenodeHighAvailabilityCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     properties.put("dfs.internal.nameservices", "anything");
     check = new PrerequisiteCheck(null, null);
-    servicesNamenodeHighAvailabilityCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesNamenodeHighAvailabilityCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 }

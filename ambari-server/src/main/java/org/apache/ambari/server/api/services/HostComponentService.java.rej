@@ -1,0 +1,37 @@
+***************
+*** 62,78 ****
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster id
+     * @param hostName    host id
+     */
+-   public HostComponentService(ApiVersion apiVersion, String clusterName, String hostName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+      m_hostName = hostName;
+    }
+  
+    /**
+-    * Handles GET /clusters/{clusterID}/hosts/{hostID}/host_components/{hostComponentID}
+     * Get a specific host_component.
+     *
+     * @param headers           http headers
+--- 62,78 ----
+    /**
+     * Constructor.
+     *
++    * @param clusterId   cluster id
+     * @param hostName    host id
+     */
++   public HostComponentService(ApiVersion apiVersion, Long clusterId, String hostName) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+      m_hostName = hostName;
+    }
+  
+    /**
++    * Handles GET /clusters/{clusterId}/hosts/{hostID}/host_components/{hostComponentID}
+     * Get a specific host_component.
+     *
+     * @param headers           http headers

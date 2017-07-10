@@ -54,8 +54,8 @@ public class KafkaKerberosCheck extends AbstractCheckDescriptor {
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
 
     if (cluster.getSecurityType() == SecurityType.KERBEROS){
       prerequisiteCheck.getFailedOn().add(KAFKA_SERVICE);

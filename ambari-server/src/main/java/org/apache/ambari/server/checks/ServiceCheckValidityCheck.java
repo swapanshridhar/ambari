@@ -109,9 +109,8 @@ public class ServiceCheckValidityCheck extends AbstractCheckDescriptor {
     ServiceConfigDAO serviceConfigDAO = serviceConfigDAOProvider.get();
     HostRoleCommandDAO hostRoleCommandDAO = hostRoleCommandDAOProvider.get();
 
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
-    long clusterId = cluster.getClusterId();
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
 
     Map<String, Long> lastServiceConfigUpdates = new HashMap<>();
 

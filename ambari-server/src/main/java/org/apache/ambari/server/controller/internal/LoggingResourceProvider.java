@@ -88,7 +88,7 @@ public class LoggingResourceProvider extends AbstractControllerResourceProvider 
 
     // TODO, fix this during refactoring
     LoggingRequestHelper requestHelper =
-      new LoggingRequestHelperFactoryImpl().getHelper(AmbariServer.getController(), "");
+      new LoggingRequestHelperFactoryImpl().getHelper(AmbariServer.getController(), null);
 
     Map<String, String> queryParameters =
       new HashMap<>();

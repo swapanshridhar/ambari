@@ -44,13 +44,13 @@ public class HostStackVersionServiceTest extends BaseServiceTest {
     Object[] args;
 
     //getHostStackVersions
-    hostStackVersionService = new TestHostStackVersionService("host", "cluster");
+    hostStackVersionService = new TestHostStackVersionService("host", 1L);
     m = hostStackVersionService.getClass().getMethod("getHostStackVersions", HttpHeaders.class, UriInfo.class);
     args = new Object[] {getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, hostStackVersionService, m, args, null));
 
     //getHostStackVersion
-    hostStackVersionService = new TestHostStackVersionService("host", "cluster");
+    hostStackVersionService = new TestHostStackVersionService("host", 1L);
     m = hostStackVersionService.getClass().getMethod("getHostStackVersion", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "1"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, hostStackVersionService, m, args, null));

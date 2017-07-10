@@ -1,0 +1,57 @@
+***************
+*** 104,130 ****
+      SecurityContextHolder.getContext().setAuthentication(null);
+    }
+  
+-   private void createService(String clusterName,
+                               String serviceName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
+-     ServiceRequest r1 = new ServiceRequest(clusterName, serviceName, dStateStr);
+      Set<ServiceRequest> requests = new HashSet<>();
+      requests.add(r1);
+      ServiceResourceProviderTest.createServices(controller, requests);
+    }
+  
+-   private void createServiceComponent(String clusterName,
+                                        String serviceName, String componentName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
+-     ServiceComponentRequest r = new ServiceComponentRequest(clusterName,
+        serviceName, componentName, dStateStr);
+      Set<ServiceComponentRequest> requests =
+        new HashSet<>();
+--- 104,130 ----
+      SecurityContextHolder.getContext().setAuthentication(null);
+    }
+  
++   private void createService(Long clusterId,
+                               String serviceName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
++     ServiceRequest r1 = new ServiceRequest(clusterId, serviceName, dStateStr);
+      Set<ServiceRequest> requests = new HashSet<>();
+      requests.add(r1);
+      ServiceResourceProviderTest.createServices(controller, requests);
+    }
+  
++   private void createServiceComponent(Long clusterId,
+                                        String serviceName, String componentName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
++     ServiceComponentRequest r = new ServiceComponentRequest(clusterId,
+        serviceName, componentName, dStateStr);
+      Set<ServiceComponentRequest> requests =
+        new HashSet<>();

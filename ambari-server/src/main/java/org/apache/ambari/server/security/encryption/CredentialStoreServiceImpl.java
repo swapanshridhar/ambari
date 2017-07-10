@@ -116,71 +116,71 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
    * with alias ALIAS1 into the temporary CredentialStore, the instance in the persisted CredentialStore
    * will be removed.
    *
-   * @param clusterName         the name of the cluster this credential is related to
+   * @param clusterId           the Id of the cluster this credential is related to
    * @param alias               a string declaring the alias (or name) of the credential
    * @param credential          the credential value to store
    * @param credentialStoreType a CredentialStoreType indicating which credential store facility to use
    * @throws AmbariException
    */
   @Override
-  public void setCredential(String clusterName, String alias, Credential credential, CredentialStoreType credentialStoreType) throws AmbariException {
+  public void setCredential(Long clusterId, String alias, Credential credential, CredentialStoreType credentialStoreType) throws AmbariException {
     validateInitialized(credentialStoreType);
 
     // Ensure only one copy of this alias exists.. either in the persisted or the temporary CertificateStore
-    removeCredential(clusterName, alias);
-    getCredentialStore(credentialStoreType).addCredential(canonicalizeAlias(clusterName, alias), credential);
+    removeCredential(clusterId, alias);
+    getCredentialStore(credentialStoreType).addCredential(canonicalizeAlias(clusterId, alias), credential);
   }
 
   @Override
-  public Credential getCredential(String clusterName, String alias) throws AmbariException {
+  public Credential getCredential(Long clusterId, String alias) throws AmbariException {
     // First check the temporary CredentialStore
-    Credential credential = getCredential(clusterName, alias, CredentialStoreType.TEMPORARY);
+    Credential credential = getCredential(clusterId, alias, CredentialStoreType.TEMPORARY);
 
     if (credential == null) {
       // If needed, check the persisted CredentialStore
-      credential = getCredential(clusterName, alias, CredentialStoreType.PERSISTED);
+      credential = getCredential(clusterId, alias, CredentialStoreType.PERSISTED);
     }
 
     return credential;
   }
 
   @Override
-  public Credential getCredential(String clusterName, String alias, CredentialStoreType credentialStoreType) throws AmbariException {
+  public Credential getCredential(Long clusterId, String alias, CredentialStoreType credentialStoreType) throws AmbariException {
     return (isInitialized(credentialStoreType))
-        ? getCredentialStore(credentialStoreType).getCredential(canonicalizeAlias(clusterName, alias))
+        ? getCredentialStore(credentialStoreType).getCredential(canonicalizeAlias(clusterId, alias))
         : null;
   }
 
   @Override
-  public void removeCredential(String clusterName, String alias) throws AmbariException {
-    removeCredential(clusterName, alias, CredentialStoreType.PERSISTED);
-    removeCredential(clusterName, alias, CredentialStoreType.TEMPORARY);
+  public void removeCredential(Long clusterId, String alias) throws AmbariException {
+    removeCredential(clusterId, alias, CredentialStoreType.PERSISTED);
+    removeCredential(clusterId, alias, CredentialStoreType.TEMPORARY);
   }
 
   @Override
-  public void removeCredential(String clusterName, String alias, CredentialStoreType credentialStoreType) throws AmbariException {
+  public void removeCredential(Long clusterId, String alias, CredentialStoreType credentialStoreType) throws AmbariException {
     if (isInitialized(credentialStoreType)) {
-      getCredentialStore(credentialStoreType).removeCredential(canonicalizeAlias(clusterName, alias));
+      getCredentialStore(credentialStoreType).removeCredential(canonicalizeAlias(clusterId, alias));
     }
   }
 
   @Override
-  public boolean containsCredential(String clusterName, String alias) throws AmbariException {
-    return containsCredential(clusterName, alias, CredentialStoreType.TEMPORARY) ||
-        containsCredential(clusterName, alias, CredentialStoreType.PERSISTED);
+  public boolean containsCredential(Long clusterId, String alias) throws AmbariException {
+    return containsCredential(clusterId, alias, CredentialStoreType.TEMPORARY) ||
+        containsCredential(clusterId, alias, CredentialStoreType.PERSISTED);
   }
 
   @Override
-  public boolean containsCredential(String clusterName, String alias, CredentialStoreType credentialStoreType) throws AmbariException {
+  public boolean containsCredential(Long clusterId, String alias, CredentialStoreType credentialStoreType) throws AmbariException {
     return isInitialized(credentialStoreType) &&
-        getCredentialStore(credentialStoreType).containsCredential(canonicalizeAlias(clusterName, alias));
+        getCredentialStore(credentialStoreType).containsCredential(canonicalizeAlias(clusterId, alias));
   }
 
   @Override
-  public CredentialStoreType getCredentialStoreType(String clusterName, String alias) throws AmbariException {
-    if (containsCredential(clusterName, alias, CredentialStoreType.TEMPORARY)) {
+  public CredentialStoreType getCredentialStoreType(Long clusterId, String alias) throws AmbariException {
+    if (containsCredential(clusterId, alias, CredentialStoreType.TEMPORARY)) {
       return CredentialStoreType.TEMPORARY;
-    } else if (containsCredential(clusterName, alias, CredentialStoreType.PERSISTED)) {
+    } else if (containsCredential(clusterId, alias, CredentialStoreType.PERSISTED)) {
       return CredentialStoreType.PERSISTED;
     } else {
       throw new AmbariException("The alias was not found in either the persisted or temporary credential stores");
@@ -188,7 +188,7 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
   }
 
   @Override
-  public Map<String, CredentialStoreType> listCredentials(String clusterName) throws AmbariException {
+  public Map<String, CredentialStoreType> listCredentials(Long clusterId) throws AmbariException {
     if (!isInitialized()) {
       throw new AmbariException("This CredentialStoreService has not yet been initialized");
     }
@@ -205,16 +205,16 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
 
     if (persistedAliases != null) {
       for (String alias : persistedAliases) {
-        if (isAliasRequested(clusterName, alias)) {
-          map.put(decanonicalizeAlias(clusterName, alias), CredentialStoreType.PERSISTED);
+        if (isAliasRequested(clusterId, alias)) {
+          map.put(decanonicalizeAlias(clusterId, alias), CredentialStoreType.PERSISTED);
         }
       }
     }
 
     if (temporaryAliases != null) {
       for (String alias : temporaryAliases) {
-        if (isAliasRequested(clusterName, alias)) {
-          map.put(decanonicalizeAlias(clusterName, alias), CredentialStoreType.TEMPORARY);
+        if (isAliasRequested(clusterId, alias)) {
+          map.put(decanonicalizeAlias(clusterId, alias), CredentialStoreType.TEMPORARY);
         }
       }
     }
@@ -242,22 +242,22 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
    * Canonicalizes an alias name by making sure that is contains the prefix indicating what cluster it belongs to.
    * This helps to reduce collisions of alias between clusters pointing to the same keystore files.
    * <p/>
-   * Each alias is expected to have a prefix of <code>cluster.:clusterName.</code>, and the
+   * Each alias is expected to have a prefix of <code>cluster.:clusterId.</code>, and the
    * combination is to be converted to have all lowercase characters.  For example if the alias was
    * "external.DB" and the cluster name is "c1", then the canonicalized alias name would be
    * "cluster.c1.external.db".
    *
-   * @param clusterName the name of the cluster
+   * @param clusterId   the Id of the cluster
    * @param alias       a string declaring the alias (or name) of the credential
    * @return a ccanonicalized alias name
    */
-  public static String canonicalizeAlias(String clusterName, String alias) {
+  public static String canonicalizeAlias(Long clusterId, String alias) {
     String canonicaizedAlias;
 
-    if ((clusterName == null) || clusterName.isEmpty() || (alias == null) || alias.isEmpty()) {
+    if ((clusterId == null) || (alias == null) || alias.isEmpty()) {
       canonicaizedAlias = alias;
     } else {
-      String prefix = createAliasPrefix(clusterName);
+      String prefix = createAliasPrefix(clusterId);
 
       if (alias.toLowerCase().startsWith(prefix)) {
         canonicaizedAlias = alias;
@@ -274,15 +274,15 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
   /**
    * Removes the prefix (if exists) from the front of a canonicalized alias
    *
-   * @param clusterName       the name the name of the cluster
+   * @param clusterId         the Id of the cluster
    * @param canonicaizedAlias the canonicalized alias to process
    * @return an alias name
    */
-  public static String decanonicalizeAlias(String clusterName, String canonicaizedAlias) {
-    if ((clusterName == null) || clusterName.isEmpty() || (canonicaizedAlias == null) || canonicaizedAlias.isEmpty()) {
+  public static String decanonicalizeAlias(Long clusterId, String canonicaizedAlias) {
+    if ((clusterId == null) || (canonicaizedAlias == null) || canonicaizedAlias.isEmpty()) {
       return canonicaizedAlias;
     } else {
-      String prefix = createAliasPrefix(clusterName);
+      String prefix = createAliasPrefix(clusterId);
 
       if (canonicaizedAlias.startsWith(prefix)) {
         return canonicaizedAlias.substring(prefix.length());
@@ -295,11 +295,11 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
   /**
    * Creates the prefix that is to be set in a canonicalized alias name.
    *
-   * @param clusterName the name of the cluster
+   * @param clusterId the name of the cluster
    * @return the prefix value
    */
-  private static String createAliasPrefix(String clusterName) {
-    return ("cluster." + clusterName + ".").toLowerCase();
+  private static String createAliasPrefix(Long clusterId) {
+    return ("cluster." + clusterId + ".").toLowerCase();
   }
 
   /**
@@ -307,12 +307,12 @@ public class CredentialStoreServiceImpl implements CredentialStoreService {
    * <p/>
    * This filters out all credentials not tagged for a specific cluster.
    *
-   * @param clusterName        the name of the cluster
+   * @param clusterId          the name of the cluster
    * @param canonicalizedAlias the canonicalized alias
    * @return true if the alias is tagged for the requested cluster; otherwise false
    */
-  private boolean isAliasRequested(String clusterName, String canonicalizedAlias) {
-    return (clusterName == null) || canonicalizedAlias.toLowerCase().startsWith(createAliasPrefix(clusterName));
+  private boolean isAliasRequested(Long clusterId, String canonicalizedAlias) {
+    return (clusterId == null) || canonicalizedAlias.toLowerCase().startsWith(createAliasPrefix(clusterId));
   }
 
 

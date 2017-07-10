@@ -41,6 +41,7 @@ import com.google.inject.Provider;
 public class HiveNotRollingWarningTest extends EasyMockSupport {
 
   private final String m_clusterName = "c1";
+  private final Long m_clusterId = 1L;
   private final Clusters m_clusters = niceMock(Clusters.class);
 
   /**
@@ -70,7 +71,7 @@ public class HiveNotRollingWarningTest extends EasyMockSupport {
     EasyMock.expect(m_clusters.getCluster(m_clusterName)).andReturn(cluster).atLeastOnce();
 
     PrereqCheckRequest request = niceMock(PrereqCheckRequest.class);
-    EasyMock.expect(request.getClusterName()).andReturn(m_clusterName);
+    EasyMock.expect(request.getClusterId()).andReturn(m_clusterId);
     EasyMock.expect(request.getUpgradeType()).andReturn(UpgradeType.ROLLING);
 
     replayAll();
@@ -87,7 +88,7 @@ public class HiveNotRollingWarningTest extends EasyMockSupport {
   public void testPerform() throws Exception {
     final HiveNotRollingWarning hiveWarningCheck = new HiveNotRollingWarning();
 
-    PrereqCheckRequest request = new PrereqCheckRequest(m_clusterName);
+    PrereqCheckRequest request = new PrereqCheckRequest(m_clusterId);
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
 
     hiveWarningCheck.perform(check, request);

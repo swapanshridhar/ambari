@@ -91,6 +91,7 @@ import com.google.inject.assistedinject.AssistedInject;
 public class UpgradeContext {
 
   public static final String COMMAND_PARAM_CLUSTER_NAME = "clusterName";
+  public static final String COMMAND_PARAM_CLUSTER_ID = "cluster_id";
   public static final String COMMAND_PARAM_DIRECTION = "upgrade_direction";
   public static final String COMMAND_PARAM_UPGRADE_PACK = "upgrade_pack";
   public static final String COMMAND_PARAM_REQUEST_ID = "request_id";

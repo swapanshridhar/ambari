@@ -68,6 +68,6 @@ public class PreUpgradeCheckService extends BaseService {
    * @return an upgrade check resource instance
    */
   private ResourceInstance createResource() {
-    return createResource(Resource.Type.PreUpgradeCheck, Collections.singletonMap(Resource.Type.Cluster, clusterName));
+    return createResource(Resource.Type.PreUpgradeCheck, Collections.singletonMap(Resource.Type.Cluster, clusterId.toString()));
   }
 }

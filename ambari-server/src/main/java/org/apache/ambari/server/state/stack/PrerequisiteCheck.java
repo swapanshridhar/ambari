@@ -30,15 +30,15 @@ import org.apache.ambari.server.checks.CheckDescription;
  */
 public class PrerequisiteCheck {
   private final CheckDescription m_description;
-  private final String m_clusterName;
+  private final Long m_clusterId;
   private PrereqCheckStatus m_status = PrereqCheckStatus.PASS;
   private String m_failReason = "";
   private LinkedHashSet<String> m_failedOn = new LinkedHashSet<>();
   private List<Object> m_failedDetail = new ArrayList<>();
 
-  public PrerequisiteCheck(CheckDescription description, String clusterName) {
+  public PrerequisiteCheck(CheckDescription description, Long clusterId) {
     m_description = description;
-    m_clusterName = clusterName;
+    m_clusterId = clusterId;
   }
 
   public String getId() {
@@ -81,7 +81,7 @@ public class PrerequisiteCheck {
     return m_description.getType();
   }
 
-  public String getClusterName() {
-    return m_clusterName;
+  public Long getClusterId() {
+    return m_clusterId;
   }
 }

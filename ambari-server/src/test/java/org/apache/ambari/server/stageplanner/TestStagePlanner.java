@@ -314,11 +314,11 @@ public class TestStagePlanner {
       "commandParamsStage", "hostParamsStage");
     stage.setStageId(1);
     stage.addServerActionCommand("RESTART", null, Role.HIVE_METASTORE,
-      RoleCommand.CUSTOM_COMMAND, "cluster1",
+      RoleCommand.CUSTOM_COMMAND, 1L,
       new ServiceComponentHostServerActionEvent("host2", System.currentTimeMillis()),
       null, "command detail", null, null, false, false);
     stage.addServerActionCommand("RESTART", null, Role.MYSQL_SERVER,
-      RoleCommand.CUSTOM_COMMAND, "cluster1",
+      RoleCommand.CUSTOM_COMMAND, 1L,
       new ServiceComponentHostServerActionEvent("host2", System.currentTimeMillis()),
       null, "command detail", null, null, false, false);
     log.info(stage.toString());

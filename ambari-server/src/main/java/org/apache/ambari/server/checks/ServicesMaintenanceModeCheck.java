@@ -49,8 +49,8 @@ public class ServicesMaintenanceModeCheck extends AbstractCheckDescriptor {
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     for (Map.Entry<String, Service> serviceEntry : cluster.getServices().entrySet()) {
       final Service service = serviceEntry.getValue();
       if (!service.isClientOnlyService() && service.getMaintenanceState() == MaintenanceState.ON) {

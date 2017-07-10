@@ -72,8 +72,8 @@ public class HealthCheck extends AbstractCheckDescriptor {
       throws AmbariException {
 
     AlertsDAO alertsDAO = alertsDAOProvider.get();
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     List<AlertCurrentEntity> alerts = alertsDAO.findCurrentByCluster(cluster.getClusterId());
 
     List<String> errorMessages = new ArrayList<>();
@@ -96,7 +96,7 @@ public class HealthCheck extends AbstractCheckDescriptor {
     }
 
     if (!errorMessages.isEmpty()) {
-      prerequisiteCheck.getFailedOn().add(clusterName);
+      prerequisiteCheck.getFailedOn().add(cluster.getClusterName());
       prerequisiteCheck.setStatus(PrereqCheckStatus.WARNING);
       String failReason = getFailReason(prerequisiteCheck, request);
       prerequisiteCheck.setFailReason(String.format(failReason, StringUtils.join(errorMessages, "\n")));

@@ -73,7 +73,7 @@ public class ConfigurationResourceProviderTest {
     RequestStatusResponse response = createNiceMock(RequestStatusResponse.class);
 
     managementController.createConfiguration(AbstractResourceProviderTest.Matcher.getConfigurationRequest(
-        "Cluster100", "type", "tag", new HashMap<String, String>(), null));
+             1L, "type", "tag", new HashMap<String, String>(), null));
     expectLastCall().andReturn(null);
 
     // replay
@@ -86,7 +86,7 @@ public class ConfigurationResourceProviderTest {
 
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID, "tag");
     properties.put(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TYPE_PROPERTY_ID, "type");
 
@@ -108,7 +108,7 @@ public class ConfigurationResourceProviderTest {
     RequestStatusResponse response = createNiceMock(RequestStatusResponse.class);
 
     managementController.createConfiguration(AbstractResourceProviderTest.Matcher.getConfigurationRequest(
-        "Cluster100", "type", "tag", new HashMap<String, String>(){
+          1L, "type", "tag", new HashMap<String, String>(){
           {
             put("a", "b");
           }
@@ -133,7 +133,7 @@ public class ConfigurationResourceProviderTest {
 
     Map<String, Object> properties = new LinkedHashMap<>();
 
-    properties.put(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+    properties.put(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID, "tag");
     properties.put(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TYPE_PROPERTY_ID, "type");
     properties.put("properties/a", "b");
@@ -158,17 +158,17 @@ public class ConfigurationResourceProviderTest {
     AmbariManagementController managementController = createMock(AmbariManagementController.class);
 
     Set<ConfigurationResponse> allResponse = new HashSet<>();
-    allResponse.add(new ConfigurationResponse("Cluster100", stackId, "type",
+    allResponse.add(new ConfigurationResponse(1L, stackId, "type",
         "tag1", 1L, null, null));
-    allResponse.add(new ConfigurationResponse("Cluster100", stackId, "type",
+    allResponse.add(new ConfigurationResponse(1L, stackId, "type",
         "tag2", 2L, null, null));
-    allResponse.add(new ConfigurationResponse("Cluster100", stackId, "type",
+    allResponse.add(new ConfigurationResponse(1L, stackId, "type",
         "tag3", 3L, null, null));
 
     Set<ConfigurationResponse> orResponse = new HashSet<>();
-    orResponse.add(new ConfigurationResponse("Cluster100", stackId, "type",
+    orResponse.add(new ConfigurationResponse(1L, stackId, "type",
         "tag1", 1L, null, null));
-    orResponse.add(new ConfigurationResponse("Cluster100", stackId, "type",
+    orResponse.add(new ConfigurationResponse(1L, stackId, "type",
         "tag2", 2L, null, null));
 
     Capture<Set<ConfigurationRequest>> configRequestCapture1 = EasyMock.newCapture();
@@ -194,19 +194,19 @@ public class ConfigurationResourceProviderTest {
 
     Set<String> propertyIds = new HashSet<>();
 
-    propertyIds.add(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID);
 
     // equals predicate
     Predicate predicate = new PredicateBuilder().property(
-        ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID).equals("Cluster100").toPredicate();
+        ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID).equals(1L).toPredicate();
     Request request = PropertyHelper.getReadRequest(propertyIds);
     Set<Resource> resources = provider.getResources(request, predicate);
 
     Set<ConfigurationRequest> setRequest = configRequestCapture1.getValue();
     assertEquals(1, setRequest.size());
     ConfigurationRequest configRequest = setRequest.iterator().next();
-    assertEquals("Cluster100", configRequest.getClusterName());
+    assertEquals((Long)1L, configRequest.getClusterId());
     assertNull(configRequest.getType());
     assertNull(configRequest.getVersionTag());
 
@@ -217,11 +217,11 @@ public class ConfigurationResourceProviderTest {
 
     for (Resource resource : resources) {
       String clusterName = (String) resource.getPropertyValue(
-          ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID);
+          ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID);
 
       String stackIdProperty = (String) resource.getPropertyValue(ConfigurationResourceProvider.CONFIGURATION_STACK_ID_PROPERTY_ID);
 
-      Assert.assertEquals("Cluster100", clusterName);
+      Assert.assertEquals(1L, clusterName);
       Assert.assertEquals(stackId.getStackId(), stackIdProperty);
       String tag = (String) resource.getPropertyValue(
           ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID);
@@ -251,7 +251,7 @@ public class ConfigurationResourceProviderTest {
     boolean containsTag1 = false;
     boolean containsTag2 = false;
     for (ConfigurationRequest cr : setRequest) {
-      assertNull(cr.getClusterName());
+      assertNull(cr.getClusterId());
       if (cr.getVersionTag().equals("tag1")) {
         containsTag1 = true;
       } else if (cr.getVersionTag().equals("tag2")) {
@@ -266,9 +266,9 @@ public class ConfigurationResourceProviderTest {
     containsResource2 = false;
 
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(
-          ConfigurationResourceProvider.CONFIGURATION_CLUSTER_NAME_PROPERTY_ID);
-      Assert.assertEquals("Cluster100", clusterName);
+      Long clusterId = (Long) resource.getPropertyValue(
+          ConfigurationResourceProvider.CONFIGURATION_CLUSTER_ID_PROPERTY_ID);
+      Assert.assertEquals((Long)1L, clusterId);
       String tag = (String) resource.getPropertyValue(
           ConfigurationResourceProvider.CONFIGURATION_CONFIG_TAG_PROPERTY_ID);
 

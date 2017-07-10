@@ -1,0 +1,89 @@
+***************
+*** 75,81 ****
+      EasyMock.replay(descriptor);
+      updateChecksRegistry.add(descriptor);
+  
+-     helper.performChecks(new PrereqCheckRequest("cluster"), updateChecksRegistry);
+      EasyMock.verify(descriptor);
+    }
+  
+--- 75,81 ----
+      EasyMock.replay(descriptor);
+      updateChecksRegistry.add(descriptor);
+  
++     helper.performChecks(new PrereqCheckRequest(1L), updateChecksRegistry);
+      EasyMock.verify(descriptor);
+    }
+  
+***************
+*** 90,96 ****
+      EasyMock.expect(descriptor.isApplicable(EasyMock.<PrereqCheckRequest> anyObject())).andReturn(false);
+      EasyMock.replay(descriptor);
+      updateChecksRegistry.add(descriptor);
+-     helper.performChecks(new PrereqCheckRequest("cluster"), updateChecksRegistry);
+      EasyMock.verify(descriptor);
+    }
+  
+--- 90,96 ----
+      EasyMock.expect(descriptor.isApplicable(EasyMock.<PrereqCheckRequest> anyObject())).andReturn(false);
+      EasyMock.replay(descriptor);
+      updateChecksRegistry.add(descriptor);
++     helper.performChecks(new PrereqCheckRequest(1L), updateChecksRegistry);
+      EasyMock.verify(descriptor);
+    }
+  
+***************
+*** 109,115 ****
+      EasyMock.expect(descriptor.getDescription()).andReturn(CheckDescription.HOSTS_HEARTBEAT).anyTimes();
+      EasyMock.replay(descriptor);
+      updateChecksRegistry.add(descriptor);
+-     final List<PrerequisiteCheck> upgradeChecks = helper.performChecks(new PrereqCheckRequest("cluster"), updateChecksRegistry);
+      EasyMock.verify(descriptor);
+      Assert.assertEquals(PrereqCheckStatus.FAIL, upgradeChecks.get(0).getStatus());
+    }
+--- 109,115 ----
+      EasyMock.expect(descriptor.getDescription()).andReturn(CheckDescription.HOSTS_HEARTBEAT).anyTimes();
+      EasyMock.replay(descriptor);
+      updateChecksRegistry.add(descriptor);
++     final List<PrerequisiteCheck> upgradeChecks = helper.performChecks(new PrereqCheckRequest(1L), updateChecksRegistry);
+      EasyMock.verify(descriptor);
+      Assert.assertEquals(PrereqCheckStatus.FAIL, upgradeChecks.get(0).getStatus());
+    }
+***************
+*** 125,131 ****
+      List<AbstractCheckDescriptor> updateChecksRegistry = new ArrayList<>();
+  
+      PrereqCheckRequest checkRequest = EasyMock.createNiceMock(PrereqCheckRequest.class);
+-     EasyMock.expect(checkRequest.getClusterName()).andReturn("c1").anyTimes();
+      EasyMock.replay(checkRequest);
+  
+      final List<PrerequisiteCheck> upgradeChecks = helper.performChecks(checkRequest, updateChecksRegistry);
+--- 125,131 ----
+      List<AbstractCheckDescriptor> updateChecksRegistry = new ArrayList<>();
+  
+      PrereqCheckRequest checkRequest = EasyMock.createNiceMock(PrereqCheckRequest.class);
++     EasyMock.expect(checkRequest.getClusterId()).andReturn(1L).anyTimes();
+      EasyMock.replay(checkRequest);
+  
+      final List<PrerequisiteCheck> upgradeChecks = helper.performChecks(checkRequest, updateChecksRegistry);
+***************
+*** 171,179 ****
+  
+      // mocked Cluster has no services, so the check should always be PASS
+      updateChecksRegistry.add(injector.getInstance(ServicesUpCheck.class));
+-     List<PrerequisiteCheck> upgradeChecks = helper.performChecks(new PrereqCheckRequest("existing"), updateChecksRegistry);
+      Assert.assertEquals(PrereqCheckStatus.PASS, upgradeChecks.get(0).getStatus());
+-     upgradeChecks = helper.performChecks(new PrereqCheckRequest("non-existing"), updateChecksRegistry);
+      Assert.assertEquals(PrereqCheckStatus.FAIL, upgradeChecks.get(0).getStatus());
+      //non existing cluster is an expected error
+      Assert.assertTrue(!upgradeChecks.get(0).getFailReason().equals("Unexpected server error happened"));
+--- 171,179 ----
+  
+      // mocked Cluster has no services, so the check should always be PASS
+      updateChecksRegistry.add(injector.getInstance(ServicesUpCheck.class));
++     List<PrerequisiteCheck> upgradeChecks = helper.performChecks(new PrereqCheckRequest(1L), updateChecksRegistry);
+      Assert.assertEquals(PrereqCheckStatus.PASS, upgradeChecks.get(0).getStatus());
++     upgradeChecks = helper.performChecks(new PrereqCheckRequest(9999L), updateChecksRegistry);
+      Assert.assertEquals(PrereqCheckStatus.FAIL, upgradeChecks.get(0).getStatus());
+      //non existing cluster is an expected error
+      Assert.assertTrue(!upgradeChecks.get(0).getFailReason().equals("Unexpected server error happened"));

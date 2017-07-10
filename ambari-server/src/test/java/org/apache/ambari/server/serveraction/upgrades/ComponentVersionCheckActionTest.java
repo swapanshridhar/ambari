@@ -251,7 +251,7 @@ public class ComponentVersionCheckActionTest {
     hostAttributes.put("os_release_version", "6");
     host.setHostAttributes(hostAttributes);
 
-    clusters.mapHostToCluster(hostName, clusterName);
+    clusters.mapHostToCluster(hostName, clusterId);
 
     // Create the starting repo version
     m_helper.getOrCreateRepositoryVersion(sourceStack, sourceRepo);
@@ -447,7 +447,7 @@ public class ComponentVersionCheckActionTest {
     host.setOsInfo("redhat6");
 
     Cluster cluster = clusters.getCluster("c1");
-    clusters.mapHostToCluster("h1", "c1");
+    clusters.mapHostToCluster("h1", 1L);
 
     RepositoryVersionEntity repositoryVersion2110 = m_helper.getOrCreateRepositoryVersion(
         HDP_21_STACK, HDP_2_1_1_0);

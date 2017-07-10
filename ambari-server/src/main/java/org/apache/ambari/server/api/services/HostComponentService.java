@@ -50,9 +50,9 @@ import org.apache.commons.lang.Validate;
  */
 public class HostComponentService extends BaseService {
   /**
-   * Parent cluster id.
+   * Parent cluster Id.
    */
-  private String m_clusterName;
+  private Long m_clusterId;
 
   /**
    * Parent host id.
@@ -97,11 +97,11 @@ public class HostComponentService extends BaseService {
     }
 
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createHostComponentResource(m_clusterName, m_hostName, hostComponentName));
+        createHostComponentResource(m_clusterId, m_hostName, hostComponentName));
   }
 
   /**
-   * Handles GET /clusters/{clusterID}/hosts/{hostID}/host_components/
+   * Handles GET /clusters/{clusterId}/hosts/{hostID}/host_components/
    * Get all host components for a host.
    *
    * @param headers http headers
@@ -115,11 +115,11 @@ public class HostComponentService extends BaseService {
       return createClientConfigResource(body, headers, ui, null);
     }
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createHostComponentResource(m_clusterName, m_hostName, null));
+        createHostComponentResource(m_clusterId, m_hostName, null));
   }
 
   /**
-   * Handles POST /clusters/{clusterID}/hosts/{hostID}/host_components
+   * Handles POST /clusters/{clusterId}/hosts/{hostID}/host_components
    * Create host components by specifying an array of host components in the http body.
    * This is used to create multiple host components in a single request.
    *
@@ -134,11 +134,11 @@ public class HostComponentService extends BaseService {
   public Response createHostComponents(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
 
     return handleRequest(headers, body, ui, Request.Type.POST,
-        createHostComponentResource(m_clusterName, m_hostName, null));
+        createHostComponentResource(m_clusterId, m_hostName, null));
   }
 
   /**
-   * Handles POST /clusters/{clusterID}/hosts/{hostID}/host_components/{hostComponentID}
+   * Handles POST /clusters/{clusterId}/hosts/{hostID}/host_components/{hostComponentID}
    * Create a specific host_component.
    *
    * @param body              http body
@@ -155,11 +155,11 @@ public class HostComponentService extends BaseService {
                                    @PathParam("hostComponentName") String hostComponentName) {
 
     return handleRequest(headers, body, ui, Request.Type.POST,
-        createHostComponentResource(m_clusterName, m_hostName, hostComponentName));
+        createHostComponentResource(m_clusterId, m_hostName, hostComponentName));
   }
 
   /**
-   * Handles PUT /clusters/{clusterID}/hosts/{hostID}/host_components/{hostComponentID}
+   * Handles PUT /clusters/{clusterId}/hosts/{hostID}/host_components/{hostComponentID}
    * Updates a specific host_component.
    *
    * @param body              http body
@@ -176,11 +176,11 @@ public class HostComponentService extends BaseService {
                                       @PathParam("hostComponentName") String hostComponentName) {
 
     return handleRequest(headers, body, ui, Request.Type.PUT,
-        createHostComponentResource(m_clusterName, m_hostName, hostComponentName));
+        createHostComponentResource(m_clusterId, m_hostName, hostComponentName));
   }
 
   /**
-   * Handles PUT /clusters/{clusterID}/hosts/{hostID}/host_components
+   * Handles PUT /clusters/{clusterId}/hosts/{hostID}/host_components
    * Updates multiple host_component resources.
    *
    * @param body              http body
@@ -194,11 +194,11 @@ public class HostComponentService extends BaseService {
   public Response updateHostComponents(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
 
     return handleRequest(headers, body, ui, Request.Type.PUT,
-        createHostComponentResource(m_clusterName, m_hostName, null));
+        createHostComponentResource(m_clusterId, m_hostName, null));
   }
 
   /**
-   * Handles DELETE /clusters/{clusterID}/hosts/{hostID}/host_components/{hostComponentID}
+   * Handles DELETE /clusters/{clusterId}/hosts/{hostID}/host_components/{hostComponentID}
    * Delete a specific host_component.
    *
    * @param headers           http headers
@@ -214,11 +214,11 @@ public class HostComponentService extends BaseService {
                                    @PathParam("hostComponentName") String hostComponentName) {
 
     return handleRequest(headers, null, ui, Request.Type.DELETE,
-        createHostComponentResource(m_clusterName, m_hostName, hostComponentName));
+        createHostComponentResource(m_clusterId, m_hostName, hostComponentName));
   }
 
   /**
-   * Handles DELETE /clusters/{clusterID}/hosts/{hostID}/host_components
+   * Handles DELETE /clusters/{clusterId}/hosts/{hostID}/host_components
    * Deletes multiple host_component resources.
    *
    * @param headers           http headers
@@ -231,7 +231,7 @@ public class HostComponentService extends BaseService {
   public Response deleteHostComponents(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
 
     return handleRequest(headers, body, ui, Request.Type.DELETE,
-        createHostComponentResource(m_clusterName, m_hostName, null));
+        createHostComponentResource(m_clusterId, m_hostName, null));
   }
 
   @GET @ApiIgnore // until documented
@@ -240,7 +240,7 @@ public class HostComponentService extends BaseService {
   public Response getProcesses(@Context HttpHeaders headers, @Context UriInfo ui,
       @PathParam("hostComponentName") String hostComponentName) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, m_clusterName);
+    mapIds.put(Resource.Type.Cluster, m_clusterId.toString());
     mapIds.put(Resource.Type.Host, m_hostName);
     mapIds.put(Resource.Type.HostComponent, hostComponentName);
 
@@ -252,15 +252,15 @@ public class HostComponentService extends BaseService {
   /**
    * Create a host_component resource instance.
    *
-   * @param clusterName       cluster name
+   * @param clusterId         cluster Id
    * @param hostName          host name
    * @param hostComponentName host_component name
    *
    * @return a host resource instance
    */
-  ResourceInstance createHostComponentResource(String clusterName, String hostName, String hostComponentName) {
+  ResourceInstance createHostComponentResource(Long clusterId, String hostName, String hostComponentName) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, m_clusterId.toString());
     mapIds.put(Resource.Type.Host, hostName);
     mapIds.put(Resource.Type.HostComponent, hostComponentName);
 
@@ -270,7 +270,7 @@ public class HostComponentService extends BaseService {
   private Response createClientConfigResource(String body, HttpHeaders headers, UriInfo ui,
                                               String hostComponentName) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, m_clusterName);
+    mapIds.put(Resource.Type.Cluster, m_clusterId.toString());
     mapIds.put(Resource.Type.Host, m_hostName);
     mapIds.put(Resource.Type.Component, hostComponentName);
 

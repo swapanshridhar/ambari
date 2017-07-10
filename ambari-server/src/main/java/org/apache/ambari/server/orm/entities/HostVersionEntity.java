@@ -51,11 +51,11 @@ import org.apache.ambari.server.state.RepositoryVersionState;
 @NamedQueries({
     @NamedQuery(name = "hostVersionByClusterAndStackAndVersion", query =
         "SELECT hostVersion FROM HostVersionEntity hostVersion JOIN hostVersion.hostEntity host JOIN host.clusterEntities clusters " +
-            "WHERE clusters.clusterName=:clusterName AND hostVersion.repositoryVersion.stack.stackName=:stackName AND hostVersion.repositoryVersion.stack.stackVersion=:stackVersion AND hostVersion.repositoryVersion.version=:version"),
+            "WHERE clusters.clusterId=:clusterId AND hostVersion.repositoryVersion.stack.stackName=:stackName AND hostVersion.repositoryVersion.stack.stackVersion=:stackVersion AND hostVersion.repositoryVersion.version=:version"),
 
     @NamedQuery(name = "hostVersionByClusterAndHostname", query =
         "SELECT hostVersion FROM HostVersionEntity hostVersion JOIN hostVersion.hostEntity host JOIN host.clusterEntities clusters " +
-            "WHERE clusters.clusterName=:clusterName AND hostVersion.hostEntity.hostName=:hostName"),
+            "WHERE clusters.clusterId=:clusterId AND hostVersion.hostEntity.hostName=:hostName"),
 
     @NamedQuery(name = "hostVersionByHostname", query =
         "SELECT hostVersion FROM HostVersionEntity hostVersion JOIN hostVersion.hostEntity host " +
@@ -68,11 +68,11 @@ import org.apache.ambari.server.state.RepositoryVersionState;
 
     @NamedQuery(name = "hostVersionByClusterHostnameAndState", query =
         "SELECT hostVersion FROM HostVersionEntity hostVersion JOIN hostVersion.hostEntity host JOIN host.clusterEntities clusters " +
-            "WHERE clusters.clusterName=:clusterName AND hostVersion.hostEntity.hostName=:hostName AND hostVersion.state=:state"),
+            "WHERE clusters.clusterId=:clusterId AND hostVersion.hostEntity.hostName=:hostName AND hostVersion.state=:state"),
 
     @NamedQuery(name = "hostVersionByClusterStackVersionAndHostname", query =
         "SELECT hostVersion FROM HostVersionEntity hostVersion JOIN hostVersion.hostEntity host JOIN host.clusterEntities clusters " +
-            "WHERE clusters.clusterName=:clusterName AND hostVersion.repositoryVersion.stack.stackName=:stackName AND hostVersion.repositoryVersion.stack.stackVersion=:stackVersion AND hostVersion.repositoryVersion.version=:version AND " +
+            "WHERE clusters.clusterId=:clusterId AND hostVersion.repositoryVersion.stack.stackName=:stackName AND hostVersion.repositoryVersion.stack.stackVersion=:stackVersion AND hostVersion.repositoryVersion.version=:version AND " +
             "hostVersion.hostEntity.hostName=:hostName"),
 
     @NamedQuery(

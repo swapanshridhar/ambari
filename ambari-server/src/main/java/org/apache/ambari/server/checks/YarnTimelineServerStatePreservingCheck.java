@@ -60,7 +60,7 @@ public class YarnTimelineServerStatePreservingCheck extends AbstractCheckDescrip
       return false;
     }
 
-    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterName());
+    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterId());
 
     String minApplicableStackVersion = null;
     PrerequisiteCheckConfig prerequisiteCheckConfig = request.getPrerequisiteCheckConfig();

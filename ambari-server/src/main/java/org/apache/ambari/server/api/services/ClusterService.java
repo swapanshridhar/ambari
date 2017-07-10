@@ -66,6 +66,8 @@ public class ClusterService extends BaseService {
    * The clusters utilities.
    */
   private final Clusters clusters;
+  private final static Logger LOG =
+    LoggerFactory.getLogger(AmbariManagementControllerImpl.class);
 
 
   // ----- Constructors ------------------------------------------------------
@@ -837,10 +839,15 @@ public class ClusterService extends BaseService {
   /**
    * Create a cluster resource instance.
    *
-   * @param clusterName cluster name
+   * @param clusterId cluster Id
    *
    * @return a cluster resource instance
    */
+  ResourceInstance createClusterResource(Long clusterId) {
+    return createResource(Resource.Type.Cluster,
+        Collections.singletonMap(Resource.Type.Cluster, clusterId != -1? clusterId.toString(): null));
+  }
+
   ResourceInstance createClusterResource(String clusterName) {
     return createResource(Resource.Type.Cluster,
         Collections.singletonMap(Resource.Type.Cluster, clusterName));
@@ -849,14 +856,14 @@ public class ClusterService extends BaseService {
   /**
    * Create an artifact resource instance.
    *
-   * @param clusterName  cluster name
+   * @param clusterId    cluster Id
    * @param artifactName artifact name
    *
    * @return an artifact resource instance
    */
-  ResourceInstance createArtifactResource(String clusterName, String artifactName) {
+  ResourceInstance createArtifactResource(Long clusterId, String artifactName) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Artifact, artifactName);
 
     return createResource(Resource.Type.Artifact, mapIds);

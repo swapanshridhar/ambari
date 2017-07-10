@@ -181,11 +181,12 @@ public class RefreshYarnCapacitySchedulerReleaseConfigTest {
   }
 
   private void addHost(String hostname, String clusterName) throws AmbariException {
+    Cluster cluster = clusters.getCluster("c1");
     clusters.addHost(hostname);
     setOsFamily(clusters.getHost(hostname), "redhat", "6.3");
     clusters.getHost(hostname).setState(HostState.HEALTHY);
     if (null != clusterName) {
-      clusters.mapHostToCluster(hostname, clusterName);
+      clusters.mapHostToCluster(hostname, cluster.getClusterId());
     }
   }
 
@@ -230,7 +231,8 @@ public class RefreshYarnCapacitySchedulerReleaseConfigTest {
     if (desiredState != null) {
       dStateStr = desiredState.toString();
     }
-    ServiceComponentRequest r = new ServiceComponentRequest(clusterName,
+    Cluster cluster = clusters.getCluster("c1");
+    ServiceComponentRequest r = new ServiceComponentRequest(cluster.getClusterId(),
         serviceName, componentName, dStateStr);
     Set<ServiceComponentRequest> requests =
       new HashSet<>();
@@ -241,10 +243,11 @@ public class RefreshYarnCapacitySchedulerReleaseConfigTest {
   private void createServiceComponentHost(String clusterName, String serviceName, String componentName, String hostname, State desiredState)
       throws AmbariException, AuthorizationException {
     String dStateStr = null;
+    Cluster cluster = clusters.getCluster("c1");
     if (desiredState != null) {
       dStateStr = desiredState.toString();
     }
-    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterName,
+    ServiceComponentHostRequest r = new ServiceComponentHostRequest(cluster.getClusterId(),
         serviceName, componentName, hostname, dStateStr);
     Set<ServiceComponentHostRequest> requests =
       new HashSet<>();

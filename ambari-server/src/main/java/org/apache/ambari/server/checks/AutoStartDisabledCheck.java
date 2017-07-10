@@ -67,7 +67,7 @@ public class AutoStartDisabledCheck extends AbstractCheckDescriptor {
 
       prerequisiteCheck.setFailReason(getFailReason(prerequisiteCheck, request));
       prerequisiteCheck.setStatus(PrereqCheckStatus.FAIL);
-      prerequisiteCheck.getFailedOn().add(request.getClusterName());
+      prerequisiteCheck.getFailedOn().add(String.valueOf(request.getClusterId()));
 
     }
   }

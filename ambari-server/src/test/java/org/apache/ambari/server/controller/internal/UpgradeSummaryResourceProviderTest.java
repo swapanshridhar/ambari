@@ -18,7 +18,6 @@
 package org.apache.ambari.server.controller.internal;
 
 import static org.easymock.EasyMock.anyLong;
-import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -170,7 +169,7 @@ public class UpgradeSummaryResourceProviderTest {
     host.setHostAttributes(hostAttributes);
     host.setState(HostState.HEALTHY);
 
-    clusters.mapHostToCluster("h1", "c1");
+    clusters.mapHostToCluster("h1", (clusters.getCluster("c1")).getClusterId());
 
     // add a single ZOOKEEPER server
     Service service = cluster.addService("ZOOKEEPER", repoVersionEntity);
@@ -240,7 +239,7 @@ public class UpgradeSummaryResourceProviderTest {
 
     // Case 1: Incorrect cluster name throws exception
     Request requestResource = PropertyHelper.getReadRequest();
-    Predicate pBogus = new PredicateBuilder().property(UpgradeSummaryResourceProvider.UPGRADE_SUMMARY_CLUSTER_NAME).equals("bogus name").toPredicate();
+    Predicate pBogus = new PredicateBuilder().property(UpgradeSummaryResourceProvider.UPGRADE_SUMMARY_CLUSTER_ID).equals("bogus name").toPredicate();
     try {
       Set<Resource> resources = upgradeSummaryResourceProvider.getResources(requestResource, pBogus);
       assertTrue("Expected exception to be thrown", false);
@@ -251,7 +250,7 @@ public class UpgradeSummaryResourceProviderTest {
     // Case 2: Upgrade with no tasks.
     Long upgradeRequestId = 1L;
 
-    Predicate p1 = new PredicateBuilder().property(UpgradeSummaryResourceProvider.UPGRADE_SUMMARY_CLUSTER_NAME).equals(clusterName).toPredicate();
+    Predicate p1 = new PredicateBuilder().property(UpgradeSummaryResourceProvider.UPGRADE_SUMMARY_CLUSTER_ID).equals(clusterName).toPredicate();
     Predicate p2 = new PredicateBuilder().property(UpgradeSummaryResourceProvider.UPGRADE_SUMMARY_REQUEST_ID).equals(upgradeRequestId.toString()).toPredicate();
     Predicate p1And2 = new AndPredicate(p1, p2);
 
@@ -331,7 +330,7 @@ public class UpgradeSummaryResourceProviderTest {
     hrcDAO.merge(hrc2);
 
     Resource failedTask = new ResourceImpl(Resource.Type.Task);
-    expect(m_upgradeHelper.getTaskResource(anyString(), anyLong(), anyLong(), anyLong())).andReturn(failedTask).anyTimes();
+    expect(m_upgradeHelper.getTaskResource(anyLong(), anyLong(), anyLong(), anyLong())).andReturn(failedTask).anyTimes();
     replay(m_upgradeHelper);
 
     resources = upgradeSummaryResourceProvider.getResources(requestResource, p1And2);

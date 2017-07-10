@@ -111,7 +111,7 @@ public class LoggingServiceTest {
 
       // return null from this factory, to simulate the case where LogSearch is
       // not running, or is not deployed in the current cluster
-      expect(helperFactoryMock.getHelper(controllerMock, expectedClusterName)).andReturn(null).atLeastOnce();
+      expect(helperFactoryMock.getHelper(controllerMock, 1L)).andReturn(null).atLeastOnce();
     }
 
     expect(controllerFactoryMock.getController()).andReturn(controllerMock).atLeastOnce();

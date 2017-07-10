@@ -76,7 +76,7 @@ public class HiveMultipleMetastoreCheckTest {
 
     services.put("HDFS", Mockito.mock(Service.class));
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.3.0.0");
 
     // HIVE not installed
@@ -111,7 +111,7 @@ public class HiveMultipleMetastoreCheckTest {
     Mockito.when(metastore.getServiceComponentHosts()).thenReturn(metastores);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.3.0.0");
     m_check.perform(check, request);
 
@@ -143,7 +143,7 @@ public class HiveMultipleMetastoreCheckTest {
     Mockito.when(metastore.getServiceComponentHosts()).thenReturn(metastores);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.3.0.0");
     m_check.perform(check, request);
 

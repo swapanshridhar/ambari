@@ -82,7 +82,7 @@ public class ComponentEventCreatorTest extends AuditEventCreatorTestBase {
 
     Map<String,Object> properties = new HashMap<>();
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "ambari1.example.com");
-    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "mycluster");
+    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID, "STARTED");
 
     Request request = AuditEventCreatorTestHelper.createRequest(type, Resource.Type.HostComponent, properties, null);
@@ -111,7 +111,7 @@ public class ComponentEventCreatorTest extends AuditEventCreatorTestBase {
 
     Map<String,Object> properties = new HashMap<>();
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "ambari1.example.com");
-    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "mycluster");
+    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID, "STARTED");
 
     Request request = AuditEventCreatorTestHelper.createRequest(Request.Type.PUT, Resource.Type.HostComponent, properties, null);
@@ -141,7 +141,7 @@ public class ComponentEventCreatorTest extends AuditEventCreatorTestBase {
 
     Map<String,Object> properties = new HashMap<>();
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "ambari1.example.com");
-    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID, "mycluster");
+    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID, "STARTED");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "MYCOMPONENT");
 
@@ -174,6 +174,7 @@ public class ComponentEventCreatorTest extends AuditEventCreatorTestBase {
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "ambari1.example.com");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_MAINTENANCE_STATE_PROPERTY_ID, "ON");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "MYCOMPONENT");
+    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
 
     Request request = AuditEventCreatorTestHelper.createRequest(Request.Type.PUT, Resource.Type.HostComponent, properties, null);
 
@@ -200,6 +201,7 @@ public class ComponentEventCreatorTest extends AuditEventCreatorTestBase {
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID, "ambari1.example.com");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_MAINTENANCE_STATE_PROPERTY_ID, "ON");
     properties.put(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID, "MYCOMPONENT");
+    properties.put(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID, 1L);
 
     Request request = AuditEventCreatorTestHelper.createRequest(Request.Type.PUT, Resource.Type.HostComponent, properties, null);
 

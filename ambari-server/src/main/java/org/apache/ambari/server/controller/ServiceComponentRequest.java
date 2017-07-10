@@ -21,7 +21,7 @@ package org.apache.ambari.server.controller;
 
 public class ServiceComponentRequest {
 
-  private String clusterName; // REF
+  private Long clusterId; // REF
 
   private String serviceName; // GET/CREATE/UPDATE/DELETE
 
@@ -33,22 +33,22 @@ public class ServiceComponentRequest {
 
   private String recoveryEnabled; // CREATE/UPDATE
 
-  public ServiceComponentRequest(String clusterName, String serviceName,
+  public ServiceComponentRequest(Long clusterId, String serviceName,
                                  String componentName, String desiredState) {
-    this(clusterName, serviceName, componentName, desiredState, null, null);
+    this(clusterId, serviceName, componentName, desiredState, null, null);
   }
 
-  public ServiceComponentRequest(String clusterName, String serviceName,
+  public ServiceComponentRequest(Long clusterId, String serviceName,
                                  String componentName, String desiredState,
                                  String recoveryEnabled) {
-    this(clusterName, serviceName, componentName, desiredState, recoveryEnabled, null);
+    this(clusterId, serviceName, componentName, desiredState, recoveryEnabled, null);
   }
 
-  public ServiceComponentRequest(String clusterName,
+  public ServiceComponentRequest(Long clusterId,
                                  String serviceName, String componentName,
                                  String desiredState, String recoveryEnabled,
                                  String componentCategory) {
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.serviceName = serviceName;
     this.componentName = componentName;
     this.desiredState = desiredState;
@@ -99,17 +99,17 @@ public class ServiceComponentRequest {
   }
 
   /**
-   * @return the clusterName
+   * @return the clusterId
    */
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   /**
-   * @param clusterName the clusterName to set
+   * @param clusterId the clusterId to set
    */
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   /**
@@ -136,7 +136,7 @@ public class ServiceComponentRequest {
 
   @Override
   public String toString() {
-    return String.format("[clusterName=%s, serviceName=%s, componentName=%s, desiredState=%s, recoveryEnabled=%s, componentCategory=%s]",
-        clusterName, serviceName, clusterName, desiredState, recoveryEnabled, componentCategory);
+    return String.format("[clusterId=%s, serviceName=%s, componentName=%s, desiredState=%s, recoveryEnabled=%s, componentCategory=%s]",
+      clusterId, serviceName, clusterId, desiredState, recoveryEnabled, componentCategory);
   }
 }

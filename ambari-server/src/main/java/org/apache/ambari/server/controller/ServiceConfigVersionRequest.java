@@ -19,7 +19,7 @@
 package org.apache.ambari.server.controller;
 
 public class ServiceConfigVersionRequest {
-  private String clusterName;
+  private Long clusterId;
   private String serviceName;
   private Long version;
   private Long createTime;
@@ -31,8 +31,8 @@ public class ServiceConfigVersionRequest {
   public ServiceConfigVersionRequest() {
   }
 
-  public ServiceConfigVersionRequest(String clusterName, String serviceName, Long version, Long createTime, Long applyTime, String userName, Boolean isCurrent) {
-    this.clusterName = clusterName;
+  public ServiceConfigVersionRequest(Long clusterId, String serviceName, Long version, Long createTime, Long applyTime,  String userName, Boolean isCurrent) {
+    this.clusterId = clusterId;
     this.serviceName = serviceName;
     this.version = version;
     this.createTime = createTime;
@@ -81,12 +81,12 @@ public class ServiceConfigVersionRequest {
     this.userName = userName;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   public String getNote() {
@@ -108,7 +108,7 @@ public class ServiceConfigVersionRequest {
   @Override
   public String toString() {
     return "ServiceConfigVersionRequest{" +
-        "clusterName='" + clusterName + '\'' +
+        "clusterId='" + clusterId + '\'' +
         ", serviceName='" + serviceName + '\'' +
         ", version=" + version +
         ", createTime=" + createTime +

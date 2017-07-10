@@ -13,7 +13,7 @@
         "_"
     ],
     "Host":[
-        "Hosts/cluster_name",
+        "Hosts/cluster_id",
         "Hosts/host_name",
         "Hosts/ip",
         "Hosts/attributes",
@@ -40,7 +40,7 @@
     ],
     "HostComponent":[
         "HostRoles/role_id",
-        "HostRoles/cluster_name",
+        "HostRoles/cluster_id",
         "HostRoles/host_name",
         "HostRoles/public_host_name",
         "HostRoles/component_name",
@@ -61,7 +61,7 @@
     ],
     "ConfigGroup": [
         "ConfigGroup/id",
-        "ConfigGroup/cluster_name",
+        "ConfigGroup/cluster_id",
         "ConfigGroup/group_name",
         "ConfigGroup/tag",
         "ConfigGroup/description",
@@ -81,7 +81,7 @@
     ],
     "Request":[
         "Requests/id",
-        "Requests/cluster_name",
+        "Requests/cluster_id",
         "Requests/request_status",
         "Requests/request_context",
         "Requests/request_schedule",
@@ -108,7 +108,7 @@
     ],
     "RequestSchedule" : [
         "RequestSchedule/id",
-        "RequestSchedule/cluster_name",
+        "RequestSchedule/cluster_id",
         "RequestSchedule/description",
         "RequestSchedule/status",
         "RequestSchedule/last_execution_status",
@@ -119,7 +119,7 @@
     "Task":[
         "Tasks/id",
         "Tasks/request_id",
-        "Tasks/cluster_name",
+        "Tasks/cluster_id",
         "Tasks/stage_id",
         "Tasks/host_name",
         "Tasks/role",
@@ -294,7 +294,7 @@
         "Instance/log"
     ],
     "Workflow":[
-        "Workflow/cluster_name",
+        "Workflow/cluster_id",
         "Workflow/workflow_id",
         "Workflow/name",
         "Workflow/user_name",
@@ -309,7 +309,7 @@
         "Workflow/context"
     ],
     "Job":[
-        "Job/cluster_name",
+        "Job/cluster_id",
         "Job/workflow_id",
         "Job/job_id",
         "Job/name",
@@ -325,7 +325,7 @@
         "Job/workflow_entity_name"
     ],
     "TaskAttempt":[
-        "TaskAttempt/cluster_name",
+        "TaskAttempt/cluster_id",
         "TaskAttempt/workflow_id",
         "TaskAttempt/job_id",
         "TaskAttempt/task_attempt_id",
@@ -412,7 +412,7 @@
         "recommendations"
     ],
     "HostComponentProcess": [
-      "HostComponentProcess/cluster_name",
+      "HostComponentProcess/cluster_id",
       "HostComponentProcess/host_name",
       "HostComponentProcess/component_name",
       "HostComponentProcess/name",
@@ -421,13 +421,13 @@
     "ClientConfig":[
         "ServiceComponentInfo/service_name",
         "ServiceComponentInfo/component_name",
-        "ServiceComponentInfo/cluster_name",
+        "ServiceComponentInfo/cluster_id",
         "HostRoles/host_name",
         "_"
     ],
     "Widget":[
       "WidgetInfo/id",
-      "WidgetInfo/cluster_name",
+      "WidgetInfo/cluster_id",
       "WidgetInfo/widget_name",
       "WidgetInfo/display_name",
       "WidgetInfo/widget_type",
@@ -443,7 +443,7 @@
     "WidgetLayout":[
       "WidgetLayoutInfo/id",
       "WidgetLayoutInfo/section_name",
-      "WidgetLayoutInfo/cluster_name",
+      "WidgetLayoutInfo/cluster_id",
       "WidgetLayoutInfo/layout_name",
       "WidgetLayoutInfo/display_name",
       "WidgetLayoutInfo/scope",

@@ -82,7 +82,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
   private static MetricPropertyProviderFactory metricPropertyProviderFactory;
 
   private Resource.Type type = null;
-  private String clusterNamePropertyId = null;
+  private String clusterIdPropertyId = null;
   private String hostNamePropertyId = null;
   private String componentNamePropertyId = null;
   private String resourceStatePropertyId = null;
@@ -134,7 +134,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
 
     this.type = type;
 
-    clusterNamePropertyId = clusterPropertyId;
+    clusterIdPropertyId = clusterPropertyId;
     hostNamePropertyId = hostPropertyId;
     componentNamePropertyId = componentPropertyId;
     this.resourceStatePropertyId = resourceStatePropertyId;
@@ -188,7 +188,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
           } else {
             PropertyProvider pp = getDelegate(m,
                 streamProvider, metricHostProvider,
-                clusterNamePropertyId, hostNamePropertyId,
+                clusterIdPropertyId, hostNamePropertyId,
                 componentNamePropertyId, resourceStatePropertyId,
                 componentName);
             if (pp == null) {
@@ -208,7 +208,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
             streamProvider, sslConfig,
             cacheProvider,
             metricHostProvider,
-            metricsServiceProvider, clusterNamePropertyId,
+            metricsServiceProvider, clusterIdPropertyId,
             hostNamePropertyId, componentNamePropertyId);
 
         propertyProvider.populateResources(resources, request, predicate);
@@ -220,7 +220,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
         JMXPropertyProvider jpp = metricPropertyProviderFactory.createJMXPropertyProvider(jmxMap,
             streamProvider,
             jmxHostProvider, metricHostProvider,
-            clusterNamePropertyId, hostNamePropertyId,
+            clusterIdPropertyId, hostNamePropertyId,
             componentNamePropertyId, resourceStatePropertyId);
 
         jpp.populateResources(resources, request, predicate);
@@ -313,7 +313,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
    * @param definition the metric definition for a component
    * @param streamProvider the stream provider
    * @param metricsHostProvider the metrics host provider
-   * @param clusterNamePropertyId the cluster name property id
+   * @param clusterIdPropertyId the cluster name property Id
    * @param hostNamePropertyId the host name property id
    * @param componentNamePropertyId the component name property id
    * @param statePropertyId the state property id
@@ -323,7 +323,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
   private PropertyProvider getDelegate(MetricDefinition definition,
                                        StreamProvider streamProvider,
                                        MetricHostProvider metricsHostProvider,
-                                       String clusterNamePropertyId,
+                                       String clusterIdPropertyId,
                                        String hostNamePropertyId,
                                        String componentNamePropertyId,
                                        String statePropertyId,
@@ -340,7 +340,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
       if (clz.equals(RestMetricsPropertyProvider.class)) {
         return metricPropertyProviderFactory.createRESTMetricsPropertyProvider(
             definition.getProperties(), componentMetrics, streamProvider, metricsHostProvider,
-            clusterNamePropertyId, hostNamePropertyId, componentNamePropertyId, statePropertyId,
+            clusterIdPropertyId, hostNamePropertyId, componentNamePropertyId, statePropertyId,
             componentName);
       }
 
@@ -356,7 +356,7 @@ public class StackDefinedPropertyProvider implements PropertyProvider {
             injector,
             definition.getProperties(), componentMetrics,
             streamProvider, metricsHostProvider,
-            clusterNamePropertyId, hostNamePropertyId,
+            clusterIdPropertyId, hostNamePropertyId,
             componentNamePropertyId, statePropertyId, componentName);
         return PropertyProvider.class.cast(o);
       } catch (Exception e) {

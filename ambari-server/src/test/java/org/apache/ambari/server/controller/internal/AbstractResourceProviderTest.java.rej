@@ -1,0 +1,36 @@
+***************
+*** 459,466 ****
+  
+      private final HostRequest hostRequest;
+  
+-     public HostRequestSetMatcher(String hostname, String clusterName, Map<String, String> hostAttributes) {
+-       hostRequest = new HostRequest(hostname, clusterName, hostAttributes);
+        add(hostRequest);
+      }
+  
+--- 459,466 ----
+  
+      private final HostRequest hostRequest;
+  
++     public HostRequestSetMatcher(String hostname, Long clusterId, Map<String, String> hostAttributes) {
++       hostRequest = new HostRequest(hostname, clusterId, hostAttributes);
+        add(hostRequest);
+      }
+  
+***************
+*** 479,485 ****
+        Object request = set.iterator().next();
+  
+        return request instanceof HostRequest &&
+-           eq(((HostRequest) request).getClusterName(), hostRequest.getClusterName()) &&
+            eq(((HostRequest) request).getHostname(), hostRequest.getHostname()) &&
+            eq(((HostRequest) request).getHostAttributes(), hostRequest.getHostAttributes());
+      }
+--- 479,485 ----
+        Object request = set.iterator().next();
+  
+        return request instanceof HostRequest &&
++           eq(((HostRequest) request).getClusterId(), hostRequest.getClusterId()) &&
+            eq(((HostRequest) request).getHostname(), hostRequest.getHostname()) &&
+            eq(((HostRequest) request).getHostAttributes(), hostRequest.getHostAttributes());
+      }

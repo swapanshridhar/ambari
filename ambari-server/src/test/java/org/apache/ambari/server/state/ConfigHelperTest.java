@@ -125,7 +125,7 @@ public class ConfigHelperTest {
 
       // core-site
       ConfigurationRequest cr = new ConfigurationRequest();
-      cr.setClusterName(clusterName);
+      cr.setClusterId(1L);
       cr.setType("core-site");
       cr.setVersionTag("version1");
       cr.setProperties(new HashMap<String, String>() {{
@@ -151,7 +151,7 @@ public class ConfigHelperTest {
       // flume-conf
 
       ConfigurationRequest cr2 = new ConfigurationRequest();
-      cr2.setClusterName(clusterName);
+      cr2.setClusterId(1L);
       cr2.setType("flume-conf");
       cr2.setVersionTag("version1");
 
@@ -192,7 +192,7 @@ public class ConfigHelperTest {
 
       // oozie-site
       ConfigurationRequest cr4 = new ConfigurationRequest();
-      cr4.setClusterName(clusterName);
+      cr4.setClusterId(1L);
       cr4.setType("oozie-site");
       cr4.setVersionTag("version1");
       cr4.setProperties(new HashMap<String, String>() {{
@@ -212,7 +212,7 @@ public class ConfigHelperTest {
 
       // ams-site
       ConfigurationRequest cr5 = new ConfigurationRequest();
-      cr5.setClusterName(clusterName);
+      cr5.setClusterId(1L);
       cr5.setType("ams-site");
       cr5.setVersionTag("version1");
       cr5.setProperties(new HashMap<String, String>() {{
@@ -269,7 +269,7 @@ public class ConfigHelperTest {
 
     void applyConfig(Map<String, String> properties, String configType, String configTag) throws Exception {
       ConfigurationRequest cr = new ConfigurationRequest();
-      cr.setClusterName(clusterName);
+      cr.setClusterId(1L);
       cr.setType(configType);
       cr.setVersionTag(configTag);
       cr.setProperties(properties);
@@ -331,7 +331,7 @@ public class ConfigHelperTest {
 
       //Setup
       ConfigurationRequest cr5 = new ConfigurationRequest();
-      cr5.setClusterName(clusterName);
+      cr5.setClusterId(1L);
       cr5.setType("ams-env");
       cr5.setVersionTag("version1");
       cr5.setProperties(new HashMap<String, String>() {{
@@ -380,7 +380,7 @@ public class ConfigHelperTest {
       //Setup
       // core-site
       ConfigurationRequest cr = new ConfigurationRequest();
-      cr.setClusterName(clusterName);
+      cr.setClusterId(1L);
       cr.setType("core-site2");
       cr.setVersionTag("version1");
       cr.setProperties(new HashMap<String, String>() {{
@@ -466,7 +466,7 @@ public class ConfigHelperTest {
       //Another version of core-site & global.
       // core-site3
       ConfigurationRequest crr = new ConfigurationRequest();
-      crr.setClusterName(clusterName);
+      crr.setClusterId(1L);
       crr.setType("core-site3");
       crr.setVersionTag("version1");
       crr.setProperties(new HashMap<String, String>() {{

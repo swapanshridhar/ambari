@@ -250,12 +250,12 @@ public class AmbariContext {
     // this is required so the user can start failed services at the service level
     Map<String, Object> installProps = new HashMap<>();
     installProps.put(ServiceResourceProvider.SERVICE_SERVICE_STATE_PROPERTY_ID, "INSTALLED");
-    installProps.put(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    installProps.put(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID, clusterId);
     Map<String, Object> startProps = new HashMap<>();
     startProps.put(ServiceResourceProvider.SERVICE_SERVICE_STATE_PROPERTY_ID, "STARTED");
-    startProps.put(ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID, clusterName);
+    startProps.put(ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID, clusterId);
     Predicate predicate = new EqualsPredicate<>(
-      ServiceResourceProvider.SERVICE_CLUSTER_NAME_PROPERTY_ID, clusterName);
+      ServiceResourceProvider.SERVICE_CLUSTER_ID_PROPERTY_ID, clusterId.toString());
     try {
       getServiceResourceProvider().updateResources(
           new RequestImpl(null, Collections.singleton(installProps), null, null), predicate);
@@ -308,7 +308,7 @@ public class AmbariContext {
         //todo: handle this in a generic manner.  These checks are all over the code
         try {
           if (cluster.getService(service) != null && !component.equals("AMBARI_SERVER")) {
-            requests.add(new ServiceComponentHostRequest(clusterName, service, component, hostName, null));
+            requests.add(new ServiceComponentHostRequest(clusterId, service, component, hostName, null));
           }
         } catch(AmbariException se) {
           LOG.warn("Service already deleted from cluster: {}", service);
@@ -675,7 +675,7 @@ public class AmbariContext {
       });
 
       ConfigGroupRequest request = new ConfigGroupRequest(
-          null, clusterName, absoluteGroupName, service, "Host Group Configuration",
+          null, topology.getClusterId(), absoluteGroupName, service, "Host Group Configuration",
         Sets.newHashSet(filteredGroupHosts), serviceConfigs);
 
       // get the config group provider and create config group resource

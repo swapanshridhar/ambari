@@ -117,7 +117,7 @@ public class ComponentEventCreator implements RequestAuditEventCreator {
       switch (request.getBody().getRequestInfoProperties().get(RequestOperationLevel.OPERATION_LEVEL_ID)) {
         case "CLUSTER":
           for (Map<String, Object> map : request.getBody().getPropertySets()) {
-            if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID)) {
+            if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID)) {
               operation = String.valueOf(map.get(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID)) + ": all services"
                 + " on all hosts"
                 + (request.getBody().getQueryString() != null && request.getBody().getQueryString().length() > 0 ? " that matches " + request.getBody().getQueryString() : "")
@@ -128,7 +128,7 @@ public class ComponentEventCreator implements RequestAuditEventCreator {
           break;
         case "HOST":
           for (Map<String, Object> map : request.getBody().getPropertySets()) {
-            if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID)) {
+            if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID)) {
               String query = request.getBody().getRequestInfoProperties().get("query");
               operation = String.valueOf(map.get(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID)) + ": " + query.substring(query.indexOf("(") + 1, query.length() - 1)
                 + " on " + request.getBody().getRequestInfoProperties().get(RequestOperationLevel.OPERATION_HOST_NAME)
@@ -139,7 +139,7 @@ public class ComponentEventCreator implements RequestAuditEventCreator {
           break;
         case "HOST_COMPONENT":
           for (Map<String, Object> map : request.getBody().getPropertySets()) {
-            if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID)) {
+            if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID)) {
               operation = String.valueOf(map.get(HostComponentResourceProvider.HOST_COMPONENT_STATE_PROPERTY_ID)) + ": " + String.valueOf(map.get(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID))
                 + "/" + request.getBody().getRequestInfoProperties().get(RequestOperationLevel.OPERATION_SERVICE_ID)
                 + " on " + request.getBody().getRequestInfoProperties().get(RequestOperationLevel.OPERATION_HOST_NAME)
@@ -153,7 +153,7 @@ public class ComponentEventCreator implements RequestAuditEventCreator {
     }
 
     for (Map<String, Object> map : request.getBody().getPropertySets()) {
-      if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_MAINTENANCE_STATE_PROPERTY_ID)) {
+      if (map.containsKey(HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID)) {
         return "Turn " + map.get(HostComponentResourceProvider.HOST_COMPONENT_MAINTENANCE_STATE_PROPERTY_ID) + " Maintenance Mode for " + map.get(HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID);
       }
     }

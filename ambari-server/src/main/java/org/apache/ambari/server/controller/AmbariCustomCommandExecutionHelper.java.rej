@@ -1,0 +1,115 @@
+***************
+*** 198,208 ****
+      return !(actions == null || actions.size() == 0) && actions.contains(command);
+    }
+  
+-   private Boolean isValidCustomCommand(String clusterName,
+        String serviceName, String componentName, String commandName)
+        throws AmbariException {
+  
+-     Cluster cluster = clusters.getCluster(clusterName);
+      StackId stackId = cluster.getDesiredStackVersion();
+  
+      if (componentName == null) {
+--- 198,208 ----
+      return !(actions == null || actions.size() == 0) && actions.contains(command);
+    }
+  
++   private Boolean isValidCustomCommand(Long clusterId,
+        String serviceName, String componentName, String commandName)
+        throws AmbariException {
+  
++     Cluster cluster = clusters.getCluster(clusterId);
+      StackId stackId = cluster.getDesiredStackVersion();
+  
+      if (componentName == null) {
+***************
+*** 1122,1128 ****
+  
+      for (RequestResourceFilter resourceFilter : resourceFilters) {
+        LOG.debug("Received a command execution request"
+-         + ", clusterName=" + actionExecutionContext.getClusterName()
+          + ", serviceName=" + resourceFilter.getServiceName()
+          + ", request=" + actionExecutionContext.toString());
+  
+--- 1122,1128 ----
+  
+      for (RequestResourceFilter resourceFilter : resourceFilters) {
+        LOG.debug("Received a command execution request"
++         + ", clusterId=" + actionExecutionContext.getClusterId()
+          + ", serviceName=" + resourceFilter.getServiceName()
+          + ", request=" + actionExecutionContext.toString());
+  
+***************
+*** 1240,1246 ****
+      ClusterVersionEntity cve = cluster.getCurrentClusterVersion();
+  
+      if (null == cve) {
+-       List<ClusterVersionEntity> list = clusterVersionDAO.findByClusterAndState(cluster.getClusterName(),
+            RepositoryVersionState.INIT);
+  
+        if (!list.isEmpty()) {
+--- 1240,1246 ----
+      ClusterVersionEntity cve = cluster.getCurrentClusterVersion();
+  
+      if (null == cve) {
++       List<ClusterVersionEntity> list = clusterVersionDAO.findByClusterAndState(cluster.getClusterId(),
+            RepositoryVersionState.INIT);
+  
+        if (!list.isEmpty()) {
+***************
+*** 1382,1391 ****
+      String notManagedHdfsPathList = gson.toJson(notManagedHdfsPathSet);
+      hostLevelParams.put(NOT_MANAGED_HDFS_PATH_LIST, notManagedHdfsPathList);
+  
+-     ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStateCurrent(cluster.getClusterName());
+      if (clusterVersionEntity == null) {
+        List<ClusterVersionEntity> clusterVersionEntityList = clusterVersionDAO
+-               .findByClusterAndState(cluster.getClusterName(), RepositoryVersionState.INSTALLING);
+        if (!clusterVersionEntityList.isEmpty()) {
+          clusterVersionEntity = clusterVersionEntityList.iterator().next();
+        }
+--- 1382,1391 ----
+      String notManagedHdfsPathList = gson.toJson(notManagedHdfsPathSet);
+      hostLevelParams.put(NOT_MANAGED_HDFS_PATH_LIST, notManagedHdfsPathList);
+  
++     ClusterVersionEntity clusterVersionEntity = clusterVersionDAO.findByClusterAndStateCurrent(cluster.getClusterId());
+      if (clusterVersionEntity == null) {
+        List<ClusterVersionEntity> clusterVersionEntityList = clusterVersionDAO
++               .findByClusterAndState(cluster.getClusterId(), RepositoryVersionState.INSTALLING);
+        if (!clusterVersionEntityList.isEmpty()) {
+          clusterVersionEntity = clusterVersionEntityList.iterator().next();
+        }
+***************
+*** 1408,1422 ****
+     * Determine whether or not the action should trigger a topology refresh.
+     *
+     * @param actionName   the action name (i.e. START, RESTART)
+-    * @param clusterName  the cluster name
+     * @param serviceName  the service name
+     *
+     * @return true if a topology refresh is required for the action
+     */
+-   public boolean isTopologyRefreshRequired(String actionName, String clusterName, String serviceName)
+        throws AmbariException {
+      if (actionName.equals(START_COMMAND_NAME) || actionName.equals(RESTART_COMMAND_NAME)) {
+-       Cluster cluster = clusters.getCluster(clusterName);
+        StackId stackId = cluster.getDesiredStackVersion();
+  
+        AmbariMetaInfo ambariMetaInfo = managementController.getAmbariMetaInfo();
+--- 1408,1422 ----
+     * Determine whether or not the action should trigger a topology refresh.
+     *
+     * @param actionName   the action name (i.e. START, RESTART)
++    * @param clusterId    the cluster Id
+     * @param serviceName  the service name
+     *
+     * @return true if a topology refresh is required for the action
+     */
++   public boolean isTopologyRefreshRequired(String actionName, Long clusterId, String serviceName)
+        throws AmbariException {
+      if (actionName.equals(START_COMMAND_NAME) || actionName.equals(RESTART_COMMAND_NAME)) {
++       Cluster cluster = clusters.getCluster(clusterId);
+        StackId stackId = cluster.getDesiredStackVersion();
+  
+        AmbariMetaInfo ambariMetaInfo = managementController.getAmbariMetaInfo();

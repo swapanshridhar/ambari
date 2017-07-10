@@ -1,0 +1,25 @@
+***************
+*** 40,50 ****
+    /**
+     * Construct a ClusterPrivilegeService.
+     *
+-    * @param clusterName  the cluster name
+     */
+-   public ClusterPrivilegeService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+  // ----- PrivilegeService --------------------------------------------------
+--- 40,50 ----
+    /**
+     * Construct a ClusterPrivilegeService.
+     *
++    * @param clusterId  the cluster ID
+     */
++   public ClusterPrivilegeService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+  // ----- PrivilegeService --------------------------------------------------

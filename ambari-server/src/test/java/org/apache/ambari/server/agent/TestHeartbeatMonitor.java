@@ -75,6 +75,7 @@ public class TestHeartbeatMonitor {
   private String hostname1 = "host1";
   private String hostname2 = "host2";
   private String clusterName = "cluster1";
+  private Long clusterId = 1L;
   private String serviceName = "HDFS";
   private int heartbeatMonitorWakeupIntervalMS = 30;
   private static AmbariMetaInfo ambariMetaInfo;
@@ -362,7 +363,7 @@ public class TestHeartbeatMonitor {
       add(hostname1);
      }};
 
-    clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostNames, cluster.getClusterId());
 
     Service hdfs = cluster.addService(serviceName, repositoryVersion);
     hdfs.addServiceComponent(Role.DATANODE.name());
@@ -443,7 +444,7 @@ public class TestHeartbeatMonitor {
       add(hostname1);
      }};
 
-    clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostNames, cluster.getClusterId());
 
     Service hdfs = cluster.addService(serviceName, repositoryVersion);
     hdfs.addServiceComponent(Role.DATANODE.name());
@@ -561,7 +562,7 @@ public class TestHeartbeatMonitor {
       add(hostname2);
     }};
 
-    clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostNames, cluster.getClusterId());
 
     Service hdfs = cluster.addService(serviceName, repositoryVersion);
 

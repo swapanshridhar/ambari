@@ -90,7 +90,7 @@ public class MapReduce2JobHistoryStatePreservingCheckTest {
     Map<String, Service> services = new HashMap<>();
     Mockito.when(cluster.getServices()).thenReturn(services);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setTargetStackId(new StackId("HDP", "2.3.1.1"));
     request.setSourceStackId(new StackId("HDP", "2.3.0.0"));
 
@@ -121,23 +121,23 @@ public class MapReduce2JobHistoryStatePreservingCheckTest {
     Mockito.when(config.getProperties()).thenReturn(properties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     properties.put(MapReduce2JobHistoryStatePreservingCheck.MAPREDUCE2_JOBHISTORY_RECOVERY_ENABLE_KEY, "true");
     properties.put(MapReduce2JobHistoryStatePreservingCheck.MAPREDUCE2_JOBHISTORY_RECOVERY_STORE_KEY, "org.apache.hadoop.mapreduce.v2.hs.HistoryServerLeveldbStateStoreService");
     properties.put(MapReduce2JobHistoryStatePreservingCheck.MAPREDUCE2_JOBHISTORY_RECOVERY_STORE_LEVELDB_PATH_KEY, "");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
     check = new PrerequisiteCheck(null, null);
     properties.put(MapReduce2JobHistoryStatePreservingCheck.MAPREDUCE2_JOBHISTORY_RECOVERY_STORE_LEVELDB_PATH_KEY, "/hadoop/yarn/timeline");
     properties.put(MapReduce2JobHistoryStatePreservingCheck.YARN_TIMELINE_SERVICE_LEVELDB_STATE_STORE_PATH_KEY, "not /hadoop/yarn/timeline");
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
     check = new PrerequisiteCheck(null, null);
     properties.put(MapReduce2JobHistoryStatePreservingCheck.YARN_TIMELINE_SERVICE_LEVELDB_STATE_STORE_PATH_KEY, "/hadoop/yarn/timeline");
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 
@@ -154,7 +154,7 @@ public class MapReduce2JobHistoryStatePreservingCheckTest {
     Mockito.when(cluster.getCurrentStackVersion()).thenReturn(new StackId("MYSTACK-12.2"));
     RepositoryVersionEntity repositoryVersionEntity = Mockito.mock(RepositoryVersionEntity.class);
     Mockito.when(m_clusters.getCluster("c1")).thenReturn(cluster);
-    PrereqCheckRequest request = new PrereqCheckRequest("c1");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
 
     Mockito.when(repositoryVersionEntity.getVersion()).thenReturn("2.0.0.1");
     boolean isApplicable = m_check.isApplicable(request);

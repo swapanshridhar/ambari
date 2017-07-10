@@ -67,7 +67,7 @@ public class ConfigurationMergeCheck extends AbstractCheckDescriptor {
     RepositoryVersionEntity rve = repositoryVersionDaoProvider.get().findByStackNameAndVersion(stackName, request.getRepositoryVersion());
 
     Map<String, Map<String, ThreeWayValue>> changes =
-        m_mergeHelper.getConflicts(request.getClusterName(), rve.getStackId());
+        m_mergeHelper.getConflicts(request.getClusterId(), rve.getStackId());
 
     Set<String> failedTypes = new HashSet<>();
 

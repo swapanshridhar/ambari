@@ -212,7 +212,7 @@ public class HeartbeatTestHelper {
     }
 
     clusterEntity.setHostEntities(hostEntities);
-    clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostNames, (clusters.getCluster(clusterName)).getClusterId());
 
     return cluster;
   }
@@ -225,7 +225,7 @@ public class HeartbeatTestHelper {
     s.addHostRoleExecutionCommand(DummyHostname1, Role.HBASE_MASTER,
         RoleCommand.START,
         new ServiceComponentHostStartEvent(Role.HBASE_MASTER.toString(),
-            DummyHostname1, System.currentTimeMillis()), DummyCluster, HBASE, false, false);
+            DummyHostname1, System.currentTimeMillis()), 1L, HBASE, false, false);
     List<Stage> stages = new ArrayList<>();
     stages.add(s);
     Request request = new Request(stages, "clusterHostInfo", clusters);

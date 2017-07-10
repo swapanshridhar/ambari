@@ -52,13 +52,11 @@ public class ConfigGroupResponse {
     this.id = id;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
-  }
+  public void setClusterId(Long clusterId) { this.clusterId = clusterId; }
 
   public String getGroupName() {
     return groupName;

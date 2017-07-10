@@ -1,0 +1,71 @@
+***************
+*** 162,168 ****
+  
+    private MaintenanceState maintenanceState = null;
+  
+-   public HostResponse(String hostname, String clusterName,
+                        String ipv4, String ipv6, int cpuCount, int phCpuCount, String osArch, String osType,
+                        String osInfo, long availableMemBytes, long totalMemBytes,
+                        List<DiskInfo> disksInfo, long lastHeartbeatTime,
+--- 162,168 ----
+  
+    private MaintenanceState maintenanceState = null;
+  
++   public HostResponse(String hostname, Long clusterId,
+                        String ipv4, String ipv6, int cpuCount, int phCpuCount, String osArch, String osType,
+                        String osInfo, long availableMemBytes, long totalMemBytes,
+                        List<DiskInfo> disksInfo, long lastHeartbeatTime,
+***************
+*** 177,183 ****
+  
+    //todo: why are we passing in empty strings for host/cluster name instead of null?
+    public HostResponse(String hostname) {
+-     this(hostname, "", "", "",
+          0, 0, "", "",
+          "", 0, 0, new ArrayList<DiskInfo>(),
+          0, 0, "",
+--- 177,183 ----
+  
+    //todo: why are we passing in empty strings for host/cluster name instead of null?
+    public HostResponse(String hostname) {
++     this(hostname, null, "", "",
+          0, 0, "", "",
+          "", 0, 0, new ArrayList<DiskInfo>(),
+          0, 0, "",
+***************
+*** 200,216 ****
+    }
+  
+    /**
+-    * @return the clusterNames
+     */
+-   public String getClusterName() {
+-     return clusterName;
+    }
+  
+    /**
+-    * @param clusterName the name of the associated cluster
+     */
+-   public void setClusterName(String clusterName) {
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+--- 200,216 ----
+    }
+  
+    /**
++    * @return the clusterIds
+     */
++   public Long getClusterId() {
++     return clusterId;
+    }
+  
+    /**
++    * @param clusterId the name of the associated cluster
+     */
++   public void setClusterId(Long clusterId) {
++     this.clusterId = clusterId;
+    }
+  
+    /**

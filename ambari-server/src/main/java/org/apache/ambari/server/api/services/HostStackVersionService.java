@@ -70,7 +70,7 @@ public class HostStackVersionService extends BaseService {
   @GET @ApiIgnore // until documented
   @Produces("text/plain")
   public Response getHostStackVersions(@Context HttpHeaders headers, @Context UriInfo ui) {
-    return handleRequest(headers, null, ui, Request.Type.GET, createResource(ui, clusterName, hostName, null));
+    return handleRequest(headers, null, ui, Request.Type.GET, createResource(ui, clusterId, hostName, null));
   }
 
   /**
@@ -88,11 +88,11 @@ public class HostStackVersionService extends BaseService {
   @Produces("text/plain")
   public Response getHostStackVersion(@Context HttpHeaders headers, @Context UriInfo ui,
       @PathParam("stackVersionId") String stackVersionId) {
-    return handleRequest(headers, null, ui, Request.Type.GET, createResource(ui, clusterName, hostName, stackVersionId));
+    return handleRequest(headers, null, ui, Request.Type.GET, createResource(ui, clusterId, hostName, stackVersionId));
   }
 
   /**
-   * Handles: POST /clusters/{clusterID}/hosts/{hostname}/host_versions requests
+   * Handles: POST /clusters/{clusterId}/hosts/{hostname}/host_versions requests
    * Distribute repositories/install packages on host.
    *
    * @param body        http body
@@ -103,7 +103,7 @@ public class HostStackVersionService extends BaseService {
   @POST @ApiIgnore // until documented
   @Produces("text/plain")
   public Response createRequests(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
-    return handleRequest(headers, body, ui, Request.Type.POST, createResource(ui, clusterName, hostName, null));
+    return handleRequest(headers, body, ui, Request.Type.POST, createResource(ui, clusterId, hostName, null));
   }
 
   /**
@@ -123,15 +123,15 @@ public class HostStackVersionService extends BaseService {
   /**
    * Create a host stack version resource instance.
    *
-   * @param clusterName
+   * @param clusterId
    * @param hostName host name
    * @param stackVersionId host stack version id
    * @return a host host version resource instance
    */
-  private ResourceInstance createResource(UriInfo ui, String clusterName, String hostName, String stackVersionId) {
+  private ResourceInstance createResource(UriInfo ui, Long clusterId, String hostName, String stackVersionId) {
     final Map<Resource.Type, String> mapIds = new HashMap<>();
-    if (clusterName != null) {
-      mapIds.put(Resource.Type.Cluster, clusterName);
+    if (clusterId != null) {
+      mapIds.put(Resource.Type.Cluster, clusterId.toString());
     }
     mapIds.put(Resource.Type.Host, hostName);
     mapIds.put(Resource.Type.HostStackVersion, stackVersionId);

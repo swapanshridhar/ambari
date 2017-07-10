@@ -25,11 +25,11 @@ public interface LoggingRequestHelperFactory {
    * Obtain a new instance of a LoggingRequestHelper, which can
    * be used to connect to the given cluster
    * @param ambariManagementController
-   * @param clusterName name of cluster that includes a LogSearch deployment
+   * @param clusterId cluster ID that includes a LogSearch deployment
    *
    * @return an instance of LoggingRequestHelper that can be used to
    *         connect to this cluster's LogSearch service
    */
-  LoggingRequestHelper getHelper(AmbariManagementController ambariManagementController, String clusterName);
+  LoggingRequestHelper getHelper(AmbariManagementController ambariManagementController, Long clusterId);
 
 }

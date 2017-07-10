@@ -1,0 +1,37 @@
+***************
+*** 54,70 ****
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster name
+     * @param hostName    host name
+     */
+-   public HostKerberosIdentityService(ApiVersion apiVersion, String clusterName, String hostName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+      this.hostName = hostName;
+    }
+  
+    /**
+-    * Handles GET: /clusters/{clusterID}/services/{serviceID}/components/{componentID}/kerberos_identities/{identityId}
+     * Get a specific Kerberos identity.
+     *
+     * @param headers    http headers
+--- 54,70 ----
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster ID
+     * @param hostName    host name
+     */
++   public HostKerberosIdentityService(ApiVersion apiVersion, Long clusterId, String hostName) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+      this.hostName = hostName;
+    }
+  
+    /**
++    * Handles GET: /clusters/{clusterId}/services/{serviceID}/components/{componentID}/kerberos_identities/{identityId}
+     * Get a specific Kerberos identity.
+     *
+     * @param headers    http headers

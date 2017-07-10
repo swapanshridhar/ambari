@@ -45,7 +45,7 @@ public class PreUpgradeCheckServiceTest extends BaseServiceTest {
     Object[] args;
 
     //getPreUpgradeChecks
-    service = new TestPreUpgradeCheckService("cluster");
+    service = new TestPreUpgradeCheckService(1L);
     m = service.getClass().getMethod("getPreUpgradeChecks", HttpHeaders.class, UriInfo.class);
     args = new Object[] { getHttpHeaders(), getUriInfo() };
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));

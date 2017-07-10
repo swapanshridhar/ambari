@@ -1,0 +1,207 @@
+***************
+*** 512,524 ****
+      if (null != versionEntity) {
+        ClusterVersionDAO clusterVersionDAO = injector.getInstance(ClusterVersionDAO.class);
+  
+-       ClusterVersionEntity clusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(request.getClusterName(), stackId,
+            request.getRepositoryVersion());
+  
+        if (null == clusterVersion) {
+          c.createClusterVersion(stackId, versionEntity.getVersion(), getAuthName(), RepositoryVersionState.INIT);
+        }
+      }
+    }
+  
+    @Override
+--- 512,526 ----
+      if (null != versionEntity) {
+        ClusterVersionDAO clusterVersionDAO = injector.getInstance(ClusterVersionDAO.class);
+  
++       ClusterVersionEntity clusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(request.getClusterId(), stackId,
+            request.getRepositoryVersion());
+  
+        if (null == clusterVersion) {
+          c.createClusterVersion(stackId, versionEntity.getVersion(), getAuthName(), RepositoryVersionState.INIT);
+        }
+      }
++     ClusterResponse clusterResponse = c.convertToResponse();
++     return clusterResponse;
+    }
+  
+    @Override
+***************
+*** 603,640 ****
+  
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Received a createHostComponent request"
+-             + ", clusterName=" + request.getClusterName()
+              + ", serviceName=" + request.getServiceName()
+              + ", componentName=" + request.getComponentName()
+              + ", hostname=" + request.getHostname()
+              + ", request=" + request);
+        }
+  
+-       if (!hostComponentNames.containsKey(request.getClusterName())) {
+-         hostComponentNames.put(request.getClusterName(),
+              new HashMap<String, Map<String,Set<String>>>());
+        }
+-       if (!hostComponentNames.get(request.getClusterName())
+            .containsKey(request.getServiceName())) {
+-         hostComponentNames.get(request.getClusterName()).put(
+              request.getServiceName(), new HashMap<String, Set<String>>());
+        }
+-       if (!hostComponentNames.get(request.getClusterName())
+            .get(request.getServiceName())
+            .containsKey(request.getComponentName())) {
+-         hostComponentNames.get(request.getClusterName())
+              .get(request.getServiceName()).put(request.getComponentName(),
+                  new HashSet<String>());
+        }
+-       if (hostComponentNames.get(request.getClusterName())
+            .get(request.getServiceName())
+            .get(request.getComponentName())
+            .contains(request.getHostname())) {
+-         duplicates.add("[clusterName=" + request.getClusterName() + ", hostName=" + request.getHostname() +
+              ", componentName=" +request.getComponentName() +']');
+          continue;
+        }
+-       hostComponentNames.get(request.getClusterName())
+            .get(request.getServiceName()).get(request.getComponentName())
+            .add(request.getHostname());
+  
+--- 605,642 ----
+  
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Received a createHostComponent request"
++             + ", clusterId=" + request.getClusterId()
+              + ", serviceName=" + request.getServiceName()
+              + ", componentName=" + request.getComponentName()
+              + ", hostname=" + request.getHostname()
+              + ", request=" + request);
+        }
+  
++       if (!hostComponentNames.containsKey(request.getClusterId())) {
++         hostComponentNames.put(request.getClusterId(),
+              new HashMap<String, Map<String,Set<String>>>());
+        }
++       if (!hostComponentNames.get(request.getClusterId())
+            .containsKey(request.getServiceName())) {
++         hostComponentNames.get(request.getClusterId()).put(
+              request.getServiceName(), new HashMap<String, Set<String>>());
+        }
++       if (!hostComponentNames.get(request.getClusterId())
+            .get(request.getServiceName())
+            .containsKey(request.getComponentName())) {
++         hostComponentNames.get(request.getClusterId())
+              .get(request.getServiceName()).put(request.getComponentName(),
+                  new HashSet<String>());
+        }
++       if (hostComponentNames.get(request.getClusterId())
+            .get(request.getServiceName())
+            .get(request.getComponentName())
+            .contains(request.getHostname())) {
++         duplicates.add("[clusterId=" + request.getClusterId() + ", hostName=" + request.getHostname() +
+              ", componentName=" +request.getComponentName() +']');
+          continue;
+        }
++       hostComponentNames.get(request.getClusterId())
+            .get(request.getServiceName()).get(request.getComponentName())
+            .add(request.getHostname());
+  
+***************
+*** 672,678 ****
+          LOG.debug("Looking to match host to cluster"
+              + ", hostnameViaReg=" + host.getHostName()
+              + ", hostname=" + request.getHostname()
+-             + ", clusterName=" + request.getClusterName()
+              + ", hostClusterMapCount=" + mappedClusters.size());
+        }
+        for (Cluster mappedCluster : mappedClusters) {
+--- 674,680 ----
+          LOG.debug("Looking to match host to cluster"
+              + ", hostnameViaReg=" + host.getHostName()
+              + ", hostname=" + request.getHostname()
++             + ", clusterId=" + request.getClusterId()
+              + ", hostClusterMapCount=" + mappedClusters.size());
+        }
+        for (Cluster mappedCluster : mappedClusters) {
+***************
+*** 815,822 ****
+    }
+  
+    @Override
+-   public void registerRackChange(String clusterName) throws AmbariException {
+-     Cluster cluster = clusters.getCluster(clusterName);
+      StackId stackId = cluster.getCurrentStackVersion();
+  
+      Set<String> rackSensitiveServices =
+--- 816,823 ----
+    }
+  
+    @Override
++   public void registerRackChange(Long clusterId) throws AmbariException {
++     Cluster cluster = clusters.getCluster(clusterId);
+      StackId stackId = cluster.getCurrentStackVersion();
+  
+      Set<String> rackSensitiveServices =
+***************
+*** 2560,2566 ****
+      if (null != effectiveClusterVersion) {
+        repoVersion = effectiveClusterVersion.getRepositoryVersion();
+      } else {
+-       List<ClusterVersionEntity> list = clusterVersionDAO.findByClusterAndState(cluster.getClusterName(),
+            RepositoryVersionState.INIT);
+        if (1 == list.size()) {
+          repoVersion = list.get(0).getRepositoryVersion();
+--- 2560,2566 ----
+      if (null != effectiveClusterVersion) {
+        repoVersion = effectiveClusterVersion.getRepositoryVersion();
+      } else {
++       List<ClusterVersionEntity> list = clusterVersionDAO.findByClusterAndState(cluster.getClusterId(),
+            RepositoryVersionState.INIT);
+        if (1 == list.size()) {
+          repoVersion = list.get(0).getRepositoryVersion();
+***************
+*** 4134,4144 ****
+      }
+  
+      Cluster cluster = null;
+-     if (null != clusterName) {
+-       cluster = clusters.getCluster(clusterName);
+  
+        LOG.info("Received action execution request"
+-         + ", clusterName=" + actionRequest.getClusterName()
+          + ", request=" + actionRequest.toString());
+      }
+  
+--- 4133,4143 ----
+      }
+  
+      Cluster cluster = null;
++     if (null != clusterId) {
++       cluster = clusters.getCluster(clusterId);
+  
+        LOG.info("Received action execution request"
++         + ", clusterId=" + actionRequest.getClusterId()
+          + ", request=" + actionRequest.toString());
+      }
+  
+***************
+*** 5368,5375 ****
+     * {@inheritDoc}
+     */
+    @Override
+-   public LoggingService getLoggingService(ApiVersion apiVersion, String clusterName) {
+-     LoggingService loggingService = new LoggingService(apiVersion, clusterName);
+      injector.injectMembers(loggingService);
+      return loggingService;
+    }
+--- 5367,5374 ----
+     * {@inheritDoc}
+     */
+    @Override
++   public LoggingService getLoggingService(ApiVersion apiVersion, Long clusterId) {
++     LoggingService loggingService = new LoggingService(apiVersion, clusterId);
+      injector.injectMembers(loggingService);
+      return loggingService;
+    }

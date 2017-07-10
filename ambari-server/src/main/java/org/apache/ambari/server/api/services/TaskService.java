@@ -41,7 +41,7 @@ public class TaskService extends BaseService {
   /**
    * Parent cluster id.
    */
-  private String m_clusterName;
+  private Long m_clusterId;
 
   /**
    * Parent request id.
@@ -82,11 +82,11 @@ public class TaskService extends BaseService {
                           @PathParam("taskId") String taskId) {
 
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createTaskResource(m_clusterName, m_requestId, m_stageId, taskId));
+        createTaskResource(m_clusterId, m_requestId, m_stageId, taskId));
   }
 
   /**
-   * Handles GET: /clusters/{clusterID}/requests/{requestID}/tasks
+   * Handles GET: /clusters/{clusterId}/requests/{requestID}/tasks
    * Get all tasks for a request.
    *
    * @param headers http headers
@@ -98,22 +98,22 @@ public class TaskService extends BaseService {
   @Produces("text/plain")
   public Response getComponents(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
     return handleRequest(headers, body, ui, Request.Type.GET,
-        createTaskResource(m_clusterName, m_requestId, m_stageId, null));
+        createTaskResource(m_clusterId, m_requestId, m_stageId, null));
   }
 
   /**
    * Create a task resource instance.
    *
-   * @param clusterName  cluster name
+   * @param clusterId    cluster Id
    * @param requestId    request id
    * @param stageId      stage id
    * @param taskId       task id
    *
    * @return a task resource instance
    */
-  ResourceInstance createTaskResource(String clusterName, String requestId, String stageId, String taskId) {
+  ResourceInstance createTaskResource(Long clusterId, String requestId, String stageId, String taskId) {
     Map<Resource.Type,String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.Request, requestId);
     mapIds.put(Resource.Type.Stage, stageId);
     mapIds.put(Resource.Type.Task, taskId);

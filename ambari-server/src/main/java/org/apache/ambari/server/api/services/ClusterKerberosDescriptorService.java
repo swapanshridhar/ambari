@@ -74,7 +74,7 @@ public class ClusterKerberosDescriptorService extends BaseService {
   }
 
   /**
-   * Handles URL: /clusters/{clusterID}/kerberos_descriptors
+   * Handles URL: /clusters/{clusterId}/kerberos_descriptors
    * Get a specific composite Kerberos descriptor
    *
    * @param headers http headers
@@ -98,7 +98,7 @@ public class ClusterKerberosDescriptorService extends BaseService {
    */
   ResourceInstance createResource(String type) {
     Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.ClusterKerberosDescriptor, type);
     return createResource(Resource.Type.ClusterKerberosDescriptor, mapIds);
   }

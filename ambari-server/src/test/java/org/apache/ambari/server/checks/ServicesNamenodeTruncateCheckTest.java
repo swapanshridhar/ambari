@@ -103,7 +103,7 @@ public class ServicesNamenodeTruncateCheckTest {
   @Test
   public void testIsApplicable() throws Exception {
 
-    PrereqCheckRequest checkRequest = new PrereqCheckRequest("c1");
+    PrereqCheckRequest checkRequest = new PrereqCheckRequest(1L);
     checkRequest.setRepositoryVersion("HDP-2.2.0.0");
     checkRequest.setSourceStackId(new StackId("HDP", "2.2"));
     checkRequest.setTargetStackId(new StackId("HDP", "2.2"));
@@ -114,7 +114,7 @@ public class ServicesNamenodeTruncateCheckTest {
   @Test
   public void testPerform() throws Exception {
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("c1");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     m_check.perform(check, request);
     assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 

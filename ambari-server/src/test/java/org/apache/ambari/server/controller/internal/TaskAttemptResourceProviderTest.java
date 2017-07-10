@@ -53,11 +53,11 @@ public class TaskAttemptResourceProviderTest {
       UnsupportedPropertyException, NoSuchResourceException,
       NoSuchParentResourceException {
     Set<Resource> expected = new HashSet<>();
-    expected.add(createTaskAttemptResponse("Cluster100", "workflow1", "job1",
+    expected.add(createTaskAttemptResponse(100L, "workflow1", "job1",
         "taskAttempt1"));
-    expected.add(createTaskAttemptResponse("Cluster100", "workflow2", "job2",
+    expected.add(createTaskAttemptResponse(100L, "workflow2", "job2",
         "taskAttempt2"));
-    expected.add(createTaskAttemptResponse("Cluster100", "workflow2", "job2",
+    expected.add(createTaskAttemptResponse(100L, "workflow2", "job2",
         "taskAttempt3"));
 
     Resource.Type type = Resource.Type.TaskAttempt;
@@ -83,9 +83,9 @@ public class TaskAttemptResourceProviderTest {
     Assert.assertEquals(3, resources.size());
     Set<String> names = new HashSet<>();
     for (Resource resource : resources) {
-      String clusterName = (String) resource
-          .getPropertyValue(TaskAttemptResourceProvider.TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID);
-      Assert.assertEquals("Cluster100", clusterName);
+      Long clusterId = (Long) resource
+          .getPropertyValue(TaskAttemptResourceProvider.TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID);
+      Assert.assertEquals(Long.valueOf(100), clusterId);
       names
           .add((String) resource
               .getPropertyValue(TaskAttemptResourceProvider.TASK_ATTEMPT_ID_PROPERTY_ID));
@@ -126,12 +126,12 @@ public class TaskAttemptResourceProviderTest {
     }
   }
 
-  private static Resource createTaskAttemptResponse(String clusterName,
+  private static Resource createTaskAttemptResponse(Long clusterId,
       String workflowId, String jobId, String taskAttemptId) {
     Resource r = new ResourceImpl(Resource.Type.TaskAttempt);
     r.setProperty(
-        TaskAttemptResourceProvider.TASK_ATTEMPT_CLUSTER_NAME_PROPERTY_ID,
-        clusterName);
+        TaskAttemptResourceProvider.TASK_ATTEMPT_CLUSTER_ID_PROPERTY_ID,
+        clusterId);
     r.setProperty(
         TaskAttemptResourceProvider.TASK_ATTEMPT_WORKFLOW_ID_PROPERTY_ID,
         workflowId);

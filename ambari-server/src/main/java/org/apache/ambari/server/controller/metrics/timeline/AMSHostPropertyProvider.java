@@ -33,11 +33,11 @@ public class AMSHostPropertyProvider extends AMSPropertyProvider {
                                  ComponentSSLConfiguration configuration,
                                  TimelineMetricCacheProvider cacheProvider,
                                  MetricHostProvider hostProvider,
-                                 String clusterNamePropertyId,
+                                 String clusterIdPropertyId,
                                  String hostNamePropertyId) {
 
     super(componentPropertyInfoMap, streamProvider, configuration,
-      cacheProvider, hostProvider, clusterNamePropertyId, hostNamePropertyId, null);
+      cacheProvider, hostProvider, clusterIdPropertyId, hostNamePropertyId, null);
   }
 
   @Override

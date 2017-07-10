@@ -1,0 +1,46 @@
+***************
+*** 39,51 ****
+   */
+  public class UpgradeItemService extends BaseService {
+  
+-   private String m_clusterName = null;
+    private String m_upgradeId = null;
+    private String m_upgradeGroupId = null;
+  
+-   UpgradeItemService(ApiVersion apiVersion, String clusterName, String upgradeId, String upgradeGroupId) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+      m_upgradeId = upgradeId;
+      m_upgradeGroupId = upgradeGroupId;
+    }
+--- 39,51 ----
+   */
+  public class UpgradeItemService extends BaseService {
+  
++   private Long m_clusterId = null;
+    private String m_upgradeId = null;
+    private String m_upgradeGroupId = null;
+  
++   UpgradeItemService(ApiVersion apiVersion, Long clusterId, String upgradeId, String upgradeGroupId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+      m_upgradeId = upgradeId;
+      m_upgradeGroupId = upgradeGroupId;
+    }
+***************
+*** 96,102 ****
+        @Context HttpHeaders headers,
+        @Context UriInfo ui,
+        @PathParam("upgradeItemId") Long id) {
+-     return new TaskService(m_apiVersion, m_clusterName, m_upgradeId, id.toString());
+    }
+  
+    /**
+--- 96,102 ----
+        @Context HttpHeaders headers,
+        @Context UriInfo ui,
+        @PathParam("upgradeItemId") Long id) {
++     return new TaskService(m_apiVersion, m_clusterId, m_upgradeId, id.toString());
+    }
+  
+    /**

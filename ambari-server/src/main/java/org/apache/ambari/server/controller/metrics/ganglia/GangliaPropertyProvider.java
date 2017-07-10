@@ -36,7 +36,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.ambari.server.AmbariException;
 import org.apache.ambari.server.configuration.ComponentSSLConfiguration;
+import org.apache.ambari.server.controller.AmbariManagementController;
+import org.apache.ambari.server.controller.AmbariServer;
 import org.apache.ambari.server.controller.internal.PropertyInfo;
 import org.apache.ambari.server.controller.internal.URLStreamProvider;
 import org.apache.ambari.server.controller.metrics.MetricHostProvider;
@@ -46,6 +49,7 @@ import org.apache.ambari.server.controller.spi.Resource;
 import org.apache.ambari.server.controller.spi.SystemException;
 import org.apache.ambari.server.controller.spi.TemporalInfo;
 import org.apache.ambari.server.controller.utilities.StreamProvider;
+import org.apache.ambari.server.state.Cluster;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,12 +90,12 @@ public abstract class GangliaPropertyProvider extends MetricsPropertyProvider {
                                  URLStreamProvider streamProvider,
                                  ComponentSSLConfiguration configuration,
                                  MetricHostProvider hostProvider,
-                                 String clusterNamePropertyId,
+                                 String clusterIdPropertyId,
                                  String hostNamePropertyId,
                                  String componentNamePropertyId) {
 
     super(componentPropertyInfoMap, streamProvider,configuration,
-      hostProvider, clusterNamePropertyId, hostNamePropertyId,
+      hostProvider, clusterIdPropertyId, hostNamePropertyId,
       componentNamePropertyId);
   }
 
@@ -180,7 +184,16 @@ public abstract class GangliaPropertyProvider extends MetricsPropertyProvider {
       new HashMap<>();
 
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+      Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+      AmbariManagementController amc = AmbariServer.getController();
+      Cluster cluster = null;
+      try {
+        cluster = amc.getClusters().getCluster(clusterId);
+      } catch (AmbariException e) {
+        return requestMap;
+      }
+      String clusterName = cluster.getClusterName();
+
       Map<TemporalInfo, RRDRequest> requests = requestMap.get(clusterName);
       if (requests == null) {
         requests = new HashMap<>();

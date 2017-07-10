@@ -61,8 +61,8 @@ public class HostMaintenanceModeCheck extends AbstractCheckDescriptor {
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request)
       throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     Collection<Host> hosts = cluster.getHosts();
 
     // see if any hosts in the cluster are in MM

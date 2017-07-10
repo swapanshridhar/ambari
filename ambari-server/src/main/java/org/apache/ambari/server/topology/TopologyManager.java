@@ -482,6 +482,7 @@ public class TopologyManager {
 
     hostNameCheck(request, topology);
     request.setClusterId(clusterId);
+    request.setClusterName(clusterName);
 
     // this registers/updates all request host groups
     topology.update(request);
@@ -976,7 +977,7 @@ public class TopologyManager {
       host.setRackInfo(rackInfoFromTemplate);
       try {
         // todo: do we need this in case of blueprints?
-        ambariContext.getController().registerRackChange(ambariContext.getClusterName(topology.getClusterId()));
+        ambariContext.getController().registerRackChange(topology.getClusterId());
       } catch (AmbariException e) {
         LOG.error("Could not register rack change for cluster id {}", topology.getClusterId());
         LOG.error("Exception during rack change: ", e);

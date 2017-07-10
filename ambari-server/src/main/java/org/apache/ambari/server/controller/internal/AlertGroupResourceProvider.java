@@ -48,6 +48,7 @@ import org.apache.ambari.server.orm.entities.AlertTargetEntity;
 import org.apache.ambari.server.security.authorization.AuthorizationException;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.alert.AlertTarget;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.inject.Inject;
@@ -63,14 +64,14 @@ public class AlertGroupResourceProvider extends
 
   public static final String ALERT_GROUP = "AlertGroup";
   public static final String ALERT_GROUP_ID = "AlertGroup/id";
-  public static final String ALERT_GROUP_CLUSTER_NAME = "AlertGroup/cluster_name";
+  public static final String ALERT_GROUP_CLUSTER_ID = "AlertGroup/cluster_id";
   public static final String ALERT_GROUP_NAME = "AlertGroup/name";
   public static final String ALERT_GROUP_DEFAULT = "AlertGroup/default";
   public static final String ALERT_GROUP_DEFINITIONS = "AlertGroup/definitions";
   public static final String ALERT_GROUP_TARGETS = "AlertGroup/targets";
 
   private static final Set<String> PK_PROPERTY_IDS = new HashSet<>(
-    Arrays.asList(ALERT_GROUP_ID, ALERT_GROUP_CLUSTER_NAME));
+    Arrays.asList(ALERT_GROUP_ID, ALERT_GROUP_CLUSTER_ID));
 
   /**
    * The property ids for an alert group resource.
@@ -85,7 +86,7 @@ public class AlertGroupResourceProvider extends
   static {
     // properties
     PROPERTY_IDS.add(ALERT_GROUP_ID);
-    PROPERTY_IDS.add(ALERT_GROUP_CLUSTER_NAME);
+    PROPERTY_IDS.add(ALERT_GROUP_CLUSTER_ID);
     PROPERTY_IDS.add(ALERT_GROUP_NAME);
     PROPERTY_IDS.add(ALERT_GROUP_DEFAULT);
     PROPERTY_IDS.add(ALERT_GROUP_DEFINITIONS);
@@ -93,7 +94,7 @@ public class AlertGroupResourceProvider extends
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.AlertGroup, ALERT_GROUP_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_GROUP_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, ALERT_GROUP_CLUSTER_ID);
   }
 
   /**
@@ -144,9 +145,9 @@ public class AlertGroupResourceProvider extends
     Set<String> requestPropertyIds = getRequestPropertyIds(request, predicate);
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = (String) propertyMap.get(ALERT_GROUP_CLUSTER_NAME);
+      Long clusterId = MapUtils.parseLong(propertyMap, ALERT_GROUP_CLUSTER_ID);
 
-      if (null == clusterName || clusterName.isEmpty()) {
+      if (null == clusterId) {
         throw new IllegalArgumentException("The cluster name is required when retrieving alert groups");
       }
 
@@ -159,13 +160,13 @@ public class AlertGroupResourceProvider extends
           } catch (AmbariException e) {
             throw new SystemException(e.getMessage(), e);
           }
-          results.add(toResource(clusterName, entity, requestPropertyIds));
+          results.add(toResource(clusterId, entity, requestPropertyIds));
         }
       } else {
         Cluster cluster = null;
 
         try {
-          cluster = getManagementController().getClusters().getCluster(clusterName);
+          cluster = getManagementController().getClusters().getCluster(clusterId);
         } catch (AmbariException ae) {
           throw new NoSuchResourceException("Parent Cluster resource doesn't exist", ae);
         }
@@ -175,7 +176,7 @@ public class AlertGroupResourceProvider extends
         for (AlertGroupEntity entity : entities) {
           try {
             if (AlertResourceProviderUtils.hasViewAuthorization(entity, getClusterResourceId(entity.getClusterId()))) {
-              results.add(toResource(clusterName, entity, requestPropertyIds));
+              results.add(toResource(clusterId, entity, requestPropertyIds));
             }
           } catch (AmbariException e) {
             throw new SystemException(e.getMessage(), e);
@@ -273,20 +274,20 @@ public class AlertGroupResourceProvider extends
       AlertGroupEntity entity = new AlertGroupEntity();
 
       String name = (String) requestMap.get(ALERT_GROUP_NAME);
-      String clusterName = (String) requestMap.get(ALERT_GROUP_CLUSTER_NAME);
+      Long clusterId = MapUtils.parseLong(requestMap, ALERT_GROUP_CLUSTER_ID);
 
       if (StringUtils.isEmpty(name)) {
         throw new IllegalArgumentException(
             "The name of the alert group is required.");
       }
 
-      if (StringUtils.isEmpty(clusterName)) {
+      if (null == clusterId) {
         throw new IllegalArgumentException(
             "The name of the cluster is required when creating an alert group.");
       }
 
       Cluster cluster = getManagementController().getClusters().getCluster(
-          clusterName);
+          clusterId);
 
       entity.setClusterId(cluster.getClusterId());
       entity.setGroupName(name);
@@ -403,13 +404,13 @@ public class AlertGroupResourceProvider extends
    *          the properties that were requested or {@code null} for all.
    * @return the resource representation of the entity (never {@code null}).
    */
-  private Resource toResource(String clusterName, AlertGroupEntity entity,
+  private Resource toResource(Long clusterId, AlertGroupEntity entity,
       Set<String> requestedIds) {
 
     Resource resource = new ResourceImpl(Resource.Type.AlertGroup);
     resource.setProperty(ALERT_GROUP_ID, entity.getGroupId());
     resource.setProperty(ALERT_GROUP_NAME, entity.getGroupName());
-    resource.setProperty(ALERT_GROUP_CLUSTER_NAME, clusterName);
+    resource.setProperty(ALERT_GROUP_CLUSTER_ID, clusterId);
 
     setResourceProperty(resource, ALERT_GROUP_DEFAULT, entity.isDefault(),
         requestedIds);

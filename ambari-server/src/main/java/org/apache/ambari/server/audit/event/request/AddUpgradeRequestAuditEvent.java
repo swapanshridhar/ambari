@@ -41,9 +41,9 @@ public class AddUpgradeRequestAuditEvent extends RequestAuditEvent {
     private String upgradeType;
 
     /**
-     * Cluster name
+     * Cluster Id
      */
-    private String clusterName;
+    private Long clusterId;
 
 
     public AddUpgradeRequestAuditEventBuilder() {
@@ -69,8 +69,8 @@ public class AddUpgradeRequestAuditEvent extends RequestAuditEvent {
         .append(repositoryVersionId)
         .append("), Upgrade type(")
         .append(upgradeType)
-        .append("), Cluster name(")
-        .append(clusterName)
+        .append("), Cluster Id(")
+        .append(clusterId)
         .append(")");
     }
 
@@ -84,8 +84,8 @@ public class AddUpgradeRequestAuditEvent extends RequestAuditEvent {
       return this;
     }
 
-    public AddUpgradeRequestAuditEventBuilder withClusterName(String clusterName) {
-      this.clusterName = clusterName;
+    public AddUpgradeRequestAuditEventBuilder withClusterId(Long clusterId) {
+      this.clusterId = clusterId;
       return this;
     }
   }

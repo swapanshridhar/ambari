@@ -1,0 +1,41 @@
+***************
+*** 44,62 ****
+    private String hostName;
+  
+    /**
+-    * Parent cluster name.
+     */
+-   private String clusterName;
+  
+    /**
+     * Constructor.
+     *
+     * @param hostName name of the host
+     */
+-   public HostStackVersionService(ApiVersion apiVersion, String hostName, String clusterName) {
+      super(apiVersion);
+      this.hostName = hostName;
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+--- 44,62 ----
+    private String hostName;
+  
+    /**
++    * Parent cluster Id.
+     */
++   private Long clusterId;
+  
+    /**
+     * Constructor.
+     *
+     * @param hostName name of the host
+     */
++   public HostStackVersionService(ApiVersion apiVersion, String hostName, Long clusterId) {
+      super(apiVersion);
+      this.hostName = hostName;
++     this.clusterId = clusterId;
+    }
+  
+    /**

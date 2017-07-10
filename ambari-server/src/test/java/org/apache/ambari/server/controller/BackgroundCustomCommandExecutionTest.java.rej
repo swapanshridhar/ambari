@@ -1,0 +1,67 @@
+***************
+*** 204,235 ****
+      host.setHostAttributes(hostAttributes);
+    }
+  
+-   private void createCluster(String clusterName) throws AmbariException, AuthorizationException {
+-     ClusterRequest r = new ClusterRequest(null, clusterName, State.INSTALLED.name(), SecurityType.NONE, "HDP-2.0.6", null);
+      controller.createCluster(r);
+    }
+  
+-   private void createService(String clusterName,
+        String serviceName, State desiredState) throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
+-     ServiceRequest r1 = new ServiceRequest(clusterName, serviceName, dStateStr);
+      Set<ServiceRequest> requests = new HashSet<>();
+      requests.add(r1);
+  
+      ServiceResourceProviderTest.createServices(controller, requests);
+    }
+  
+-   private void createServiceComponent(String clusterName,
+        String serviceName, String componentName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
+-     ServiceComponentRequest r = new ServiceComponentRequest(clusterName,
+          serviceName, componentName, dStateStr);
+      Set<ServiceComponentRequest> requests =
+        new HashSet<>();
+--- 204,235 ----
+      host.setHostAttributes(hostAttributes);
+    }
+  
++   private void createCluster(Long clusterId, String clusterName) throws AmbariException, AuthorizationException {
++     ClusterRequest r = new ClusterRequest(clusterId, clusterName, State.INSTALLED.name(), SecurityType.NONE, "HDP-2.0.6", null);
+      controller.createCluster(r);
+    }
+  
++   private void createService(Long clusterId,
+        String serviceName, State desiredState) throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
++     ServiceRequest r1 = new ServiceRequest(clusterId, serviceName, dStateStr);
+      Set<ServiceRequest> requests = new HashSet<>();
+      requests.add(r1);
+  
+      ServiceResourceProviderTest.createServices(controller, requests);
+    }
+  
++   private void createServiceComponent(Long clusterId,
+        String serviceName, String componentName, State desiredState)
+        throws AmbariException, AuthorizationException {
+      String dStateStr = null;
+      if (desiredState != null) {
+        dStateStr = desiredState.toString();
+      }
++     ServiceComponentRequest r = new ServiceComponentRequest(clusterId,
+          serviceName, componentName, dStateStr);
+      Set<ServiceComponentRequest> requests =
+        new HashSet<>();

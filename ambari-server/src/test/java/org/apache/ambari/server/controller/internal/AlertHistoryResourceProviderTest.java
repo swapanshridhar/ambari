@@ -164,7 +164,7 @@ public class AlertHistoryResourceProviderTest {
    */
   private void testGetResourcesClusterPredicate(Authentication authentication) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME,
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID,
         AlertHistoryResourceProvider.ALERT_HISTORY_DEFINITION_ID,
         AlertHistoryResourceProvider.ALERT_HISTORY_DEFINITION_NAME,
         AlertHistoryResourceProvider.ALERT_HISTORY_COMPONENT_NAME,
@@ -172,7 +172,7 @@ public class AlertHistoryResourceProviderTest {
         AlertHistoryResourceProvider.ALERT_HISTORY_STATE);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").toPredicate();
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals(1L).toPredicate();
 
     expect(m_dao.findAll(EasyMock.anyObject(AlertHistoryRequest.class))).andReturn(
         getMockEntities());
@@ -237,7 +237,7 @@ public class AlertHistoryResourceProviderTest {
    */
   public void testGetSingleResource(Authentication authentication) throws Exception {
     Request request = PropertyHelper.getReadRequest(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME,
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID,
         AlertHistoryResourceProvider.ALERT_HISTORY_DEFINITION_ID,
         AlertHistoryResourceProvider.ALERT_HISTORY_DEFINITION_NAME,
         AlertHistoryResourceProvider.ALERT_HISTORY_COMPONENT_NAME,
@@ -245,7 +245,7 @@ public class AlertHistoryResourceProviderTest {
         AlertHistoryResourceProvider.ALERT_HISTORY_STATE);
 
     Predicate predicate = new PredicateBuilder().property(
-        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_NAME).equals("c1").and().property(
+        AlertHistoryResourceProvider.ALERT_HISTORY_CLUSTER_ID).equals(1L).and().property(
         AlertHistoryResourceProvider.ALERT_HISTORY_ID).equals("1").toPredicate();
 
     expect(m_dao.findAll(EasyMock.anyObject(AlertHistoryRequest.class))).andReturn(

@@ -131,7 +131,7 @@ public class ServerActionExecutorTest {
         "{\"host_param\":\"param_value\"}", "{\"stage_param\":\"param_value\"}");
 
     stage.addServerActionCommand(ManualStageAction.class.getName(),
-        null, Role.AMBARI_SERVER_ACTION, RoleCommand.EXECUTE, "cluster1",
+        null, Role.AMBARI_SERVER_ACTION, RoleCommand.EXECUTE, 1L,
         new ServiceComponentHostServerActionEvent(StageUtils.getHostName(), System.currentTimeMillis()),
         Collections.<String, String> emptyMap(), null, null, 1200, false, false);
 
@@ -328,7 +328,7 @@ public class ServerActionExecutorTest {
 
             stage.setStageId(stageId);
             stage.addServerActionCommand(MockServerAction.class.getName(), null,
-                Role.AMBARI_SERVER_ACTION, RoleCommand.EXECUTE, "cluster1",
+                Role.AMBARI_SERVER_ACTION, RoleCommand.EXECUTE, 1L,
                 new ServiceComponentHostServerActionEvent(SERVER_HOST_NAME, System.currentTimeMillis()),
                 payload, "command detail", null, timeout, false, false);
 

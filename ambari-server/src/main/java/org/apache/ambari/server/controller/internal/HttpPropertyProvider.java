@@ -46,7 +46,7 @@ public class HttpPropertyProvider extends BaseProvider implements PropertyProvid
   protected final static Logger LOG = LoggerFactory.getLogger(HttpPropertyProvider.class);
 
   private final StreamProvider streamProvider;
-  private final String clusterNamePropertyId;
+  private final String clusterIdPropertyId;
   private final String hostNamePropertyId;
   private final String componentNamePropertyId;
   private final Clusters clusters;
@@ -58,14 +58,14 @@ public class HttpPropertyProvider extends BaseProvider implements PropertyProvid
   public HttpPropertyProvider(
       StreamProvider stream,
       Clusters clusters,
-      String clusterNamePropertyId,
+      String clusterIdPropertyId,
       String hostNamePropertyId,
       String componentNamePropertyId,
       Map<String, List<HttpPropertyRequest>> httpPropertyRequests) {
 
     super(getSupportedProperties(httpPropertyRequests));
     this.streamProvider = stream;
-    this.clusterNamePropertyId = clusterNamePropertyId;
+    this.clusterIdPropertyId = clusterIdPropertyId;
     this.hostNamePropertyId = hostNamePropertyId;
     this.componentNamePropertyId = componentNamePropertyId;
     this.clusters = clusters;
@@ -101,15 +101,15 @@ public class HttpPropertyProvider extends BaseProvider implements PropertyProvid
     }
 
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+      Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
       String hostName = (String) resource.getPropertyValue(hostNamePropertyId);
       String componentName = (String) resource.getPropertyValue(componentNamePropertyId);
 
-      if (clusterName != null && hostName != null && componentName != null &&
+      if (clusterId != null && hostName != null && componentName != null &&
           httpPropertyRequests.containsKey(componentName)) {
 
         try {
-          Cluster cluster = clusters.getCluster(clusterName);
+          Cluster cluster = clusters.getCluster(clusterId);
 
           List<HttpPropertyRequest> httpPropertyRequestList = httpPropertyRequests.get(componentName);
 
@@ -117,7 +117,7 @@ public class HttpPropertyProvider extends BaseProvider implements PropertyProvid
             populateResource(httpPropertyRequest, resource, cluster, hostName);
           }
         } catch (AmbariException e) {
-          String msg = String.format("Could not load cluster with name %s.", clusterName);
+          String msg = String.format("Could not load cluster with name %s.", clusterId);
           LOG.debug(msg, e);
           throw new SystemException(msg, e);
         }

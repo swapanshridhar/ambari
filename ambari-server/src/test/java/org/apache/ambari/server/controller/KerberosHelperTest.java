@@ -1150,7 +1150,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     metaInfo.init();
 
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
 
     kerberosHelper.toggleKerberos(cluster, SecurityType.KERBEROS, requestStageContainer, null);
@@ -1357,7 +1357,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     metaInfo.init();
 
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
 
     kerberosHelper.toggleKerberos(cluster, SecurityType.NONE, requestStageContainer, true);
@@ -1568,7 +1568,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     metaInfo.init();
 
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
 
     Assert.assertNotNull(kerberosHelper.executeCustomOperations(cluster, Collections.singletonMap(KerberosHelper.DIRECTIVE_REGENERATE_KEYTABS, "true"), requestStageContainer, true));
@@ -2958,7 +2958,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     serviceComponentFilter.put("SERVICE1", null);
 
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
 
     kerberosHelper.ensureIdentities(cluster, serviceComponentFilter, filteredHosts, identityFilter, null, requestStageContainer, true);
@@ -3157,7 +3157,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     serviceComponentFilter.put("SERVICE1", null);
 
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
 
     kerberosHelper.deleteIdentities(cluster, serviceComponentFilter, null, identityFilter, requestStageContainer, true);
@@ -3340,7 +3340,7 @@ public class KerberosHelperTest extends EasyMockSupport {
 
     Map<String, String> commandParamsStage = new HashMap<>();
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
     kerberosHelper.createTestIdentity(cluster, commandParamsStage, requestStageContainer);
 
@@ -3511,7 +3511,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     commandParamsStage.put("keytab_file", "${keytab_dir}/kerberos.service_check.keytab");
 
     CredentialStoreService credentialStoreService = injector.getInstance(CredentialStoreService.class);
-    credentialStoreService.setCredential(cluster.getClusterName(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
+    credentialStoreService.setCredential(cluster.getClusterId(), KerberosHelper.KDC_ADMINISTRATOR_CREDENTIAL_ALIAS,
         PrincipalKeyCredential, CredentialStoreType.TEMPORARY);
     kerberosHelper.deleteTestIdentity(cluster, commandParamsStage, requestStageContainer);
 
@@ -3788,7 +3788,7 @@ public class KerberosHelperTest extends EasyMockSupport {
     metaInfo.init();
 
     Map<String, Collection<KerberosIdentityDescriptor>> identities;
-    identities = kerberosHelper.getActiveIdentities(clusterName, hostName, serviceName, componentName, replaceHostNames);
+    identities = kerberosHelper.getActiveIdentities((clusters.getCluster(clusterName)).getClusterId(), hostName, serviceName, componentName, replaceHostNames);
 
     verifyAll();
 

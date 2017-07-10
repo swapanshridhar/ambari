@@ -304,7 +304,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
         managementController);
 
     Predicate predicate = new PredicateBuilder()
-        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID).equals("c1")
         .toPredicate();
 
     Set<Resource> results = provider.getResources(request, predicate);
@@ -384,7 +384,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
         managementController);
 
     Predicate clusterPredicate = new PredicateBuilder()
-        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID).equals("c1")
         .toPredicate();
     Predicate typePredicate;
     Set<Resource> results;
@@ -502,7 +502,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
         managementController);
 
     Predicate clusterPredicate = new PredicateBuilder()
-        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID).equals("c1")
         .toPredicate();
     Predicate typePredicate;
     Set<Resource> results;
@@ -517,7 +517,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
     Assert.assertEquals(1, results.size());
 
     for (Resource result : results) {
-      Assert.assertEquals("c1", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals("c1", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("STACK", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID));
 
       // Reconstruct the deconstructed Kerberos Descriptor
@@ -538,7 +538,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
     Assert.assertEquals(1, results.size());
 
     for (Resource result : results) {
-      Assert.assertEquals("c1", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals("c1", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals("USER", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID));
 
       // Reconstruct the deconstructed Kerberos Descriptor
@@ -625,7 +625,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
         managementController);
 
     Predicate predicate1 = new PredicateBuilder()
-        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID).equals("c1")
         .toPredicate();
     Predicate predicate2 = new PredicateBuilder()
         .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID).equals("BOGUS")
@@ -772,7 +772,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
         managementController);
 
     Predicate predicate1 = new PredicateBuilder()
-        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID).equals("c1")
+        .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID).equals("c1")
         .toPredicate();
     Predicate predicate2 = new PredicateBuilder()
         .property(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID).equals("alias1")
@@ -786,7 +786,7 @@ public class ClusterKerberosDescriptorResourceProviderTest extends EasyMockSuppo
 
   private void testResults(String type, Map<String, Object> expectedData, Set<Resource> results) {
     for (Resource result : results) {
-      Assert.assertEquals("c1", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_NAME_PROPERTY_ID));
+      Assert.assertEquals("c1", result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_CLUSTER_ID_PROPERTY_ID));
       Assert.assertEquals(type, result.getPropertyValue(ClusterKerberosDescriptorResourceProvider.CLUSTER_KERBEROS_DESCRIPTOR_TYPE_PROPERTY_ID));
 
       // Reconstruct the deconstructed Kerberos Descriptor

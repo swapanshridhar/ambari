@@ -1,0 +1,72 @@
+***************
+*** 39,57 ****
+   */
+  public class JobService extends BaseService {
+    private String workflowId;
+-   private String clusterName;
+  
+    /**
+     * Constructor.
+     * 
+-    * @param clusterName
+-    *          cluster name
+     * @param workflowId
+     *          workflow id
+     */
+-   public JobService(ApiVersion apiVersion, String clusterName, String workflowId) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+      this.workflowId = workflowId;
+    }
+  
+--- 39,57 ----
+   */
+  public class JobService extends BaseService {
+    private String workflowId;
++   private Long clusterId;
+  
+    /**
+     * Constructor.
+     * 
++    * @param clusterId
++    *          cluster Id
+     * @param workflowId
+     *          workflow id
+     */
++   public JobService(ApiVersion apiVersion, Long clusterId, String workflowId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+      this.workflowId = workflowId;
+    }
+  
+***************
+*** 96,109 ****
+    @Path("{jobId}/taskattempts")
+    public TaskAttemptService getTaskAttemptHandler(
+        @PathParam("jobId") String jobId) {
+-     return new TaskAttemptService(m_apiVersion, clusterName, workflowId, jobId);
+    }
+  
+    /**
+     * Create a job resource instance.
+     * 
+-    * @param clusterName
+-    *          cluster name
+     * @param workflowId
+     *          workflow id
+     * @param jobId
+--- 96,109 ----
+    @Path("{jobId}/taskattempts")
+    public TaskAttemptService getTaskAttemptHandler(
+        @PathParam("jobId") String jobId) {
++     return new TaskAttemptService(m_apiVersion, clusterId, workflowId, jobId);
+    }
+  
+    /**
+     * Create a job resource instance.
+     * 
++    * @param clusterId
++    *          cluster Id
+     * @param workflowId
+     *          workflow id
+     * @param jobId

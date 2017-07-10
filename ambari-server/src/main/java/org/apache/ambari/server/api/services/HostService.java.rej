@@ -1,0 +1,356 @@
+***************
+*** 45,51 ****
+    /**
+     * Parent cluster id.
+     */
+-   private String m_clusterName;
+  
+    /**
+     * Constructor.
+--- 45,51 ----
+    /**
+     * Parent cluster id.
+     */
++   private Long m_clusterId;
+  
+    /**
+     * Constructor.
+***************
+*** 57,71 ****
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster id
+     */
+-   public HostService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+    }
+  
+    /**
+-    * Handles GET /clusters/{clusterID}/hosts/{hostID} and /hosts/{hostID}
+     * Get a specific host.
+     *
+     * @param headers  http headers
+--- 57,71 ----
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster id
+     */
++   public HostService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+    }
+  
+    /**
++    * Handles GET /clusters/{clusterId}/hosts/{hostID} and /hosts/{hostID}
+     * Get a specific host.
+     *
+     * @param headers  http headers
+***************
+*** 80,90 ****
+                            @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, body, ui, Request.Type.GET,
+-         createHostResource(m_clusterName, hostName, ui));
+    }
+  
+    /**
+-    * Handles GET /clusters/{clusterID}/hosts and /hosts
+     * Get all hosts for a cluster.
+     *
+     * @param headers http headers
+--- 80,90 ----
+                            @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, body, ui, Request.Type.GET,
++         createHostResource(m_clusterId, hostName, ui));
+    }
+  
+    /**
++    * Handles GET /clusters/{clusterId}/hosts and /hosts
+     * Get all hosts for a cluster.
+     *
+     * @param headers http headers
+***************
+*** 95,105 ****
+    @Produces("text/plain")
+    public Response getHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+      return handleRequest(headers, body, ui, Request.Type.GET,
+-         createHostResource(m_clusterName, null, ui));
+    }
+  
+    /**
+-    * Handles POST /clusters/{clusterID}/hosts
+     * Create hosts by specifying an array of hosts in the http body.
+     * This is used to create multiple hosts in a single request.
+     *
+--- 95,105 ----
+    @Produces("text/plain")
+    public Response getHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+      return handleRequest(headers, body, ui, Request.Type.GET,
++         createHostResource(m_clusterId, null, ui));
+    }
+  
+    /**
++    * Handles POST /clusters/{clusterId}/hosts
+     * Create hosts by specifying an array of hosts in the http body.
+     * This is used to create multiple hosts in a single request.
+     *
+***************
+*** 114,124 ****
+    public Response createHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+      return handleRequest(headers, body, ui, Request.Type.POST,
+-         createHostResource(m_clusterName, null, ui));
+    }
+  
+    /**
+-    * Handles POST /clusters/{clusterID}/hosts/{hostID}
+     * Create a specific host.
+     *
+     * @param body     http body
+--- 114,124 ----
+    public Response createHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+      return handleRequest(headers, body, ui, Request.Type.POST,
++         createHostResource(m_clusterId, null, ui));
+    }
+  
+    /**
++    * Handles POST /clusters/{clusterId}/hosts/{hostID}
+     * Create a specific host.
+     *
+     * @param body     http body
+***************
+*** 135,145 ****
+                            @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, body, ui, Request.Type.POST,
+-         createHostResource(m_clusterName, hostName, ui));
+    }
+  
+    /**
+-    * Handles PUT /clusters/{clusterID}/hosts/{hostID}
+     * Updates a specific host.
+     *
+     * @param body     http body
+--- 135,145 ----
+                            @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, body, ui, Request.Type.POST,
++         createHostResource(m_clusterId, hostName, ui));
+    }
+  
+    /**
++    * Handles PUT /clusters/{clusterId}/hosts/{hostID}
+     * Updates a specific host.
+     *
+     * @param body     http body
+***************
+*** 156,166 ****
+                            @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, body, ui, Request.Type.PUT,
+-         createHostResource(m_clusterName, hostName, ui));
+    }
+  
+    /**
+-    * Handles PUT /clusters/{clusterID}/hosts
+     * Updates multiple hosts.
+     *
+     * @param body     http body
+--- 156,166 ----
+                            @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, body, ui, Request.Type.PUT,
++         createHostResource(m_clusterId, hostName, ui));
+    }
+  
+    /**
++    * Handles PUT /clusters/{clusterId}/hosts
+     * Updates multiple hosts.
+     *
+     * @param body     http body
+***************
+*** 174,184 ****
+    public Response updateHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+      return handleRequest(headers, body, ui, Request.Type.PUT,
+-         createHostResource(m_clusterName, null, ui));
+    }
+  
+    /**
+-    * Handles DELETE /clusters/{clusterID}/hosts/{hostID}
+     * Deletes a specific host.
+     *
+     * @param headers  http headers
+--- 174,184 ----
+    public Response updateHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+      return handleRequest(headers, body, ui, Request.Type.PUT,
++         createHostResource(m_clusterId, null, ui));
+    }
+  
+    /**
++    * Handles DELETE /clusters/{clusterId}/hosts/{hostID}
+     * Deletes a specific host.
+     *
+     * @param headers  http headers
+***************
+*** 194,200 ****
+                               @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, null, ui, Request.Type.DELETE,
+-         createHostResource(m_clusterName, hostName, ui));
+    }
+  
+    @DELETE
+--- 194,200 ----
+                               @PathParam("hostName") String hostName) {
+  
+      return handleRequest(headers, null, ui, Request.Type.DELETE,
++         createHostResource(m_clusterId, hostName, ui));
+    }
+  
+    @DELETE
+***************
+*** 202,208 ****
+    public Response deleteHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+      return handleRequest(headers, body, ui, Request.Type.DELETE,
+-             createHostResource(m_clusterName, null, ui));
+    }
+  
+    /**
+--- 202,208 ----
+    public Response deleteHosts(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+  
+      return handleRequest(headers, body, ui, Request.Type.DELETE,
++             createHostResource(m_clusterId, null, ui));
+    }
+  
+    /**
+***************
+*** 213,219 ****
+     */
+    @Path("{hostName}/host_components")
+    public HostComponentService getHostComponentHandler(@PathParam("hostName") String hostName) {
+-     return new HostComponentService(m_apiVersion, m_clusterName, hostName);
+    }
+  
+    /**
+--- 213,219 ----
+     */
+    @Path("{hostName}/host_components")
+    public HostComponentService getHostComponentHandler(@PathParam("hostName") String hostName) {
++     return new HostComponentService(m_apiVersion, m_clusterId, hostName);
+    }
+  
+    /**
+***************
+*** 224,230 ****
+     */
+    @Path("{hostName}/kerberos_identities")
+    public HostKerberosIdentityService getHostKerberosIdentityHandler(@PathParam("hostName") String hostName) {
+-     return new HostKerberosIdentityService(m_apiVersion, m_clusterName, hostName);
+    }
+  
+    /**
+--- 224,230 ----
+     */
+    @Path("{hostName}/kerberos_identities")
+    public HostKerberosIdentityService getHostKerberosIdentityHandler(@PathParam("hostName") String hostName) {
++     return new HostKerberosIdentityService(m_apiVersion, m_clusterId, hostName);
+    }
+  
+    /**
+***************
+*** 235,241 ****
+     */
+    @Path("{hostName}/alerts")
+    public AlertService getAlertHandler(@PathParam("hostName") String hostName) {
+-     return new AlertService(m_apiVersion, m_clusterName, null, hostName);
+    }
+  
+    /**
+--- 235,241 ----
+     */
+    @Path("{hostName}/alerts")
+    public AlertService getAlertHandler(@PathParam("hostName") String hostName) {
++     return new AlertService(m_apiVersion, m_clusterId, null, hostName);
+    }
+  
+    /**
+***************
+*** 253,259 ****
+        @Context javax.ws.rs.core.Request request,
+        @PathParam("hostName") String hostName) {
+  
+-     return new AlertHistoryService(m_apiVersion, m_clusterName, null, hostName);
+    }
+  
+    /**
+--- 253,259 ----
+        @Context javax.ws.rs.core.Request request,
+        @PathParam("hostName") String hostName) {
+  
++     return new AlertHistoryService(m_apiVersion, m_clusterId, null, hostName);
+    }
+  
+    /**
+***************
+*** 270,276 ****
+    public HostStackVersionService getHostStackVersionService(@Context javax.ws.rs.core.Request request,
+        @PathParam("hostName") String hostName) {
+  
+-     return new HostStackVersionService(m_apiVersion, hostName, m_clusterName);
+    }
+  
+    /**
+--- 270,276 ----
+    public HostStackVersionService getHostStackVersionService(@Context javax.ws.rs.core.Request request,
+        @PathParam("hostName") String hostName) {
+  
++     return new HostStackVersionService(m_apiVersion, hostName, m_clusterId);
+    }
+  
+    /**
+***************
+*** 278,294 ****
+     *
+     *
+     *
+-    * @param clusterName  cluster
+     * @param hostName     host name
+     * @param ui           uri information
+     *
+     * @return a host resource instance
+     */
+-   ResourceInstance createHostResource(String clusterName, String hostName, UriInfo ui) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+      mapIds.put(Resource.Type.Host, hostName);
+-     if (clusterName != null) {
+-       mapIds.put(Resource.Type.Cluster, clusterName);
+      }
+  
+      return createResource(Resource.Type.Host, mapIds);
+--- 278,294 ----
+     *
+     *
+     *
++    * @param clusterId     cluster Id
+     * @param hostName     host name
+     * @param ui           uri information
+     *
+     * @return a host resource instance
+     */
++   ResourceInstance createHostResource(Long clusterId, String hostName, UriInfo ui) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+      mapIds.put(Resource.Type.Host, hostName);
++     if (clusterId != null) {
++       mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      }
+  
+      return createResource(Resource.Type.Host, mapIds);

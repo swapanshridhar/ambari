@@ -17,7 +17,7 @@
  */
 package org.apache.ambari.server.controller.internal;
 
-import static org.apache.ambari.server.controller.internal.ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID;
+import static org.apache.ambari.server.controller.internal.ClusterPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID;
 import static org.apache.ambari.server.controller.internal.ViewPrivilegeResourceProvider.PRIVILEGE_INSTANCE_NAME_PROPERTY_ID;
 import static org.apache.ambari.server.controller.internal.ViewPrivilegeResourceProvider.PRIVILEGE_VIEW_NAME_PROPERTY_ID;
 import static org.apache.ambari.server.controller.internal.ViewPrivilegeResourceProvider.PRIVILEGE_VIEW_VERSION_PROPERTY_ID;
@@ -70,7 +70,7 @@ public class AmbariPrivilegeResourceProvider extends PrivilegeResourceProvider<O
     propertyIds.add(PRIVILEGE_VIEW_NAME_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_VIEW_VERSION_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_INSTANCE_NAME_PROPERTY_ID);
-    propertyIds.add(PRIVILEGE_CLUSTER_NAME_PROPERTY_ID);
+    propertyIds.add(PRIVILEGE_CLUSTER_ID_PROPERTY_ID);
     propertyIds.add(PRIVILEGE_TYPE_PROPERTY_ID);
 
   }
@@ -166,7 +166,7 @@ public class AmbariPrivilegeResourceProvider extends PrivilegeResourceProvider<O
             break;
           case CLUSTER:
             ClusterEntity clusterEntity = (ClusterEntity) resourceEntities.get(resourceEntity.getId());
-            setResourceProperty(resource, PRIVILEGE_CLUSTER_NAME_PROPERTY_ID, clusterEntity.getClusterName(), requestedIds);
+            setResourceProperty(resource, PRIVILEGE_CLUSTER_ID_PROPERTY_ID, clusterEntity.getClusterId(), requestedIds);
             break;
           case VIEW:
             ViewInstanceEntity viewInstanceEntity = (ViewInstanceEntity) resourceEntities.get(resourceEntity.getId());

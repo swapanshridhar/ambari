@@ -171,7 +171,7 @@ public class UserAuthorizationResourceProviderTest extends EasyMockSupport {
     expect(clusterResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID))
         .andReturn("CLUSTER")
         .anyTimes();
-    expect(clusterResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID))
+    expect(clusterResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID))
         .andReturn("Cluster Name")
         .anyTimes();
 
@@ -199,7 +199,7 @@ public class UserAuthorizationResourceProviderTest extends EasyMockSupport {
     expect(adminResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID))
         .andReturn("ADMIN")
         .anyTimes();
-    expect(adminResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID))
+    expect(adminResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID))
         .andReturn(null)
         .anyTimes();
 
@@ -210,7 +210,7 @@ public class UserAuthorizationResourceProviderTest extends EasyMockSupport {
     expect(emptyResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID))
         .andReturn("ADMIN")
         .anyTimes();
-    expect(emptyResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID))
+    expect(emptyResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID))
         .andReturn(null)
         .anyTimes();
 
@@ -221,7 +221,7 @@ public class UserAuthorizationResourceProviderTest extends EasyMockSupport {
     expect(nullResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_TYPE_PROPERTY_ID))
         .andReturn("ADMIN")
         .anyTimes();
-    expect(nullResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_NAME_PROPERTY_ID))
+    expect(nullResource.getPropertyValue(UserPrivilegeResourceProvider.PRIVILEGE_CLUSTER_ID_PROPERTY_ID))
         .andReturn(null)
         .anyTimes();
 
@@ -347,7 +347,7 @@ public class UserAuthorizationResourceProviderTest extends EasyMockSupport {
         case "CLUSTER.DO_SOMETHING":
           Assert.assertEquals("CLUSTER DO_SOMETHING", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_NAME_PROPERTY_ID));
           Assert.assertEquals("CLUSTER", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_RESOURCE_TYPE_PROPERTY_ID));
-          Assert.assertEquals("Cluster Name", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_CLUSTER_NAME_PROPERTY_ID));
+          Assert.assertEquals("Cluster Name", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_CLUSTER_ID_PROPERTY_ID));
           Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_NAME_PROPERTY_ID));
           Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_VERSION_PROPERTY_ID));
           Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_INSTANCE_NAME_PROPERTY_ID));
@@ -358,12 +358,12 @@ public class UserAuthorizationResourceProviderTest extends EasyMockSupport {
           Assert.assertEquals("View Name", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_NAME_PROPERTY_ID));
           Assert.assertEquals("View Version", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_VERSION_PROPERTY_ID));
           Assert.assertEquals("View Instance Name", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_INSTANCE_NAME_PROPERTY_ID));
-          Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_CLUSTER_NAME_PROPERTY_ID));
+          Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_CLUSTER_ID_PROPERTY_ID));
           break;
         case "ADMIN.DO_SOMETHING":
           Assert.assertEquals("ADMIN DO_SOMETHING", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_NAME_PROPERTY_ID));
           Assert.assertEquals("ADMIN", resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_RESOURCE_TYPE_PROPERTY_ID));
-          Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_CLUSTER_NAME_PROPERTY_ID));
+          Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_CLUSTER_ID_PROPERTY_ID));
           Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_NAME_PROPERTY_ID));
           Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_VERSION_PROPERTY_ID));
           Assert.assertNull(resource.getPropertyValue(UserAuthorizationResourceProvider.AUTHORIZATION_VIEW_INSTANCE_NAME_PROPERTY_ID));

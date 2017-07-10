@@ -60,6 +60,7 @@ import org.apache.ambari.server.state.ServiceComponentFactory;
 import org.apache.ambari.server.state.ServiceComponentHost;
 import org.apache.ambari.server.state.StackId;
 import org.apache.ambari.server.state.State;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
@@ -76,7 +77,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
   // ----- Property ID constants ---------------------------------------------
 
   // Components
-  protected static final String COMPONENT_CLUSTER_NAME_PROPERTY_ID    = "ServiceComponentInfo/cluster_name";
+  protected static final String COMPONENT_CLUSTER_ID_PROPERTY_ID    = "ServiceComponentInfo/cluster_id";
   protected static final String COMPONENT_SERVICE_NAME_PROPERTY_ID    = "ServiceComponentInfo/service_name";
   protected static final String COMPONENT_COMPONENT_NAME_PROPERTY_ID  = "ServiceComponentInfo/component_name";
   protected static final String COMPONENT_DISPLAY_NAME_PROPERTY_ID    = "ServiceComponentInfo/display_name";
@@ -99,7 +100,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
   private static final String QUERY_PARAMETERS_RUN_SMOKE_TEST_ID = "params/run_smoke_test";
 
   private static Set<String> pkPropertyIds = Sets.newHashSet(
-          COMPONENT_CLUSTER_NAME_PROPERTY_ID,
+          COMPONENT_CLUSTER_ID_PROPERTY_ID,
           COMPONENT_SERVICE_NAME_PROPERTY_ID,
           COMPONENT_COMPONENT_NAME_PROPERTY_ID);
 
@@ -211,7 +212,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
 
     for (ServiceComponentResponse response : responses) {
       Resource resource = new ResourceImpl(Resource.Type.Component);
-      setResourceProperty(resource, COMPONENT_CLUSTER_NAME_PROPERTY_ID, response.getClusterName(), requestedIds);
+      setResourceProperty(resource, COMPONENT_CLUSTER_ID_PROPERTY_ID, response.getClusterId(), requestedIds);
       setResourceProperty(resource, COMPONENT_SERVICE_NAME_PROPERTY_ID, response.getServiceName(), requestedIds);
       setResourceProperty(resource, COMPONENT_COMPONENT_NAME_PROPERTY_ID, response.getComponentName(), requestedIds);
       setResourceProperty(resource, COMPONENT_DISPLAY_NAME_PROPERTY_ID, response.getDisplayName(), requestedIds);
@@ -295,8 +296,9 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
    * @return the component request object
    */
   private ServiceComponentRequest getRequest(Map<String, Object> properties) {
+    Long clusterId = MapUtils.parseLong(properties, COMPONENT_CLUSTER_ID_PROPERTY_ID);
     return new ServiceComponentRequest(
-        (String) properties.get(COMPONENT_CLUSTER_NAME_PROPERTY_ID),
+        clusterId,
         (String) properties.get(COMPONENT_SERVICE_NAME_PROPERTY_ID),
         (String) properties.get(COMPONENT_COMPONENT_NAME_PROPERTY_ID),
         (String) properties.get(COMPONENT_STATE_PROPERTY_ID),
@@ -318,7 +320,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
     ServiceComponentFactory serviceComponentFactory = getManagementController().getServiceComponentFactory();
 
     // do all validation checks
-    Map<String, Map<String, Set<String>>> componentNames = new HashMap<>();
+    Map<Long, Map<String, Set<String>>> componentNames = new HashMap<>();
     Set<String> duplicates = new HashSet<>();
 
     for (ServiceComponentRequest request : requests) {
@@ -386,7 +388,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
 
     // now doing actual work
     for (ServiceComponentRequest request : requests) {
-      Cluster cluster = clusters.getCluster(request.getClusterName());
+      Cluster cluster = clusters.getCluster(request.getClusterId());
       Service s = cluster.getService(request.getServiceName());
       ServiceComponent sc = serviceComponentFactory.createNew(s, request.getComponentName());
       sc.setDesiredRepositoryVersion(s.getDesiredRepositoryVersion());
@@ -533,8 +535,8 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
     Map<String, Map<State, List<ServiceComponentHost>>> changedScHosts = new HashMap<>();
     Collection<ServiceComponentHost> ignoredScHosts = new ArrayList<>();
 
-    Set<String> clusterNames = new HashSet<>();
-    Map<String, Map<String, Set<String>>> componentNames = new HashMap<>();
+    Set<Long> clusterIds = new HashSet<>();
+    Map<Long, Map<String, Set<String>>> componentNames = new HashMap<>();
     Set<State> seenNewStates = new HashSet<>();
 
     Collection<ServiceComponent> recoveryEnabledComponents = new ArrayList<>();
@@ -553,7 +555,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
     for (ServiceComponentRequest request : requests) {
       Validate.notEmpty(request.getComponentName(), "component name should be non-empty");
       final Cluster cluster = getClusterForRequest(request, clusters);
-      final String clusterName = request.getClusterName();
+      final Long clusterId = request.getClusterId();
       final String componentName = request.getComponentName();
 
       LOG.info("Received a updateComponent request: {}", request);
@@ -563,21 +565,21 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
 
       debug("Received a updateComponent request: {}", request);
 
-      clusterNames.add(clusterName);
+      clusterIds.add(clusterId);
 
-      Validate.isTrue(clusterNames.size() == 1, "Updates to multiple clusters is not supported");
+      Validate.isTrue(clusterIds.size() == 1, "Updates to multiple clusters is not supported");
 
-      if (!componentNames.containsKey(clusterName)) {
-        componentNames.put(clusterName, new HashMap<String, Set<String>>());
+      if (!componentNames.containsKey(clusterId)) {
+        componentNames.put(clusterId, new HashMap<String, Set<String>>());
       }
-      if (!componentNames.get(clusterName).containsKey(serviceName)) {
-        componentNames.get(clusterName).put(serviceName, new HashSet<String>());
+      if (!componentNames.get(clusterId).containsKey(serviceName)) {
+        componentNames.get(clusterId).put(serviceName, new HashSet<String>());
       }
-      if (componentNames.get(clusterName).get(serviceName).contains(componentName)){
+      if (componentNames.get(clusterId).get(serviceName).contains(componentName)){
         // throw error later for dup
         throw new IllegalArgumentException("Invalid request contains duplicate service components");
       }
-      componentNames.get(clusterName).get(serviceName).add(componentName);
+      componentNames.get(clusterId).get(serviceName).add(componentName);
 
       Service s = cluster.getService(serviceName);
       ServiceComponent sc = s.getServiceComponent(componentName);
@@ -594,7 +596,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
       // auto start state
       if (!StringUtils.isEmpty(request.getRecoveryEnabled())) {
         // Verify that the authenticated user has authorization to change auto-start states for services
-        AuthorizationHelper.verifyAuthorization(ResourceType.CLUSTER, getClusterResourceId(clusterName),
+        AuthorizationHelper.verifyAuthorization(ResourceType.CLUSTER, getClusterResourceId(clusterId),
             EnumSet.of(RoleAuthorization.CLUSTER_MANAGE_AUTO_START, RoleAuthorization.SERVICE_MANAGE_AUTO_START));
 
         boolean newRecoveryEnabled = Boolean.parseBoolean(request.getRecoveryEnabled());
@@ -645,7 +647,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
           changedComps.put(newState, new ArrayList<ServiceComponent>());
         }
         debug("Handling update to ServiceComponent"
-              + ", clusterName=" + clusterName
+              + ", clusterId=" + clusterId
               + ", serviceName=" + serviceName
               + ", componentName=" + sc.getName()
               + ", recoveryEnabled=" + sc.isRecoveryEnabled()
@@ -659,7 +661,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
         State oldSchState = sch.getState();
         if (oldSchState == State.DISABLED || oldSchState == State.UNKNOWN) {
           debug("Ignoring ServiceComponentHost"
-                + ", clusterName=" + clusterName
+                + ", clusterId=" + clusterId
                 + ", serviceName=" + serviceName
                 + ", componentName=" + sc.getName()
                 + ", recoveryEnabled=" + sc.isRecoveryEnabled()
@@ -672,7 +674,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
         if (newState == oldSchState) {
           ignoredScHosts.add(sch);
           debug("Ignoring ServiceComponentHost"
-                + ", clusterName=" + clusterName
+                + ", clusterId=" + clusterId
                 + ", serviceName=" + serviceName
                 + ", componentName=" + sc.getName()
                 + ", recoveryEnabled=" + sc.isRecoveryEnabled()
@@ -686,7 +688,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
         if (! maintenanceStateHelper.isOperationAllowed(reqOpLvl, sch)) {
           ignoredScHosts.add(sch);
           debug("Ignoring ServiceComponentHost in maintenance state"
-                + ", clusterName=" + clusterName
+                + ", clusterId=" + clusterId
                 + ", serviceName=" + serviceName
                 + ", componentName=" + sc.getName()
                 + ", recoveryEnabled=" + sc.isRecoveryEnabled()
@@ -716,7 +718,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
         }
 
         debug("Handling update to ServiceComponentHost"
-              + ", clusterName=" + clusterName
+              + ", clusterId=" + clusterId
               + ", serviceName=" + serviceName
               + ", componentName=" + sc.getName()
               + ", recoveryEnabled=" + sc.isRecoveryEnabled()
@@ -743,7 +745,7 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
       sc.setRecoveryEnabled(false);
     }
 
-    Cluster cluster = clusters.getCluster(clusterNames.iterator().next());
+    Cluster cluster = clusters.getCluster(clusterIds.iterator().next());
 
     return getManagementController().createAndPersistStages(cluster, requestProperties, null, null, changedComps, changedScHosts,
         ignoredScHosts, runSmokeTest, false);
@@ -789,9 +791,9 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
     }
   }
   private Cluster getClusterForRequest(final ServiceComponentRequest request, final Clusters clusters) throws AmbariException {
-    Validate.notEmpty(request.getClusterName(), "cluster name should be non-empty");
+    Validate.notNull(request.getClusterId(), "cluster id should be non-empty");
     try {
-      return clusters.getCluster(request.getClusterName());
+      return clusters.getCluster(request.getClusterId());
     } catch (ClusterNotFoundException e) {
       throw new ParentObjectNotFoundException("Attempted to add a component to a cluster which doesn't exist:", e);
     }
@@ -806,10 +808,10 @@ public class ComponentResourceProvider extends AbstractControllerResourceProvide
   }
 
   private Cluster getCluster(final ServiceComponentRequest request, final Clusters clusters) throws AmbariException {
-    Validate.notEmpty(request.getClusterName(), "cluster name should be non-empty");
+    Validate.notNull(request.getClusterId(), "cluster name should be non-empty");
 
     try {
-      return clusters.getCluster(request.getClusterName());
+      return clusters.getCluster(request.getClusterId());
     } catch (ObjectNotFoundException e) {
       throw new ParentObjectNotFoundException("Parent Cluster resource doesn't exist", e);
     }

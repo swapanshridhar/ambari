@@ -1,0 +1,19 @@
+***************
+*** 293,300 ****
+        setResourceProperty(resource, CLUSTER_HEALTH_REPORT_PROPERTY_ID, response.getClusterHealthReport(), requestedIds);
+        setResourceProperty(resource, CLUSTER_CREDENTIAL_STORE_PROPERTIES_PROPERTY_ID, response.getCredentialStoreServiceProperties(), requestedIds);
+  
+-       resource.setProperty(CLUSTER_VERSION_PROPERTY_ID,
+-           response.getDesiredStackVersion());
+  
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Adding ClusterResponse to resource"
+--- 304,311 ----
+        setResourceProperty(resource, CLUSTER_HEALTH_REPORT_PROPERTY_ID, response.getClusterHealthReport(), requestedIds);
+        setResourceProperty(resource, CLUSTER_CREDENTIAL_STORE_PROPERTIES_PROPERTY_ID, response.getCredentialStoreServiceProperties(), requestedIds);
+  
++       resource.setProperty(CLUSTER_VERSION_PROPERTY_ID, response.getDesiredStackVersion());
++       resource.setProperty(CLUSTER_NAME_PROPERTY_ID, response.getClusterName());
+  
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Adding ClusterResponse to resource"

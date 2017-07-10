@@ -1,0 +1,16 @@
+***************
+*** 59,64 ****
+  import org.apache.ambari.server.controller.utilities.PropertyHelper;
+  import org.apache.ambari.server.events.MetricsCollectorHostDownEvent;
+  import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.commons.lang.StringUtils;
+  import org.apache.hadoop.metrics2.sink.timeline.TimelineMetric;
+--- 60,66 ----
+  import org.apache.ambari.server.controller.utilities.PropertyHelper;
+  import org.apache.ambari.server.events.MetricsCollectorHostDownEvent;
+  import org.apache.ambari.server.events.publishers.AmbariEventPublisher;
++ import org.apache.ambari.server.state.Cluster;
+  import org.apache.ambari.server.state.StackId;
+  import org.apache.commons.lang.StringUtils;
+  import org.apache.hadoop.metrics2.sink.timeline.TimelineMetric;

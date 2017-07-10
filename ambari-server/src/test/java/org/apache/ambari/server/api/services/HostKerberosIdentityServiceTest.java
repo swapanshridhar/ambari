@@ -42,13 +42,13 @@ public class HostKerberosIdentityServiceTest extends BaseServiceTest {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
 
     //getComponent
-    HostKerberosIdentityService service = new TestHostKerberosIdentityService("clusterName", "hostName", "identityId");
+    HostKerberosIdentityService service = new TestHostKerberosIdentityService(1L, "hostName", "identityId");
     Method m = service.getClass().getMethod("getKerberosIdentity", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo(), "identityId", null};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
     //getComponents
-    service = new TestHostKerberosIdentityService("clusterName", "hostName", null);
+    service = new TestHostKerberosIdentityService(1L, "hostName", null);
     m = service.getClass().getMethod("getKerberosIdentities", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo(), null};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
@@ -69,7 +69,7 @@ public class HostKerberosIdentityServiceTest extends BaseServiceTest {
     }
 
     @Override
-    ResourceInstance createResource(String clusterId, String hostId, String identityId) {
+    ResourceInstance createResource(Long clusterId, String hostId, String identityId) {
       assertEquals(this.clusterId, clusterId);
       assertEquals(this.hostId, hostId);
       assertEquals(this.identityId, identityId);

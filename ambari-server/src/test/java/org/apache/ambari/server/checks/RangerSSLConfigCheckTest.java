@@ -67,10 +67,10 @@ public class RangerSSLConfigCheckTest {
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
     Mockito.when(clusters.getCluster("cluster")).thenReturn(cluster);
 
-    Assert.assertTrue(rangerSSLConfigCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertTrue(rangerSSLConfigCheck.isApplicable(new PrereqCheckRequest(1L)));
 
     services.remove("RANGER");
-    Assert.assertFalse(rangerSSLConfigCheck.isApplicable(new PrereqCheckRequest("cluster")));
+    Assert.assertFalse(rangerSSLConfigCheck.isApplicable(new PrereqCheckRequest(1L)));
 
   }
 
@@ -101,14 +101,14 @@ public class RangerSSLConfigCheckTest {
     properties.put("ranger.service.https.attrib.ssl.enabled","true");
     properties.put("ranger.https.attrib.keystore.file","/etc/ranger/security/ranger-admin-keystore.jks");
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     properties.put("ranger.service.http.enabled","true");
     properties.put("ranger.service.https.attrib.ssl.enabled","true");
     properties.put("ranger.https.attrib.keystore.file","/etc/ranger/security/ranger-admin-keystore.jks");
     check = new PrerequisiteCheck(null, null);
-    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
 
@@ -116,7 +116,7 @@ public class RangerSSLConfigCheckTest {
     properties.put("ranger.service.https.attrib.ssl.enabled","fasle");
     properties.put("ranger.https.attrib.keystore.file","/etc/ranger/security/ranger-admin-keystore.jks");
     check = new PrerequisiteCheck(null, null);
-    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
 
@@ -124,14 +124,14 @@ public class RangerSSLConfigCheckTest {
     properties.put("ranger.service.https.attrib.ssl.enabled","true");
     properties.put("ranger.https.attrib.keystore.file","/etc/ranger/admin/conf/ranger-admin-keystore.jks");
     check = new PrerequisiteCheck(null, null);
-    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.WARNING, check.getStatus());
 
     properties.put("ranger.service.http.enabled","false");
     properties.put("ranger.service.https.attrib.ssl.enabled","true");
     properties.put("ranger.https.attrib.keystore.file","/etc/ranger/security/ranger-admin-keystore.jks");
     check = new PrerequisiteCheck(null, null);
-    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
 
@@ -139,7 +139,7 @@ public class RangerSSLConfigCheckTest {
     properties.put("ranger.service.https.attrib.ssl.enabled","false");
     properties.put("ranger.https.attrib.keystore.file","/etc/ranger/security/ranger-admin-keystore.jks");
     check = new PrerequisiteCheck(null, null);
-    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest("cluster"));
+    rangerSSLConfigCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
 

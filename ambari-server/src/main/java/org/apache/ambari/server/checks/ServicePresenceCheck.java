@@ -76,7 +76,7 @@ public class ServicePresenceCheck extends AbstractCheckDescriptor{
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterName());
+    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterId());
     Set<String> installedServices = cluster.getServices().keySet();
 
     List<String> noUpgradeSupportServices = getNoUpgradeSupportServices(request);

@@ -54,7 +54,7 @@ public class UpgradeGroupResourceProvider extends AbstractControllerResourceProv
 
   protected static final String UPGRADE_REQUEST_ID = "UpgradeGroup/request_id";
   protected static final String UPGRADE_GROUP_ID = "UpgradeGroup/group_id";
-  protected static final String UPGRADE_CLUSTER_NAME = "UpgradeGroup/cluster_name";
+  protected static final String UPGRADE_CLUSTER_ID = "UpgradeGroup/cluster_id";
   protected static final String UPGRADE_GROUP_NAME = "UpgradeGroup/name";
   protected static final String UPGRADE_GROUP_TITLE = "UpgradeGroup/title";
   protected static final String UPGRADE_GROUP_PROGRESS_PERCENT = "UpgradeGroup/progress_percent";

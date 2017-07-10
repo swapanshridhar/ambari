@@ -67,7 +67,7 @@ public class ClientRetryPropertyCheck extends AbstractCheckDescriptor {
    */
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterName());
+    final Cluster cluster = clustersProvider.get().getCluster(request.getClusterId());
     Map<String, Service> services = cluster.getServices();
 
     List<String> errorMessages = new ArrayList<>();

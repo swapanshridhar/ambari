@@ -1,0 +1,39 @@
+***************
+*** 36,53 ****
+  public class PreUpgradeCheckService extends BaseService {
+  
+    /**
+-    * Cluster name.
+     */
+-   private String clusterName = null;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster name
+     */
+-   public PreUpgradeCheckService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+--- 36,53 ----
+  public class PreUpgradeCheckService extends BaseService {
+  
+    /**
++    * cluster ID.
+     */
++   private Long clusterId = null;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster ID
+     */
++   public PreUpgradeCheckService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    /**

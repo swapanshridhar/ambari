@@ -1,0 +1,41 @@
+***************
+*** 22,40 ****
+  
+  public class ConfigGroupResponse {
+    private Long id;
+-   private String clusterName;
+    private String groupName;
+    private String tag;
+    private String description;
+    private Set<Map<String, Object>> hosts;
+    private Set<Map<String, Object>> configVersions;
+  
+-   public ConfigGroupResponse(Long id, String clusterName,
+            String groupName, String tag, String description,
+            Set<Map<String, Object>> hosts,
+            Set<Map<String, Object>> configVersions) {
+      this.id = id;
+-     this.clusterName = clusterName;
+      this.groupName = groupName;
+      this.tag = tag;
+      this.description = description;
+--- 22,40 ----
+  
+  public class ConfigGroupResponse {
+    private Long id;
++   private Long clusterId;
+    private String groupName;
+    private String tag;
+    private String description;
+    private Set<Map<String, Object>> hosts;
+    private Set<Map<String, Object>> configVersions;
+  
++   public ConfigGroupResponse(Long id, Long clusterId,
+            String groupName, String tag, String description,
+            Set<Map<String, Object>> hosts,
+            Set<Map<String, Object>> configVersions) {
+      this.id = id;
++     this.clusterId = clusterId;
+      this.groupName = groupName;
+      this.tag = tag;
+      this.description = description;

@@ -73,7 +73,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.5.0.0");
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
@@ -85,7 +85,7 @@ public class ServicePresenceCheckTest {
   public void testPerformHasNoUpgradeSupportServices() throws Exception {
     final Cluster cluster = Mockito.mock(Cluster.class);
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
-    Mockito.when(m_clusters.getCluster("cluster")).thenReturn(cluster);
+    Mockito.when(m_clusters.getCluster(1L)).thenReturn(cluster);
 
     Map<String, Service> services = new HashMap<>();
     services.put("ATLAS", Mockito.mock(Service.class));
@@ -98,7 +98,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     m_check.perform(check, request);
@@ -109,7 +109,7 @@ public class ServicePresenceCheckTest {
   public void testPerformHasReplacedServices() throws Exception {
     final Cluster cluster = Mockito.mock(Cluster.class);
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
-    Mockito.when(m_clusters.getCluster("cluster")).thenReturn(cluster);
+    Mockito.when(m_clusters.getCluster(1L)).thenReturn(cluster);
 
     Map<String, Service> services = new HashMap<>();
     services.put("ATLAS", Mockito.mock(Service.class));
@@ -125,7 +125,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     m_check.perform(check, request);
@@ -136,7 +136,7 @@ public class ServicePresenceCheckTest {
   public void testPerformHasRemovedServices() throws Exception {
     final Cluster cluster = Mockito.mock(Cluster.class);
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
-    Mockito.when(m_clusters.getCluster("cluster")).thenReturn(cluster);
+    Mockito.when(m_clusters.getCluster(1L)).thenReturn(cluster);
 
     Map<String, Service> services = new HashMap<String, Service>();
     services.put("ATLAS", Mockito.mock(Service.class));
@@ -151,7 +151,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     m_check.perform(check, request);
@@ -162,7 +162,7 @@ public class ServicePresenceCheckTest {
   public void testPerformMixOne() throws Exception {
     final Cluster cluster = Mockito.mock(Cluster.class);
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
-    Mockito.when(m_clusters.getCluster("cluster")).thenReturn(cluster);
+    Mockito.when(m_clusters.getCluster(1L)).thenReturn(cluster);
 
     Map<String, Service> services = new HashMap<>();
     services.put("ATLAS", Mockito.mock(Service.class));
@@ -180,7 +180,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     m_check.perform(check, request);
@@ -191,7 +191,7 @@ public class ServicePresenceCheckTest {
   public void testPerformMixTwo() throws Exception {
     final Cluster cluster = Mockito.mock(Cluster.class);
     Mockito.when(cluster.getClusterId()).thenReturn(1L);
-    Mockito.when(m_clusters.getCluster("cluster")).thenReturn(cluster);
+    Mockito.when(m_clusters.getCluster(1L)).thenReturn(cluster);
 
     Map<String, Service> services = new HashMap<>();
     services.put("OLDSERVICE", Mockito.mock(Service.class));
@@ -207,7 +207,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     m_check.perform(check, request);
@@ -237,7 +237,7 @@ public class ServicePresenceCheckTest {
         m_check.getClass().getName())).thenReturn(checkProperties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     m_check.perform(check, request);

@@ -1,0 +1,51 @@
+***************
+*** 38,61 ****
+   */
+  public class AlertHistoryService extends BaseService {
+  
+-   private String clusterName = null;
+    private String serviceName = null;
+    private String hostName = null;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName
+-    *          the cluster name (not {@code null}).
+     * @param serviceName
+     *          the service name, or {@code null} to return history across all
+     *          services.
+     * @param hostName
+     *          the host name, or {@code null} to return history across all hosts.
+     */
+-   AlertHistoryService(ApiVersion apiVersion, String clusterName, String serviceName, String hostName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+      this.serviceName = serviceName;
+      this.hostName = hostName;
+    }
+--- 38,61 ----
+   */
+  public class AlertHistoryService extends BaseService {
+  
++   private Long clusterId = null;
+    private String serviceName = null;
+    private String hostName = null;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId
++    *          the cluster Id (not {@code null}).
+     * @param serviceName
+     *          the service name, or {@code null} to return history across all
+     *          services.
+     * @param hostName
+     *          the host name, or {@code null} to return history across all hosts.
+     */
++   AlertHistoryService(ApiVersion apiVersion, Long clusterId, String serviceName, String hostName) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+      this.serviceName = serviceName;
+      this.hostName = hostName;
+    }

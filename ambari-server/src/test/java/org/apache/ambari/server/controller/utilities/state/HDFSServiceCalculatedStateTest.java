@@ -55,7 +55,7 @@ public class HDFSServiceCalculatedStateTest extends GeneralServiceCalculatedStat
       hostAttributes.put("os_release_version", "6.3");
       host.setHostAttributes(hostAttributes);
       host.setState(HostState.HEALTHY);
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, clusterId);
 
       ServiceComponentHost sch = masterComponent.addServiceComponentHost(hostName);
       sch.setVersion("2.1.1.0");

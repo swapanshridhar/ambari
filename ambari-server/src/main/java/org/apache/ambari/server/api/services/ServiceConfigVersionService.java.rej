@@ -1,0 +1,53 @@
+***************
+*** 34,58 ****
+  
+  public class ServiceConfigVersionService extends BaseService {
+    /**
+-    * Parent cluster name.
+     */
+-   private String m_clusterName;
+  
+-   public ServiceConfigVersionService(ApiVersion apiVersion, String m_clusterName) {
+      super(apiVersion);
+-     this.m_clusterName = m_clusterName;
+    }
+  
+    @GET
+    @Produces("text/plain")
+    public Response getServiceConfigVersions(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+-     return handleRequest(headers, body, ui, Request.Type.GET, createServiceConfigResource(m_clusterName));
+    }
+  
+  
+-   ResourceInstance createServiceConfigResource(String clusterName) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.ServiceConfigVersion, null);
+  
+      return createResource(Resource.Type.ServiceConfigVersion, mapIds);
+--- 34,58 ----
+  
+  public class ServiceConfigVersionService extends BaseService {
+    /**
++    * Parent cluster Id.
+     */
++   private Long m_clusterId;
+  
++   public ServiceConfigVersionService(ApiVersion apiVersion, Long m_clusterId) {
+      super(apiVersion);
++     this.m_clusterId = m_clusterId;
+    }
+  
+    @GET
+    @Produces("text/plain")
+    public Response getServiceConfigVersions(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
++     return handleRequest(headers, body, ui, Request.Type.GET, createServiceConfigResource(m_clusterId));
+    }
+  
+  
++   ResourceInstance createServiceConfigResource(Long clusterId) {
+      Map<Resource.Type,String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.ServiceConfigVersion, null);
+  
+      return createResource(Resource.Type.ServiceConfigVersion, mapIds);

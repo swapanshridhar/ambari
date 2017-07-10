@@ -52,6 +52,7 @@ public abstract class GeneralServiceCalculatedStateTest {
 
   final protected String[] hosts = {"h1", "h2"};
   final protected String clusterName = "c1";
+  final protected Long clusterId = 1L;
 
   protected ServiceCalculatedState serviceCalculatedState;
   protected Injector injector;

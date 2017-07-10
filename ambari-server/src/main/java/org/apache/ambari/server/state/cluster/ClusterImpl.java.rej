@@ -1,0 +1,228 @@
+***************
+*** 1116,1122 ****
+     */
+    @Override
+    public Collection<ClusterVersionEntity> getAllClusterVersions() {
+-     return clusterVersionDAO.findByCluster(getClusterName());
+    }
+  
+    /**
+--- 1116,1122 ----
+     */
+    @Override
+    public Collection<ClusterVersionEntity> getAllClusterVersions() {
++     return clusterVersionDAO.findByCluster(getClusterId());
+    }
+  
+    /**
+***************
+*** 1145,1151 ****
+  
+        Map<String, HostVersionEntity> existingHostToHostVersionEntity = new HashMap<>();
+        List<HostVersionEntity> existingHostVersionEntities = hostVersionDAO.findByClusterStackAndVersion(
+-         getClusterName(), repoVersionStackId,
+          currentClusterVersion.getRepositoryVersion().getVersion());
+  
+        if (existingHostVersionEntities != null) {
+--- 1145,1151 ----
+  
+        Map<String, HostVersionEntity> existingHostToHostVersionEntity = new HashMap<>();
+        List<HostVersionEntity> existingHostVersionEntities = hostVersionDAO.findByClusterStackAndVersion(
++           getClusterId(), repoVersionStackId,
+          currentClusterVersion.getRepositoryVersion().getVersion());
+  
+        if (existingHostVersionEntities != null) {
+***************
+*** 1159,1165 ****
+  
+        for (String hostname : hostNames) {
+          List<HostVersionEntity> currentHostVersions = hostVersionDAO.findByClusterHostAndState(
+-             getClusterName(), hostname, RepositoryVersionState.CURRENT);
+          HostVersionEntity currentHostVersionEntity = (currentHostVersions != null && currentHostVersions.size() == 1) ? currentHostVersions.get(0)
+              : null;
+  
+--- 1159,1165 ----
+  
+        for (String hostname : hostNames) {
+          List<HostVersionEntity> currentHostVersions = hostVersionDAO.findByClusterHostAndState(
++             getClusterId(), hostname, RepositoryVersionState.CURRENT);
+          HostVersionEntity currentHostVersionEntity = (currentHostVersions != null && currentHostVersions.size() == 1) ? currentHostVersions.get(0)
+              : null;
+  
+***************
+*** 1178,1188 ****
+        // Part 1, bootstrap cluster version if necessary.
+  
+        ClusterVersionEntity clusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-           getClusterName(), stackId, version);
+  
+        boolean performingInitialBootstrap = false;
+        if (clusterVersion == null) {
+-         if (clusterVersionDAO.findByCluster(getClusterName()).isEmpty()) {
+            // During an Ambari Upgrade from 1.7.0 -> 2.0.0, the Cluster Version
+            // will not exist, so bootstrap it.
+            // This can still fail if the Repository Version has not yet been created,
+--- 1178,1188 ----
+        // Part 1, bootstrap cluster version if necessary.
+  
+        ClusterVersionEntity clusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++           getClusterId(), stackId, version);
+  
+        boolean performingInitialBootstrap = false;
+        if (clusterVersion == null) {
++         if (clusterVersionDAO.findByCluster(getClusterId()).isEmpty()) {
+            // During an Ambari Upgrade from 1.7.0 -> 2.0.0, the Cluster Version
+            // will not exist, so bootstrap it.
+            // This can still fail if the Repository Version has not yet been created,
+***************
+*** 1195,1201 ****
+                AuthorizationHelper.getAuthenticatedName(configuration.getAnonymousAuditName()),
+                RepositoryVersionState.INSTALLING);
+            clusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-               getClusterName(), stackId, version);
+  
+            if (clusterVersion == null) {
+              LOG.warn(String.format(
+--- 1195,1201 ----
+                AuthorizationHelper.getAuthenticatedName(configuration.getAnonymousAuditName()),
+                RepositoryVersionState.INSTALLING);
+            clusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++               getClusterId(), stackId, version);
+  
+            if (clusterVersion == null) {
+              LOG.warn(String.format(
+***************
+*** 1228,1234 ****
+        //hack until better hostversion integration into in-memory cluster structure
+  
+        List<HostVersionEntity> hostVersionEntities =
+-               hostVersionDAO.findByClusterStackAndVersion(getClusterName(), stackId, version);
+  
+        Set<String> hostsWithState = new HashSet<>();
+        Set<String> hostsInMaintenanceState = new HashSet<>();
+--- 1228,1234 ----
+        //hack until better hostversion integration into in-memory cluster structure
+  
+        List<HostVersionEntity> hostVersionEntities =
++               hostVersionDAO.findByClusterStackAndVersion(getClusterId(), stackId, version);
+  
+        Set<String> hostsWithState = new HashSet<>();
+        Set<String> hostsInMaintenanceState = new HashSet<>();
+***************
+*** 1329,1335 ****
+        // Create one if it doesn't already exist. It will be possible to make further transitions below.
+        boolean performingInitialBootstrap = false;
+        if (hostVersionEntity == null) {
+-         if (hostVersionDAO.findByClusterAndHost(getClusterName(), host.getHostName()).isEmpty()) {
+            // That is an initial bootstrap
+            performingInitialBootstrap = true;
+          }
+--- 1329,1335 ----
+        // Create one if it doesn't already exist. It will be possible to make further transitions below.
+        boolean performingInitialBootstrap = false;
+        if (hostVersionEntity == null) {
++         if (hostVersionDAO.findByClusterAndHost(getClusterId(), host.getHostName()).isEmpty()) {
+            // That is an initial bootstrap
+            performingInitialBootstrap = true;
+          }
+***************
+*** 1373,1379 ****
+    public void recalculateAllClusterVersionStates() throws AmbariException {
+      clusterGlobalLock.writeLock().lock();
+      try {
+-       List<ClusterVersionEntity> clusterVersionEntities = clusterVersionDAO.findByCluster(getClusterName());
+        StackId currentStackId = getCurrentStackVersion();
+        for (ClusterVersionEntity clusterVersionEntity : clusterVersionEntities) {
+          RepositoryVersionEntity repositoryVersionEntity = clusterVersionEntity.getRepositoryVersion();
+--- 1373,1379 ----
+    public void recalculateAllClusterVersionStates() throws AmbariException {
+      clusterGlobalLock.writeLock().lock();
+      try {
++       List<ClusterVersionEntity> clusterVersionEntities = clusterVersionDAO.findByCluster(getClusterId());
+        StackId currentStackId = getCurrentStackVersion();
+        for (ClusterVersionEntity clusterVersionEntity : clusterVersionEntities) {
+          RepositoryVersionEntity repositoryVersionEntity = clusterVersionEntity.getRepositoryVersion();
+***************
+*** 1412,1418 ****
+      }
+  
+      ClusterVersionEntity existing = clusterVersionDAO.findByClusterAndStackAndVersion(
+-       getClusterName(), stackId, version);
+      if (existing != null) {
+        throw new DuplicateResourceException(
+            "Duplicate item, a cluster version with stack=" + stackId
+--- 1412,1418 ----
+      }
+  
+      ClusterVersionEntity existing = clusterVersionDAO.findByClusterAndStackAndVersion(
++       getClusterId(), stackId, version);
+      if (existing != null) {
+        throw new DuplicateResourceException(
+            "Duplicate item, a cluster version with stack=" + stackId
+***************
+*** 1466,1472 ****
+      try {
+        ClusterEntity clusterEntity = getClusterEntity();
+        ClusterVersionEntity existingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
+-           getClusterName(), stackId, version);
+  
+        if (existingClusterVersion == null) {
+          throw new AmbariException("Existing cluster version not found for cluster="
+--- 1466,1472 ----
+      try {
+        ClusterEntity clusterEntity = getClusterEntity();
+        ClusterVersionEntity existingClusterVersion = clusterVersionDAO.findByClusterAndStackAndVersion(
++                  getClusterId(), stackId, version);
+  
+        if (existingClusterVersion == null) {
+          throw new AmbariException("Existing cluster version not found for cluster="
+***************
+*** 1490,1496 ****
+            allowedStates.add(RepositoryVersionState.INSTALLED);
+            allowedStates.add(RepositoryVersionState.INSTALL_FAILED);
+            allowedStates.add(RepositoryVersionState.OUT_OF_SYNC);
+-           if (clusterVersionDAO.findByClusterAndStateCurrent(getClusterName()) == null) {
+              allowedStates.add(RepositoryVersionState.CURRENT);
+            }
+            break;
+--- 1490,1496 ----
+            allowedStates.add(RepositoryVersionState.INSTALLED);
+            allowedStates.add(RepositoryVersionState.INSTALL_FAILED);
+            allowedStates.add(RepositoryVersionState.OUT_OF_SYNC);
++           if (clusterVersionDAO.findByClusterAndStateCurrent(getClusterId()) == null) {
+              allowedStates.add(RepositoryVersionState.CURRENT);
+            }
+            break;
+***************
+*** 1519,1525 ****
+        // all times.
+        if (state == RepositoryVersionState.CURRENT) {
+          ClusterVersionEntity currentVersion = clusterVersionDAO.findByClusterAndStateCurrent(
+-             getClusterName());
+          if (currentVersion != null) {
+            currentVersion.setState(RepositoryVersionState.INSTALLED);
+            currentVersion = clusterVersionDAO.merge(currentVersion);
+--- 1519,1525 ----
+        // all times.
+        if (state == RepositoryVersionState.CURRENT) {
+          ClusterVersionEntity currentVersion = clusterVersionDAO.findByClusterAndStateCurrent(
++             getClusterId());
+          if (currentVersion != null) {
+            currentVersion.setState(RepositoryVersionState.INSTALLED);
+            currentVersion = clusterVersionDAO.merge(currentVersion);
+***************
+*** 2406,2412 ****
+     * should make sure the cluster global write lock is acquired.
+     *
+     * @param stackId
+-    * @see #clusterGlobalLock
+     */
+    @Transactional
+    void removeAllConfigsForStack(StackId stackId) {
+--- 2406,2411 ----
+     * should make sure the cluster global write lock is acquired.
+     *
+     * @param stackId
+     */
+    @Transactional
+    void removeAllConfigsForStack(StackId stackId) {

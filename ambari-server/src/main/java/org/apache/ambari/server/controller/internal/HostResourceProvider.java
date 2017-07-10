@@ -69,6 +69,7 @@ import org.apache.ambari.server.topology.InvalidTopologyException;
 import org.apache.ambari.server.topology.InvalidTopologyTemplateException;
 import org.apache.ambari.server.topology.LogicalRequest;
 import org.apache.ambari.server.topology.TopologyManager;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,10 +234,9 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
       Resource resource = new ResourceImpl(Resource.Type.Host);
 
       // TODO : properly handle more than one cluster
-      if (response.getClusterName() != null
-          && !response.getClusterName().isEmpty()) {
-        setResourceProperty(resource, HOST_CLUSTER_NAME_PROPERTY_ID,
-            response.getClusterName(), requestedIds);
+      if (response.getClusterId() != null) {
+        setResourceProperty(resource, HOST_CLUSTER_ID_PROPERTY_ID,
+            response.getClusterId(), requestedIds);
       }
       setResourceProperty(resource, HOST_HOST_NAME_PROPERTY_ID,
           response.getHostname(), requestedIds);
@@ -483,19 +483,18 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
           "These hosts have not been registered with the server: " + names);
     }
 
-    Map<String, Set<String>> hostClustersMap = new HashMap<>();
+    Map<String, Set<Long>> hostClustersMap = new HashMap<>();
     Map<String, Map<String, String>> hostAttributes = new HashMap<>();
-    Set<String> allClusterSet = new HashSet<>();
+    Set<Long> allClusterSet = new HashSet<>();
 
     for (HostRequest hostRequest : hostRequests) {
       if (hostRequest.getHostname() != null &&
           !hostRequest.getHostname().isEmpty() &&
-          hostRequest.getClusterName() != null &&
-          !hostRequest.getClusterName().isEmpty()){
+          hostRequest.getClusterId() != null){
 
-        Set<String> clusterSet = new HashSet<>();
-        clusterSet.add(hostRequest.getClusterName());
-        allClusterSet.add(hostRequest.getClusterName());
+        Set<Long> clusterSet = new HashSet<>();
+        clusterSet.add(hostRequest.getClusterId());
+        allClusterSet.add(hostRequest.getClusterId());
         hostClustersMap.put(hostRequest.getHostname(), clusterSet);
       }
     }
@@ -535,13 +534,13 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
       return;
     }
 
-    if (request.getClusterName() != null) {
+    if (request.getClusterId() != null) {
       try {
         // validate that cluster_name is valid
-        clusters.getCluster(request.getClusterName());
+        clusters.getCluster(request.getClusterId());
       } catch (ClusterNotFoundException e) {
         throw new ParentObjectNotFoundException("Attempted to add a host to a cluster which doesn't exist: "
-            + " clusterName=" + request.getClusterName());
+            + " clusterId=" + request.getClusterId());
       }
     }
   }
@@ -601,13 +600,13 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
 
     Clusters                   clusters   = controller.getClusters();
 
-    String clusterName = request.getClusterName();
+    Long clusterId = request.getClusterId();
     String hostName    = request.getHostname();
 
-    if (clusterName != null) {
+    if (clusterId != null) {
       //validate that cluster exists, throws exception if it doesn't.
       try {
-        cluster = clusters.getCluster(clusterName);
+        cluster = clusters.getCluster(clusterId);
       } catch (ObjectNotFoundException e) {
         throw new ParentObjectNotFoundException("Parent Cluster resource doesn't exist", e);
       }
@@ -621,7 +620,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
         hosts.add(clusters.getHost(request.getHostname()));
       } catch (HostNotFoundException e) {
         // add cluster name
-        throw new HostNotFoundException(clusterName, hostName);
+        throw new HostNotFoundException(cluster.getClusterName(), hostName);
       }
     }
 
@@ -658,7 +657,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
         //todo: host can only belong to a single cluster
         if (clustersForHost != null && clustersForHost.size() != 0) {
           Cluster clusterForHost = clustersForHost.iterator().next();
-          r.setClusterName(clusterForHost.getClusterName());
+          r.setClusterId(clusterForHost.getClusterId());
           r.setDesiredHostConfigs(h.getDesiredHostConfigs(clusterForHost, null));
           r.setMaintenanceState(h.getMaintenanceState(clusterForHost.getClusterId()));
         }
@@ -692,15 +691,15 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
 
       Host host = clusters.getHost(request.getHostname());
 
-      String clusterName = request.getClusterName();
-      Cluster cluster = clusters.getCluster(clusterName);
-      Long clusterId = cluster.getClusterId();
+      Long clusterId = request.getClusterId();
+      Cluster cluster = clusters.getCluster(clusterId);
+
       Long resourceId = cluster.getResourceId();
 
       try {
         // The below method call throws an exception when trying to create a duplicate mapping in the clusterhostmapping
         // table. This is done to detect duplicates during host create. In order to be robust, handle these gracefully.
-        clusters.mapAndPublishHostsToCluster(new HashSet<>(Arrays.asList(request.getHostname())), clusterName);
+        clusters.mapAndPublishHostsToCluster(new HashSet<>(Arrays.asList(request.getHostname())), clusterId);
       } catch (DuplicateResourceException e) {
         // do nothing
       }
@@ -723,7 +722,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
         host.setPublicHostName(request.getPublicHostName());
       }
 
-      if (null != clusterName && null != request.getMaintenanceState()) {
+      if (null != clusterId && null != request.getMaintenanceState()) {
         if(!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, resourceId, RoleAuthorization.HOST_TOGGLE_MAINTENANCE)) {
           throw new AuthorizationException("The authenticated user is not authorized to update host maintenance state");
         }
@@ -741,17 +740,17 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
       }
 
       // Create configurations
-      if (null != clusterName && null != request.getDesiredConfigs()) {
-        if (clusters.getHostsForCluster(clusterName).containsKey(host.getHostName())) {
+      if (null != clusterId && null != request.getDesiredConfigs()) {
+        if (clusters.getHostsForCluster(clusterId).containsKey(host.getHostName())) {
 
           for (ConfigurationRequest cr : request.getDesiredConfigs()) {
             if (null != cr.getProperties() && cr.getProperties().size() > 0) {
               LOG.info(MessageFormat.format("Applying configuration with tag ''{0}'' to host ''{1}'' in cluster ''{2}''",
                   cr.getVersionTag(),
                   request.getHostname(),
-                  clusterName));
+                  clusterId));
 
-              cr.setClusterName(cluster.getClusterName());
+              cr.setClusterId(cluster.getClusterId());
               controller.createConfiguration(cr);
             }
 
@@ -840,7 +839,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
   }
 
   private void processDeleteHostRequests(List<HostRequest> requests,  Clusters clusters, DeleteStatusMetaData deleteStatusMetaData) throws AmbariException {
-    Set<String> hostsClusters = new HashSet<>();
+    Set<Long> hostsClusters = new HashSet<>();
     Set<String> hostNames = new HashSet<>();
     Set<Cluster> allClustersWithHosts = new HashSet<>();
     for (HostRequest hostRequest : requests) {
@@ -848,18 +847,18 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
       String hostname = hostRequest.getHostname();
       hostNames.add(hostname);
 
-      if (hostRequest.getClusterName() != null) {
-        hostsClusters.add(hostRequest.getClusterName());
+      if (hostRequest.getClusterId() != null) {
+        hostsClusters.add(hostRequest.getClusterId());
       }
 
-      LOG.info("Received Delete request for host {} from cluster {}.", hostname, hostRequest.getClusterName());
+      LOG.info("Received Delete request for host {} from cluster {}.", hostname, hostRequest.getClusterId());
 
       // delete all host components
       Set<ServiceComponentHostRequest> schrs = new HashSet<>();
       for (Cluster cluster : clusters.getClustersForHost(hostname)) {
         List<ServiceComponentHost> list = cluster.getServiceComponentHosts(hostname);
         for (ServiceComponentHost sch : list) {
-          ServiceComponentHostRequest schr = new ServiceComponentHostRequest(cluster.getClusterName(),
+          ServiceComponentHostRequest schr = new ServiceComponentHostRequest(cluster.getClusterId(),
                                                                              sch.getServiceName(),
                                                                              sch.getServiceComponentName(),
                                                                              sch.getHostName(),
@@ -885,8 +884,8 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
         }
       }
 
-      if (hostRequest.getClusterName() != null) {
-        hostsClusters.add(hostRequest.getClusterName());
+      if (hostRequest.getClusterId() != null) {
+        hostsClusters.add(hostRequest.getClusterId());
       }
       try {
         clusters.deleteHost(hostname);
@@ -937,7 +936,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
             StringBuilder reason = new StringBuilder("Cannot remove host ")
                 .append(hostName)
                 .append(" from ")
-                .append(hostRequest.getClusterName())
+                .append(hostRequest.getClusterId())
                 .append(
                     ".  The following roles exist, and these components must be stopped: ");
 
@@ -950,7 +949,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
             StringBuilder reason = new StringBuilder("Cannot remove host ")
                 .append(hostName)
                 .append(" from ")
-                .append(hostRequest.getClusterName())
+                .append(hostRequest.getClusterId())
                 .append(
                     ".  The following roles exist, and these components must be stopped if running, and then deleted: ");
 
@@ -967,12 +966,12 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
    * Removes hostname from the stateful cluster topology
    */
   private void removeHostFromClusterTopology(Clusters clusters, HostRequest hostRequest) throws AmbariException{
-    if (hostRequest.getClusterName() == null) {
+    if (hostRequest.getClusterId() == null) {
       for (Cluster c : clusters.getClusters().values()) {
         removeHostFromClusterTopology(c.getClusterId(), hostRequest.getHostname());
       }
     } else {
-      long clusterId = clusters.getCluster(hostRequest.getClusterName()).getClusterId();
+      long clusterId = clusters.getCluster(hostRequest.getClusterId()).getClusterId();
       removeHostFromClusterTopology(clusterId, hostRequest.getHostname());
     }
   }

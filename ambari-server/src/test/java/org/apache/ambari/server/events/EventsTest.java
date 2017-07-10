@@ -69,6 +69,7 @@ public class EventsTest {
   private Clusters m_clusters;
   private Cluster m_cluster;
   private String m_clusterName;
+  private Long m_clusterId;
   private Injector m_injector;
   private ServiceFactory m_serviceFactory;
   private ServiceComponentFactory m_componentFactory;
@@ -124,7 +125,7 @@ public class EventsTest {
     m_cluster.setDesiredStackVersion(stackId);
     m_repositoryVersion = m_helper.getOrCreateRepositoryVersion(stackId, REPO_VERSION);
 
-    m_clusters.mapHostToCluster(HOSTNAME, m_clusterName);
+    m_clusters.mapHostToCluster(HOSTNAME, m_clusterId);
   }
 
   /**

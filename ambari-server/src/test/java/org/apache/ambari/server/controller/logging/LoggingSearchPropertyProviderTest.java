@@ -212,10 +212,10 @@ public class LoggingSearchPropertyProviderTest {
       expect(componentInfoMock.getLogs()).andReturn(Collections.singletonList(logDefinitionMock)).atLeastOnce();
       expect(logDefinitionMock.getLogId()).andReturn(expectedLogSearchComponentName).atLeastOnce();
 
-      expect(dataRetrievalServiceMock.getLogFileNames(expectedLogSearchComponentName, "c6401.ambari.apache.org", "clusterone")).andReturn(Collections.singleton(expectedLogFilePath)).atLeastOnce();
-      expect(dataRetrievalServiceMock.getLogFileTailURI(expectedAmbariURL + expectedSearchEnginePath, expectedLogSearchComponentName, "c6401.ambari.apache.org", "clusterone")).andReturn("").atLeastOnce();
+      expect(dataRetrievalServiceMock.getLogFileNames(expectedLogSearchComponentName, "c6401.ambari.apache.org", clusterMock.getClusterId())).andReturn(Collections.singleton(expectedLogFilePath)).atLeastOnce();
+      expect(dataRetrievalServiceMock.getLogFileTailURI(expectedAmbariURL + expectedSearchEnginePath, expectedLogSearchComponentName, "c6401.ambari.apache.org", clusterMock.getClusterId())).andReturn("").atLeastOnce();
 
-      expect(loggingRequestHelperFactoryMock.getHelper(anyObject(AmbariManagementController.class), anyObject(String.class)))
+      expect(loggingRequestHelperFactoryMock.getHelper(anyObject(AmbariManagementController.class), anyObject(Long.class)))
           .andReturn(loggingRequestHelperMock).atLeastOnce();
     }
 
@@ -410,12 +410,12 @@ public class LoggingSearchPropertyProviderTest {
       expect(clusterMock.getService(expectedServiceName)).andReturn(serviceMock).anyTimes();
       expect(serviceMock.getDesiredStackId()).andReturn(stackIdMock).anyTimes();
 
-      expect(dataRetrievalServiceMock.getLogFileNames(expectedLogSearchComponentName, "c6401.ambari.apache.org", "clusterone")).andReturn(Collections.singleton(expectedLogFilePath)).atLeastOnce();
+      expect(dataRetrievalServiceMock.getLogFileNames(expectedLogSearchComponentName, "c6401.ambari.apache.org", clusterMock.getClusterId())).andReturn(Collections.singleton(expectedLogFilePath)).atLeastOnce();
       // return null, to simulate the case when the LogSearch service goes down, and the helper object
       // is not available to continue servicing the request.
-      expect(dataRetrievalServiceMock.getLogFileTailURI(expectedAmbariURL + expectedSearchEnginePath, expectedLogSearchComponentName, "c6401.ambari.apache.org", "clusterone")).andReturn(null).atLeastOnce();
+      expect(dataRetrievalServiceMock.getLogFileTailURI(expectedAmbariURL + expectedSearchEnginePath, expectedLogSearchComponentName, "c6401.ambari.apache.org", clusterMock.getClusterId())).andReturn(null).atLeastOnce();
 
-      expect(loggingRequestHelperFactoryMock.getHelper(anyObject(AmbariManagementController.class), anyObject(String.class)))
+      expect(loggingRequestHelperFactoryMock.getHelper(anyObject(AmbariManagementController.class), anyObject(Long.class)))
           .andReturn(loggingRequestHelperMock).atLeastOnce();
 
       expect(controllerMock.getAmbariServerURI(expectedSearchEnginePath)).
@@ -585,12 +585,12 @@ public class LoggingSearchPropertyProviderTest {
       expect(metaInfoMock.getComponent(expectedStackName, expectedStackVersion, expectedServiceName, expectedComponentName)).andReturn(componentInfoMock).atLeastOnce();
 
       // simulate the case when LogSearch is not deployed, or is not available for some reason
-      expect(dataRetrievalServiceMock.getLogFileNames(expectedLogSearchComponentName, "c6401.ambari.apache.org", "clusterone")).andReturn(null).atLeastOnce();
+      expect(dataRetrievalServiceMock.getLogFileNames(expectedLogSearchComponentName, "c6401.ambari.apache.org", clusterMock.getClusterId())).andReturn(null).atLeastOnce();
 
       expect(componentInfoMock.getLogs()).andReturn(Collections.singletonList(logDefinitionMock)).atLeastOnce();
       expect(logDefinitionMock.getLogId()).andReturn(expectedLogSearchComponentName).atLeastOnce();
 
-      expect(loggingRequestHelperFactoryMock.getHelper(anyObject(AmbariManagementController.class), anyObject(String.class)))
+      expect(loggingRequestHelperFactoryMock.getHelper(anyObject(AmbariManagementController.class), anyObject(Long.class)))
           .andReturn(loggingRequestHelperMock).atLeastOnce();
     }
 

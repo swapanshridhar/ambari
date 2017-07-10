@@ -1,0 +1,179 @@
+***************
+*** 87,94 ****
+    // ----- Property ID constants ---------------------------------------------
+  
+    // Hosts
+-   public static final String HOST_CLUSTER_NAME_PROPERTY_ID =
+-       PropertyHelper.getPropertyId("Hosts", "cluster_name");
+    public static final String HOST_NAME_PROPERTY_ID =
+        PropertyHelper.getPropertyId("Hosts", "host_name");
+    public static final String HOST_PUBLIC_NAME_PROPERTY_ID =
+--- 88,95 ----
+    // ----- Property ID constants ---------------------------------------------
+  
+    // Hosts
++   public static final String HOST_CLUSTER_ID_PROPERTY_ID =
++       PropertyHelper.getPropertyId("Hosts", "cluster_id");
+    public static final String HOST_NAME_PROPERTY_ID =
+        PropertyHelper.getPropertyId("Hosts", "host_name");
+    public static final String HOST_PUBLIC_NAME_PROPERTY_ID =
+***************
+*** 404,412 ****
+        return  new HostRequest(null, null, null);
+      }
+  
+      HostRequest hostRequest = new HostRequest(
+          getHostNameFromProperties(properties),
+-         (String) properties.get(HOST_CLUSTER_NAME_PROPERTY_ID),
+          null);
+      hostRequest.setPublicHostName((String) properties.get(HOST_PUBLIC_NAME_PROPERTY_ID));
+  
+--- 404,413 ----
+        return  new HostRequest(null, null, null);
+      }
+  
++     Long clusterId = MapUtils.parseLong(properties, HOST_CLUSTER_ID_PROPERTY_ID);
+      HostRequest hostRequest = new HostRequest(
+          getHostNameFromProperties(properties),
++         clusterId,
+          null);
+      hostRequest.setPublicHostName((String) properties.get(HOST_PUBLIC_NAME_PROPERTY_ID));
+  
+***************
+*** 504,511 ****
+      }
+      clusters.updateHostWithClusterAndAttributes(hostClustersMap, hostAttributes);
+  
+-     for (String clusterName : allClusterSet) {
+-       clusters.getCluster(clusterName).recalculateAllClusterVersionStates();
+      }
+    }
+  
+--- 504,511 ----
+      }
+      clusters.updateHostWithClusterAndAttributes(hostClustersMap, hostAttributes);
+  
++     for (Long clusterId : allClusterSet) {
++       clusters.getCluster(clusterId).recalculateAllClusterVersionStates();
+      }
+    }
+  
+***************
+*** 632,648 ****
+      }
+  
+      for (Host h : hosts) {
+-       if (clusterName != null) {
+          if (clusters.getClustersForHost(h.getHostName()).contains(cluster)) {
+            HostResponse r = h.convertToResponse();
+  
+-           r.setClusterName(clusterName);
+            r.setDesiredHostConfigs(h.getDesiredHostConfigs(cluster, desiredConfigs));
+            r.setMaintenanceState(h.getMaintenanceState(cluster.getClusterId()));
+  
+            response.add(r);
+          } else if (hostName != null) {
+-           throw new HostNotFoundException(clusterName, hostName);
+          }
+        } else {
+          HostResponse r = h.convertToResponse();
+--- 632,648 ----
+      }
+  
+      for (Host h : hosts) {
++       if (clusterId != null) {
+          if (clusters.getClustersForHost(h.getHostName()).contains(cluster)) {
+            HostResponse r = h.convertToResponse();
+  
++           r.setClusterId(clusterId);
+            r.setDesiredHostConfigs(h.getDesiredHostConfigs(cluster, desiredConfigs));
+            r.setMaintenanceState(h.getMaintenanceState(cluster.getClusterId()));
+  
+            response.add(r);
+          } else if (hostName != null) {
++           throw new HostNotFoundException(cluster.getClusterName(), hostName);
+          }
+        } else {
+          HostResponse r = h.convertToResponse();
+***************
+*** 775,785 ****
+          }
+        }
+  
+-       if (clusterName != null && !clusterName.isEmpty()) {
+-         clusters.getCluster(clusterName).recalculateAllClusterVersionStates();
+          if (rackChange) {
+            // Authorization check for this update was performed before we got to this point.
+-           controller.registerRackChange(clusterName);
+          }
+        }
+  
+--- 775,785 ----
+          }
+        }
+  
++       if (clusterId != null) {
++         clusters.getCluster(clusterId).recalculateAllClusterVersionStates();
+          if (rackChange) {
+            // Authorization check for this update was performed before we got to this point.
++           controller.registerRackChange(clusterId);
+          }
+        }
+  
+***************
+*** 900,926 ****
+        }
+      }
+      clusters.publishHostsDeletion(allClustersWithHosts, hostNames);
+-     for (String clustername : hostsClusters) {
+-       clusters.getCluster(clustername).recalculateAllClusterVersionStates();
+      }
+    }
+  
+    private void validateHostInDeleteFriendlyState(HostRequest hostRequest, Clusters clusters, boolean forceDelete) throws AmbariException {
+-     Set<String> clusterNamesForHost = new HashSet<>();
+      String hostName = hostRequest.getHostname();
+-     if (null != hostRequest.getClusterName()) {
+-       clusterNamesForHost.add(hostRequest.getClusterName());
+      } else {
+        Set<Cluster> clustersForHost = clusters.getClustersForHost(hostRequest.getHostname());
+        if (null != clustersForHost) {
+          for (Cluster c : clustersForHost) {
+-           clusterNamesForHost.add(c.getClusterName());
+          }
+        }
+      }
+  
+-     for (String clusterName : clusterNamesForHost) {
+-       Cluster cluster = clusters.getCluster(clusterName);
+  
+        List<ServiceComponentHost> list = cluster.getServiceComponentHosts(hostName);
+  
+--- 900,926 ----
+        }
+      }
+      clusters.publishHostsDeletion(allClustersWithHosts, hostNames);
++     for (Long clusterId : hostsClusters) {
++       clusters.getCluster(clusterId).recalculateAllClusterVersionStates();
+      }
+    }
+  
+    private void validateHostInDeleteFriendlyState(HostRequest hostRequest, Clusters clusters, boolean forceDelete) throws AmbariException {
++     Set<Long> clusterNamesForHost = new HashSet<>();
+      String hostName = hostRequest.getHostname();
++     if (null != hostRequest.getClusterId()) {
++       clusterNamesForHost.add(hostRequest.getClusterId());
+      } else {
+        Set<Cluster> clustersForHost = clusters.getClustersForHost(hostRequest.getHostname());
+        if (null != clustersForHost) {
+          for (Cluster c : clustersForHost) {
++           clusterNamesForHost.add(c.getClusterId());
+          }
+        }
+      }
+  
++     for (Long clusterId : clusterNamesForHost) {
++       Cluster cluster = clusters.getCluster(clusterId);
+  
+        List<ServiceComponentHost> list = cluster.getServiceComponentHosts(hostName);
+  

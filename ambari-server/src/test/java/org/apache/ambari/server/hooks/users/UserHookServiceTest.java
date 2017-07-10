@@ -215,7 +215,7 @@ public class UserHookServiceTest extends EasyMockSupport {
     stageMock.setStageId(-1);
 
     // TBD refine expectations to validate the logic / eg capture arguments
-    stageMock.addServerActionCommand(EasyMock.anyString(), EasyMock.anyString(), EasyMock.anyObject(Role.class), EasyMock.anyObject(RoleCommand.class), EasyMock.anyString(), EasyMock.anyObject(ServiceComponentHostServerActionEvent.class),
+    stageMock.addServerActionCommand(EasyMock.anyString(), EasyMock.anyString(), EasyMock.anyObject(Role.class), EasyMock.anyObject(RoleCommand.class), EasyMock.anyLong(), EasyMock.anyObject(ServiceComponentHostServerActionEvent.class),
         EasyMock.<Map<String, String>>anyObject(), EasyMock.anyString(), EasyMock.<Map<String, Map<String, String>>>anyObject(), EasyMock.anyInt(), EasyMock.anyBoolean(), EasyMock.anyBoolean());
     EasyMock.expect(requestFactoryMock.createNewFromStages(Arrays.asList(stageMock), "{}")).andReturn(null);
     EasyMock.expect(stageFactoryMock.createNew(1, "/var/lib/ambari-server/tmp:1", "test-cluster", 1, "Post user creation hook for [ 1 ] users", "{}", "{}")).andReturn(stageMock);

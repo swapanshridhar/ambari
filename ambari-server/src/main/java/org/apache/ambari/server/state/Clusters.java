@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ambari.server.AmbariException;
+import org.apache.ambari.server.orm.entities.ClusterEntity;
 
 /**
  * Single entity that tracks all clusters and hosts that are managed
@@ -38,7 +39,7 @@ public interface Clusters {
    *          the stack for the cluster (not {@code null}).
    */
   void addCluster(String clusterName, StackId stackId)
-      throws AmbariException;
+    throws AmbariException;
 
   /**
    * Add a new cluster
@@ -145,19 +146,19 @@ public interface Clusters {
    * Map host to the given cluster.
    * A host can belong to multiple clusters
    * @param hostname
-   * @param clusterName
+   * @param clusterId
    * @throws AmbariException
    */
-  void mapHostToCluster(String hostname, String clusterName)
+  void mapHostToCluster(String hostname, Long clusterId)
       throws AmbariException;
 
   /**
    * Maps a set of hosts to the given cluster
    * @param hostnames
-   * @param clusterName
+   * @param clusterId
    * @throws AmbariException
    */
-  void mapAndPublishHostsToCluster(Set<String> hostnames, String clusterName)
+  void mapAndPublishHostsToCluster(Set<String> hostnames, Long clusterId)
       throws AmbariException;
 
   /**
@@ -200,6 +201,9 @@ public interface Clusters {
   Map<Long, Host> getHostIdsForCluster(String clusterName)
       throws AmbariException;
 
+  Map<String, Host> getHostsForCluster(Long clusterId)
+    throws AmbariException;
+
   /**
    * Deletes the cluster identified by the name
    * @param clusterName The name of the cluster
@@ -215,8 +219,8 @@ public interface Clusters {
    * @throws AmbariException
    */
   void updateHostWithClusterAndAttributes(
-      Map<String, Set<String>> hostsClusters, Map<String, Map<String, String>> hostAttributes)
-      throws AmbariException;
+    Map<String, Set<Long>> hostsClusters, Map<String, Map<String, String>> hostAttributes)
+    throws AmbariException;
 
   /**
    * Removes a host from a cluster.  Inverts {@link #mapHostToCluster(String, String)

@@ -166,7 +166,7 @@ public class FinalizeKerberosServerAction extends KerberosServerAction {
     String dataDirectoryPath = getCommandParameterValue(DATA_DIRECTORY);
 
     // Set the ServiceComponentHost from a transitional state to the desired endpoint state
-    Map<String, Host> hosts = getClusters().getHostsForCluster(getClusterName());
+    Map<String, Host> hosts = getClusters().getHostsForCluster(getClusterId());
     if ((hosts != null) && !hosts.isEmpty()) {
       Cluster cluster = getCluster();
       for (String hostname : hosts.keySet()) {

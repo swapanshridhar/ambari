@@ -77,8 +77,8 @@ public class SecondaryNamenodeDeletedCheck extends AbstractCheckDescriptor {
     Set<String> hosts = new HashSet<>();
     final String SECONDARY_NAMENODE = "SECONDARY_NAMENODE";
 
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     try {
       ServiceComponent serviceComponent = cluster.getService(HDFS_SERVICE_NAME).getServiceComponent(SECONDARY_NAMENODE);
       if (serviceComponent != null) {

@@ -70,7 +70,7 @@ public class ClusterStackVersionService extends BaseService {
 
   /**
    * Gets a single cluster stack version.
-   * Handles: GET /clusters/{clustername}/stack_versions/{stackVersionId} requests.
+   * Handles: GET /clusters/{clusterId}/stack_versions/{stackVersionId} requests.
    *
    * @param headers        http headers
    * @param ui             uri info
@@ -121,7 +121,7 @@ public class ClusterStackVersionService extends BaseService {
   }
 
   /**
-   * Handles: POST /{clustername}/stack_versions requests
+   * Handles: POST /{clusterId}/stack_versions requests
    * triggering Finalize during manual Stack Upgrade
    *
    * @param body        http body
@@ -144,7 +144,7 @@ public class ClusterStackVersionService extends BaseService {
    */
   private ResourceInstance createResource(String stackVersionId) {
     final Map<Resource.Type, String> mapIds = new HashMap<>();
-    mapIds.put(Resource.Type.Cluster, clusterName);
+    mapIds.put(Resource.Type.Cluster, clusterId.toString());
     mapIds.put(Resource.Type.ClusterStackVersion, stackVersionId);
     return createResource(Resource.Type.ClusterStackVersion, mapIds);
   }

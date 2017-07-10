@@ -158,7 +158,7 @@ public class AmbariPerformanceRunnable extends AlertRunnable {
 
         // create the request
         Map<Resource.Type, String> mapIds = new HashMap<>();
-        mapIds.put(Resource.Type.Cluster, cluster.getClusterName());
+        mapIds.put(Resource.Type.Cluster, String.valueOf(cluster.getClusterId()));
 
         ClusterController clusterController = ClusterControllerHelper.getClusterController();
         Query query = new QueryImpl(mapIds, new ClusterResourceDefinition(), clusterController);

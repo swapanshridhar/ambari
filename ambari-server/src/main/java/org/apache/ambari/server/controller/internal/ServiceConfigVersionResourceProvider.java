@@ -46,11 +46,12 @@ import org.apache.ambari.server.controller.spi.SystemException;
 import org.apache.ambari.server.controller.spi.UnsupportedPropertyException;
 import org.apache.ambari.server.controller.utilities.PropertyHelper;
 import org.apache.ambari.server.security.authorization.RoleAuthorization;
+import org.apache.ambari.server.utils.MapUtils;
 
 public class ServiceConfigVersionResourceProvider extends
     AbstractControllerResourceProvider {
 
-  public static final String SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId(null, "cluster_name");
+  public static final String SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId(null, "cluster_id");
   public static final String SERVICE_CONFIG_VERSION_PROPERTY_ID = PropertyHelper.getPropertyId(null, "service_config_version");
   public static final String SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID = PropertyHelper.getPropertyId(null, "service_name");
   public static final String SERVICE_CONFIG_VERSION_CREATE_TIME_PROPERTY_ID = PropertyHelper.getPropertyId(null, "createtime");
@@ -76,7 +77,7 @@ public class ServiceConfigVersionResourceProvider extends
 
   static {
     // properties
-    PROPERTY_IDS.add(SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID);
+    PROPERTY_IDS.add(SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID);
     PROPERTY_IDS.add(SERVICE_CONFIG_VERSION_PROPERTY_ID);
     PROPERTY_IDS.add(SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID);
     PROPERTY_IDS.add(SERVICE_CONFIG_VERSION_CREATE_TIME_PROPERTY_ID);
@@ -92,7 +93,7 @@ public class ServiceConfigVersionResourceProvider extends
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.Service,SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster,SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster,SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID);
     KEY_PROPERTY_IDS.put(Resource.Type.ServiceConfigVersion,SERVICE_CONFIG_VERSION_PROPERTY_ID);
   }
 
@@ -102,7 +103,7 @@ public class ServiceConfigVersionResourceProvider extends
    */
   private static Set<String> pkPropertyIds =
     new HashSet<>(Arrays.asList(new String[]{
-      SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID,
+      SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID,
       SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID}));
 
 
@@ -149,12 +150,12 @@ public class ServiceConfigVersionResourceProvider extends
 
     Set<Resource> resources = new HashSet<>();
     for (ServiceConfigVersionResponse response : responses) {
-      String clusterName = response.getClusterName();
+      Long clusterId = response.getClusterId();
       List<ConfigurationResponse> configurationResponses = response.getConfigurations();
-      List<Map<String,Object>> configVersionConfigurations = convertToSubResources(clusterName, configurationResponses);
+      List<Map<String,Object>> configVersionConfigurations = convertToSubResources(clusterId, configurationResponses);
 
       Resource resource = new ResourceImpl(Resource.Type.ServiceConfigVersion);
-      resource.setProperty(SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID, clusterName);
+      resource.setProperty(SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID, clusterId);
       resource.setProperty(SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID, response.getServiceName());
       resource.setProperty(SERVICE_CONFIG_VERSION_USER_PROPERTY_ID, response.getUserName());
       resource.setProperty(SERVICE_CONFIG_VERSION_PROPERTY_ID, response.getVersion());
@@ -213,25 +214,25 @@ public class ServiceConfigVersionResourceProvider extends
 
 
   private ServiceConfigVersionRequest createRequest(Map<String, Object> properties) {
-    String clusterName = (String) properties.get(SERVICE_CONFIG_VERSION_CLUSTER_NAME_PROPERTY_ID);
+    Long clusterId = MapUtils.parseLong(properties, SERVICE_CONFIG_VERSION_CLUSTER_ID_PROPERTY_ID);
     String serviceName = (String) properties.get(SERVICE_CONFIG_VERSION_SERVICE_NAME_PROPERTY_ID);
     String user = (String) properties.get(SERVICE_CONFIG_VERSION_USER_PROPERTY_ID);
     Boolean isCurrent = Boolean.valueOf((String) properties.get(SERVICE_CONFIG_VERSION_IS_CURRENT_PROPERTY_ID));
     Object versionObject = properties.get(SERVICE_CONFIG_VERSION_PROPERTY_ID);
     Long version = versionObject == null ? null : Long.valueOf(versionObject.toString());
 
-    return new ServiceConfigVersionRequest(clusterName, serviceName, version, null, null, user, isCurrent);
+    return new ServiceConfigVersionRequest(clusterId, serviceName, version, null, null, user, isCurrent);
   }
 
-  private List<Map<String, Object>> convertToSubResources(final String clusterName, List<ConfigurationResponse> configs) {
+  private List<Map<String, Object>> convertToSubResources(final Long clusterId, List<ConfigurationResponse> configs) {
     List<Map<String, Object>> result = new ArrayList<>();
     for (final ConfigurationResponse config : configs) {
       Map<String, Object> subResourceMap = new LinkedHashMap<>();
-      Map<String,String> configMap = new HashMap<>();
+      Map<String,Object> configMap = new HashMap<>();
 
       String stackId = config.getStackId().getStackId();
 
-      configMap.put("cluster_name", clusterName);
+      configMap.put("cluster_id", clusterId);
       configMap.put("stack_id", stackId);
 
       subResourceMap.put("Config", configMap);

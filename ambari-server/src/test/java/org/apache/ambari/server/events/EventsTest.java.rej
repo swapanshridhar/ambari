@@ -1,0 +1,16 @@
+***************
+*** 101,106 ****
+      m_alertDispatchDao = m_injector.getInstance(AlertDispatchDAO.class);
+  
+      m_clusterName = "foo";
+      StackId stackId = new StackId("HDP", "2.0.6");
+  
+      m_clusters.addCluster(m_clusterName, stackId);
+--- 102,108 ----
+      m_alertDispatchDao = m_injector.getInstance(AlertDispatchDAO.class);
+  
+      m_clusterName = "foo";
++     m_clusterId = 1L;
+      StackId stackId = new StackId("HDP", "2.0.6");
+  
+      m_clusters.addCluster(m_clusterName, stackId);

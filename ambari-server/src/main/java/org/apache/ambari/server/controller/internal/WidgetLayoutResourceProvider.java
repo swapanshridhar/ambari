@@ -49,6 +49,7 @@ import org.apache.ambari.server.orm.dao.WidgetLayoutDAO;
 import org.apache.ambari.server.orm.entities.WidgetEntity;
 import org.apache.ambari.server.orm.entities.WidgetLayoutEntity;
 import org.apache.ambari.server.orm.entities.WidgetLayoutUserWidgetEntity;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -63,7 +64,7 @@ public class WidgetLayoutResourceProvider extends AbstractControllerResourceProv
   // ----- Property ID constants ---------------------------------------------
 
   public static final String WIDGETLAYOUT_ID_PROPERTY_ID = PropertyHelper.getPropertyId("WidgetLayoutInfo", "id");
-  public static final String WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("WidgetLayoutInfo", "cluster_name");
+  public static final String WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID = PropertyHelper.getPropertyId("WidgetLayoutInfo", "cluster_id");
   public static final String WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("WidgetLayoutInfo", "section_name");
   public static final String WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("WidgetLayoutInfo", "layout_name");
   public static final String WIDGETLAYOUT_SCOPE_PROPERTY_ID = PropertyHelper.getPropertyId("WidgetLayoutInfo", "scope");
@@ -91,7 +92,7 @@ public class WidgetLayoutResourceProvider extends AbstractControllerResourceProv
       add(WIDGETLAYOUT_ID_PROPERTY_ID);
       add(WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID);
       add(WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID);
-      add(WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID);
+      add(WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID);
       add(WIDGETLAYOUT_WIDGETS_PROPERTY_ID);
       add(WIDGETLAYOUT_SCOPE_PROPERTY_ID);
       add(WIDGETLAYOUT_USERNAME_PROPERTY_ID);
@@ -103,7 +104,7 @@ public class WidgetLayoutResourceProvider extends AbstractControllerResourceProv
   public static Map<Type, String> keyPropertyIds = new HashMap<Type, String>() {
     {
       put(Type.WidgetLayout, WIDGETLAYOUT_ID_PROPERTY_ID);
-      put(Type.Cluster, WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID);
+      put(Type.Cluster, WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID);
       put(Type.User, WIDGETLAYOUT_USERNAME_PROPERTY_ID);
     }
   };
@@ -139,7 +140,7 @@ public class WidgetLayoutResourceProvider extends AbstractControllerResourceProv
           final String[] requiredProperties = {
               WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID,
               WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID,
-              WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID,
+              WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID,
               WIDGETLAYOUT_SCOPE_PROPERTY_ID,
               WIDGETLAYOUT_WIDGETS_PROPERTY_ID,
               WIDGETLAYOUT_DISPLAY_NAME_PROPERTY_ID,
@@ -155,9 +156,9 @@ public class WidgetLayoutResourceProvider extends AbstractControllerResourceProv
 
           Set widgetsSet = (LinkedHashSet) properties.get(WIDGETLAYOUT_WIDGETS_PROPERTY_ID);
 
-          String clusterName = properties.get(WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID).toString();
+          Long clusterId = MapUtils.parseLong(properties, WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID);
           entity.setLayoutName(properties.get(WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID).toString());
-          entity.setClusterId(getManagementController().getClusters().getCluster(clusterName).getClusterId());
+          entity.setClusterId(getManagementController().getClusters().getCluster(clusterId).getClusterId());
           entity.setSectionName(properties.get(WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID).toString());
           entity.setScope(properties.get(WIDGETLAYOUT_SCOPE_PROPERTY_ID).toString());
           entity.setUserName(userName);
@@ -229,13 +230,13 @@ public class WidgetLayoutResourceProvider extends AbstractControllerResourceProv
     for (WidgetLayoutEntity layoutEntity : layoutEntities) {
       Resource resource = new ResourceImpl(Type.WidgetLayout);
       resource.setProperty(WIDGETLAYOUT_ID_PROPERTY_ID, layoutEntity.getId());
-      String clusterName = null;
+      Long clusterId = null;
       try {
-        clusterName = getManagementController().getClusters().getClusterById(layoutEntity.getClusterId()).getClusterName();
+        clusterId = getManagementController().getClusters().getClusterById(layoutEntity.getClusterId()).getClusterId();
       } catch (AmbariException e) {
         throw new SystemException(e.getMessage());
       }
-      resource.setProperty(WIDGETLAYOUT_CLUSTER_NAME_PROPERTY_ID, clusterName);
+      resource.setProperty(WIDGETLAYOUT_CLUSTER_ID_PROPERTY_ID, clusterId);
       resource.setProperty(WIDGETLAYOUT_LAYOUT_NAME_PROPERTY_ID, layoutEntity.getLayoutName());
       resource.setProperty(WIDGETLAYOUT_SECTION_NAME_PROPERTY_ID, layoutEntity.getSectionName());
       resource.setProperty(WIDGETLAYOUT_SCOPE_PROPERTY_ID, layoutEntity.getScope());

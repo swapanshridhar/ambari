@@ -44,9 +44,10 @@ public final class FlumeServiceCalculatedState extends DefaultServiceCalculatedS
   public State getState(String clusterName, String serviceName) {
     try {
       Cluster cluster = getCluster(clusterName);
+      Long clusterId = cluster.getClusterId();
       if (cluster != null && managementControllerProvider != null) {
 
-        ServiceComponentHostRequest request = new ServiceComponentHostRequest(clusterName,
+        ServiceComponentHostRequest request = new ServiceComponentHostRequest(clusterId,
           serviceName, null, null, null);
 
         Set<ServiceComponentHostResponse> hostComponentResponses =

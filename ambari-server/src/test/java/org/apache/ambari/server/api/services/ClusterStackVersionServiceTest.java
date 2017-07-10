@@ -48,13 +48,13 @@ public class ClusterStackVersionServiceTest extends BaseServiceTest {
     Object[] args;
 
     //getClusterStackVersions
-    clusterStackVersionService = new TestClusterStackVersionService("cluster");
+    clusterStackVersionService = new TestClusterStackVersionService(1L);
     m = clusterStackVersionService.getClass().getMethod("getClusterStackVersions", HttpHeaders.class, UriInfo.class);
     args = new Object[] {getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, clusterStackVersionService, m, args, null));
 
     //getClusterStackVersion
-    clusterStackVersionService = new TestClusterStackVersionService("cluster");
+    clusterStackVersionService = new TestClusterStackVersionService(1L);
     m = clusterStackVersionService.getClass().getMethod("getClusterStackVersion", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "1"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, clusterStackVersionService, m, args, null));

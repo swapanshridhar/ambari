@@ -59,6 +59,7 @@ App.wizardDeployProgressControllerMixin = Em.Mixin.create({
       error: 'ajaxQueueRequestErrorCallback'
     }, params);
     params.data.cluster = this.get('clusterName');
+    params.data.clusterId = this.get('clusterId');
 
     this.get('ajaxRequestsQueue').addRequest(params);
   },

@@ -52,7 +52,7 @@ public class SQLPropertyProvider extends AbstractPropertyProvider {
 
   private final HostInfoProvider hostProvider;
 
-  private final String clusterNamePropertyId;
+  private final String clusterIdPropertyId;
 
   private final String hostNamePropertyId;
 
@@ -94,14 +94,14 @@ public class SQLPropertyProvider extends AbstractPropertyProvider {
   public SQLPropertyProvider(
     Map<String, Map<String, PropertyInfo>> componentPropertyInfoMap,
     HostInfoProvider hostProvider,
-    String clusterNamePropertyId,
+    String clusterIdPropertyId,
     String hostNamePropertyId,
     String componentNamePropertyId,
     String serviceNamePropertyId,
     ConnectionFactory connectionFactory) {
     super(componentPropertyInfoMap);
     this.hostProvider = hostProvider;
-    this.clusterNamePropertyId = clusterNamePropertyId;
+    this.clusterIdPropertyId = clusterIdPropertyId;
     this.hostNamePropertyId = hostNamePropertyId;
     this.componentNamePropertyId = componentNamePropertyId;
     this.serviceNamePropertyId = serviceNamePropertyId;
@@ -160,7 +160,7 @@ public class SQLPropertyProvider extends AbstractPropertyProvider {
       return true;
     }
 
-    String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+    String clusterName = (String) resource.getPropertyValue(clusterIdPropertyId);
     String hostName = getHost(resource, clusterName, componentName);
 
     if (hostName == null) {

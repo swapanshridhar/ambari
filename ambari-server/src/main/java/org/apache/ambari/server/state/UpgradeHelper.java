@@ -695,19 +695,19 @@ public class UpgradeHelper {
 
   /**
    * Get a single resource for the task with the given parameters.
-   * @param clusterName Cluster Name
+   * @param clusterId Cluster Id
    * @param requestId Request Id
    * @param stageId Stage Id
    * @param taskId Task Id
    * @return Single task resource that matches the predicates, otherwise, null.
    */
-  public Resource getTaskResource(String clusterName, Long requestId, Long stageId, Long taskId)
+  public Resource getTaskResource(Long clusterId, Long requestId, Long stageId, Long taskId)
       throws UnsupportedPropertyException, NoSuchResourceException, NoSuchParentResourceException, SystemException {
     ClusterController clusterController = ClusterControllerHelper.getClusterController();
 
     Request request = PropertyHelper.getReadRequest();
 
-    Predicate p1 = new PredicateBuilder().property(TaskResourceProvider.TASK_CLUSTER_NAME_PROPERTY_ID).equals(clusterName).toPredicate();
+    Predicate p1 = new PredicateBuilder().property(TaskResourceProvider.TASK_CLUSTER_ID_PROPERTY_ID).equals(clusterId).toPredicate();
     Predicate p2 = new PredicateBuilder().property(TaskResourceProvider.TASK_REQUEST_ID_PROPERTY_ID).equals(requestId.toString()).toPredicate();
     Predicate p3 = new PredicateBuilder().property(TaskResourceProvider.TASK_STAGE_ID_PROPERTY_ID).equals(stageId.toString()).toPredicate();
     Predicate p4 = new PredicateBuilder().property(TaskResourceProvider.TASK_ID_PROPERTY_ID).equals(taskId.toString()).toPredicate();

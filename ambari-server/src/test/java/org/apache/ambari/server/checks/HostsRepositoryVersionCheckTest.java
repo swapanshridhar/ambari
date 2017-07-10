@@ -53,7 +53,7 @@ public class HostsRepositoryVersionCheckTest {
 
   @Test
   public void testIsApplicable() throws Exception {
-    final PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    final PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("not null");
     HostsRepositoryVersionCheck hrvc = new HostsRepositoryVersionCheck();
     Configuration config = Mockito.mock(Configuration.class);
@@ -119,7 +119,7 @@ public class HostsRepositoryVersionCheckTest {
         null);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    hostsRepositoryVersionCheck.perform(check, new PrereqCheckRequest("cluster"));
+    hostsRepositoryVersionCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     StackEntity stackEntity = new StackEntity();
@@ -141,12 +141,12 @@ public class HostsRepositoryVersionCheckTest {
     final HostVersionEntity hostVersion = new HostVersionEntity();
     hostVersion.setState(RepositoryVersionState.INSTALLED);
     Mockito.when(
-        hostVersionDAO.findByClusterStackVersionAndHost(Mockito.anyString(),
+        hostVersionDAO.findByClusterStackVersionAndHost(Mockito.any(Long.class),
             Mockito.any(StackId.class), Mockito.anyString(),
             Mockito.anyString())).thenReturn(hostVersion);
 
     check = new PrerequisiteCheck(null, null);
-    hostsRepositoryVersionCheck.perform(check, new PrereqCheckRequest("cluster"));
+    hostsRepositoryVersionCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 
@@ -201,7 +201,7 @@ public class HostsRepositoryVersionCheckTest {
             Collections.singletonList(hve));
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("1.1.1");
     hostsRepositoryVersionCheck.perform(check, request);
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
@@ -258,7 +258,7 @@ public class HostsRepositoryVersionCheckTest {
             Collections.singletonList(hve));
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("1.1.1");
     hostsRepositoryVersionCheck.perform(check, request);
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());

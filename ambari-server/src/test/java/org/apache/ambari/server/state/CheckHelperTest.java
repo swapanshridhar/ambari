@@ -198,7 +198,7 @@ public class CheckHelperTest {
 
       try {
         CheckDescription description = CheckDescription.SERVICES_UP;
-        PrerequisiteCheck check = new PrerequisiteCheck(description, "c1");
+        PrerequisiteCheck check = new PrerequisiteCheck(description, 1L);
         check.setStatus(PrereqCheckStatus.FAIL);
 
         AbstractCheckDescriptor descriptor = EasyMock.createNiceMock(AbstractCheckDescriptor.class);

@@ -234,7 +234,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
     host.setHostAttributes(hostAttributes);
     host.setState(HostState.HEALTHY);
 
-    clusters.mapHostToCluster("h1", "c1");
+    clusters.mapHostToCluster("h1", 1L);
 
     // add a single ZK server and client on 2.1.1.0
     Service service = cluster.addService("ZOOKEEPER", repoVersionEntity2110);
@@ -451,7 +451,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
 
     Predicate predicate = new PredicateBuilder()
       .property(UpgradeResourceProvider.UPGRADE_REQUEST_ID).equals("1").and()
-      .property(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME).equals("c1")
+      .property(UpgradeResourceProvider.UPGRADE_CLUSTER_ID).equals(1L)
       .toPredicate();
     Request request = PropertyHelper.getReadRequest(propertyIds);
 
@@ -473,7 +473,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
 
     predicate = new PredicateBuilder()
       .property(UpgradeGroupResourceProvider.UPGRADE_REQUEST_ID).equals("1").and()
-      .property(UpgradeGroupResourceProvider.UPGRADE_CLUSTER_NAME).equals("c1")
+      .property(UpgradeGroupResourceProvider.UPGRADE_CLUSTER_ID).equals(1L)
       .toPredicate();
     request = PropertyHelper.getReadRequest(propertyIds);
 
@@ -495,7 +495,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
     predicate = new PredicateBuilder()
       .property(UpgradeItemResourceProvider.UPGRADE_GROUP_ID).equals("1").and()
       .property(UpgradeItemResourceProvider.UPGRADE_REQUEST_ID).equals("1").and()
-      .property(UpgradeItemResourceProvider.UPGRADE_CLUSTER_NAME).equals("c1")
+      .property(UpgradeItemResourceProvider.UPGRADE_CLUSTER_ID).equals(1L)
       .toPredicate();
     request = PropertyHelper.getReadRequest(propertyIds);
 
@@ -514,7 +514,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
     predicate = new PredicateBuilder()
       .property(UpgradeItemResourceProvider.UPGRADE_GROUP_ID).equals("3").and()
       .property(UpgradeItemResourceProvider.UPGRADE_REQUEST_ID).equals("1").and()
-      .property(UpgradeItemResourceProvider.UPGRADE_CLUSTER_NAME).equals("c1")
+      .property(UpgradeItemResourceProvider.UPGRADE_CLUSTER_ID).equals(1L)
       .toPredicate();
     request = PropertyHelper.getReadRequest(propertyIds);
 
@@ -566,7 +566,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
 
     Predicate predicate = new PredicateBuilder()
       .property(UpgradeResourceProvider.UPGRADE_REQUEST_ID).equals("1").and()
-      .property(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME).equals("c1")
+      .property(UpgradeResourceProvider.UPGRADE_CLUSTER_ID).equals(1L)
       .toPredicate();
 
     request = PropertyHelper.getReadRequest(propertyIds);
@@ -589,7 +589,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
     hostAttributes.put("os_release_version", "6.3");
     host.setHostAttributes(hostAttributes);
 
-    clusters.mapHostToCluster("h2", "c1");
+    clusters.mapHostToCluster("h2", 1L);
     Cluster cluster = clusters.getCluster("c1");
     Service service = cluster.getService("ZOOKEEPER");
 
@@ -846,7 +846,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
 
     Map<String, Object> requestProps = new HashMap<>();
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_ID, id.toString());
-    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_STATUS, "ABORTED");
     requestProps.put(UpgradeResourceProvider.UPGRADE_SUSPENDED, "true");
 
@@ -871,7 +871,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
 
     Map<String, Object> requestProps = new HashMap<>();
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_ID, id.toString());
-    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_STATUS, "ABORTED");
     requestProps.put(UpgradeResourceProvider.UPGRADE_SUSPENDED, "true");
 
@@ -905,7 +905,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
     requestProps = new HashMap<>();
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_ID, id.toString());
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_STATUS, "PENDING");
-    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
     requestProps.put(UpgradeResourceProvider.UPGRADE_SUSPENDED, "false");
 
     // !!! make sure we can.  actual reset is tested elsewhere
@@ -926,7 +926,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
 
     Map<String, Object> requestProps = new HashMap<>();
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_ID, id.toString());
-    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_STATUS, "ABORTED");
 
     UpgradeResourceProvider urp = createProvider(amc);
@@ -1590,7 +1590,7 @@ public class UpgradeResourceProviderTest extends EasyMockSupport {
     // now abort the upgrade so another can be created
     Map<String, Object> requestProps = new HashMap<>();
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_ID, String.valueOf(requestId));
-    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_NAME, "c1");
+    requestProps.put(UpgradeResourceProvider.UPGRADE_CLUSTER_ID, 1L);
     requestProps.put(UpgradeResourceProvider.UPGRADE_REQUEST_STATUS, "ABORTED");
     requestProps.put(UpgradeResourceProvider.UPGRADE_SUSPENDED, "false");
     Request request = PropertyHelper.getUpdateRequest(requestProps, null);

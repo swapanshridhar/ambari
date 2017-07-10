@@ -42,6 +42,7 @@ import org.apache.ambari.server.controller.utilities.PropertyHelper;
 import org.apache.ambari.server.orm.dao.HostRoleCommandDAO;
 import org.apache.ambari.server.orm.entities.HostRoleCommandEntity;
 import org.apache.ambari.server.topology.TopologyManager;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.ambari.server.utils.StageUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -56,7 +57,7 @@ public class TaskResourceProvider extends AbstractControllerResourceProvider {
   // ----- Property ID constants ---------------------------------------------
 
   // Tasks
-  public static final String TASK_CLUSTER_NAME_PROPERTY_ID = PropertyHelper.getPropertyId("Tasks", "cluster_name");
+  public static final String TASK_CLUSTER_ID_PROPERTY_ID   = PropertyHelper.getPropertyId("Tasks", "cluster_id");
   public static final String TASK_REQUEST_ID_PROPERTY_ID   = PropertyHelper.getPropertyId("Tasks", "request_id");
   public static final String TASK_ID_PROPERTY_ID           = PropertyHelper.getPropertyId("Tasks", "id");
   public static final String TASK_STAGE_ID_PROPERTY_ID     = PropertyHelper.getPropertyId("Tasks", "stage_id");
@@ -89,7 +90,7 @@ public class TaskResourceProvider extends AbstractControllerResourceProvider {
   // These are static so that they can be referenced by other classes such as UpgradeSummaryResourceProvider.java
   static {
     // properties
-    PROPERTY_IDS.add(TASK_CLUSTER_NAME_PROPERTY_ID);
+    PROPERTY_IDS.add(TASK_CLUSTER_ID_PROPERTY_ID);
     PROPERTY_IDS.add(TASK_REQUEST_ID_PROPERTY_ID);
     PROPERTY_IDS.add(TASK_ID_PROPERTY_ID);
     PROPERTY_IDS.add(TASK_STAGE_ID_PROPERTY_ID);
@@ -173,10 +174,10 @@ public class TaskResourceProvider extends AbstractControllerResourceProvider {
     // make the same call to the API over and over
     String clusterName = null;
     Long requestId = null;
+    Long clusterId = null;
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      clusterName = (String) propertyMap.get(TASK_CLUSTER_NAME_PROPERTY_ID);
-      String requestIdStr = (String) propertyMap.get(TASK_REQUEST_ID_PROPERTY_ID);
-      requestId = Long.parseLong(requestIdStr);
+      clusterId = MapUtils.parseLong(propertyMap, TASK_CLUSTER_ID_PROPERTY_ID);
+      requestId = MapUtils.parseLong(propertyMap, TASK_REQUEST_ID_PROPERTY_ID);
     }
 
     Collection<HostRoleCommand> commands = new ArrayList<>(100);
@@ -200,8 +201,8 @@ public class TaskResourceProvider extends AbstractControllerResourceProvider {
       Resource resource = new ResourceImpl(Resource.Type.Task);
 
       // !!! shocked this isn't broken.  the key can be null for non-cluster tasks
-      if (null != clusterName) {
-        setResourceProperty(resource, TASK_CLUSTER_NAME_PROPERTY_ID, clusterName, requestedIds);
+      if (null != clusterId) {
+        setResourceProperty(resource, TASK_CLUSTER_ID_PROPERTY_ID, clusterId, requestedIds);
       }
 
       setResourceProperty(resource, TASK_REQUEST_ID_PROPERTY_ID, hostRoleCommand.getRequestId(), requestedIds);

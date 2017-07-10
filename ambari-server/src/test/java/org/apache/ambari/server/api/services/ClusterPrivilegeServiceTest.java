@@ -37,27 +37,27 @@ public class ClusterPrivilegeServiceTest extends BaseServiceTest {
 
   public List<ServiceTestInvocation> getTestInvocations() throws Exception {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
-
+    Long clusterId = 1L;
     //getPrivilege
-    ClusterPrivilegeService privilegeService = new TestClusterPrivilegeService("c1");
+    ClusterPrivilegeService privilegeService = new TestClusterPrivilegeService(clusterId);
     Method m = privilegeService.getClass().getMethod("getPrivilege", HttpHeaders.class, UriInfo.class, String.class);
     Object[] args = new Object[] {getHttpHeaders(), getUriInfo(), "privilegename"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, privilegeService, m, args, null));
 
     //getPrivileges
-    privilegeService = new TestClusterPrivilegeService("c1");
+    privilegeService = new TestClusterPrivilegeService(clusterId);
     m = privilegeService.getClass().getMethod("getPrivileges", HttpHeaders.class, UriInfo.class);
     args = new Object[] {getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, privilegeService, m, args, null));
 
     //createPrivilege
-    privilegeService = new TestClusterPrivilegeService("c1");
+    privilegeService = new TestClusterPrivilegeService(clusterId);
     m = privilegeService.getClass().getMethod("createPrivilege", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, privilegeService, m, args, "body"));
 
     //deletePrivilege
-    privilegeService = new TestClusterPrivilegeService("c1");
+    privilegeService = new TestClusterPrivilegeService(clusterId);
     m = privilegeService.getClass().getMethod("deletePrivilege", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "privilegename"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, privilegeService, m, args, null));

@@ -280,6 +280,7 @@ public class TestActionScheduler {
    */
   @Test
   public void testActionTimeout() throws Exception {
+    Long cluster1 = 1L;
     ActionQueue aq = new ActionQueue();
     Properties properties = new Properties();
     Configuration conf = new Configuration(properties);
@@ -312,7 +313,7 @@ public class TestActionScheduler {
       "{\"host_param\":\"param_value\"}", "{\"stage_param\":\"param_value\"}");
     s.addHostRoleExecutionCommand(hostname, Role.SECONDARY_NAMENODE, RoleCommand.INSTALL,
             new ServiceComponentHostInstallEvent("SECONDARY_NAMENODE", hostname, System.currentTimeMillis(), "HDP-1.2.0"),
-            "cluster1", "HDFS", false, false);
+            cluster1, "HDFS", false, false);
     s.setHostRoleStatus(hostname, "SECONDARY_NAMENODE", HostRoleStatus.IN_PROGRESS);
     List<Stage> stages = Collections.singletonList(s);
 
@@ -444,6 +445,7 @@ public class TestActionScheduler {
 
   @Test
   public void testOpFailedEventRaisedForAbortedHostRole() throws Exception {
+    Long cluster1 = 1L;
     ActionQueue aq = new ActionQueue();
     Properties properties = new Properties();
     Configuration conf = new Configuration(properties);
@@ -1059,6 +1061,7 @@ public class TestActionScheduler {
   private Stage getStageWithServerAction(long requestId, long stageId, Map<String, String> payload,
       String requestContext, int timeout, boolean stageSupportsAutoSkip,
       boolean autoSkipFailedTask) {
+    Long cluster1 = 1L;
 
     Stage stage = stageFactory.createNew(requestId, "/tmp", "cluster1", 1L, requestContext,
       "{}", "{}");
@@ -1069,7 +1072,7 @@ public class TestActionScheduler {
 
     stage.addServerActionCommand(MockServerAction.class.getName(), null,
         Role.AMBARI_SERVER_ACTION,
-        RoleCommand.EXECUTE, "cluster1",
+        RoleCommand.EXECUTE, cluster1,
         new ServiceComponentHostServerActionEvent(null, System.currentTimeMillis()),
         payload,
         null, null, timeout, false, autoSkipFailedTask);
@@ -1511,6 +1514,7 @@ public class TestActionScheduler {
 
     String host1 = "host1";
     String host2 = "host2";
+    Long cluster1 = 1L;
     Host host = mock(Host.class);
     HashMap<String, ServiceComponentHost> hosts =
       new HashMap<>();
@@ -1535,25 +1539,25 @@ public class TestActionScheduler {
     stage.setStageId(1);
 
     addHostRoleExecutionCommand(now, stage, Role.SQOOP, Service.Type.SQOOP,
-        RoleCommand.INSTALL, host1, "cluster1");
+        RoleCommand.INSTALL, host1, cluster1);
 
     addHostRoleExecutionCommand(now, stage, Role.OOZIE_CLIENT, Service.Type.OOZIE,
-        RoleCommand.INSTALL, host1, "cluster1");
+        RoleCommand.INSTALL, host1, cluster1);
 
     addHostRoleExecutionCommand(now, stage, Role.MAPREDUCE_CLIENT, Service.Type.MAPREDUCE,
-        RoleCommand.INSTALL, host1, "cluster1");
+        RoleCommand.INSTALL, host1, cluster1);
 
     addHostRoleExecutionCommand(now, stage, Role.HBASE_CLIENT, Service.Type.HBASE,
-        RoleCommand.INSTALL, host1, "cluster1");
+        RoleCommand.INSTALL, host1, cluster1);
 
     addHostRoleExecutionCommand(now, stage, Role.GANGLIA_MONITOR, Service.Type.GANGLIA,
-        RoleCommand.INSTALL, host1, "cluster1");
+        RoleCommand.INSTALL, host1, cluster1);
 
     addHostRoleExecutionCommand(now, stage, Role.HBASE_CLIENT, Service.Type.HBASE,
-        RoleCommand.INSTALL, host2, "cluster1");
+        RoleCommand.INSTALL, host2, cluster1);
 
     addHostRoleExecutionCommand(now, stage, Role.GANGLIA_MONITOR, Service.Type.GANGLIA,
-        RoleCommand.INSTALL, host2, "cluster1");
+        RoleCommand.INSTALL, host2, cluster1);
 
     final List<Stage> stages = Collections.singletonList(stage);
 
@@ -1703,16 +1707,17 @@ public class TestActionScheduler {
   }
 
   private void addHostRoleExecutionCommand(long now, Stage stage, Role role, Service.Type service,
-                                           RoleCommand command, String host, String cluster) {
+                                           RoleCommand command, String host, Long clusterId) {
     stage.addHostRoleExecutionCommand(host, role, command,
         new ServiceComponentHostInstallEvent(role.toString(), host, now, "HDP-0.2"),
-        cluster, service.toString(), false, false);
+        clusterId, service.toString(), false, false);
     stage.getExecutionCommandWrapper(host,
         role.toString()).getExecutionCommand();
   }
 
   @Test
   public void testRequestFailureBasedOnSuccessFactor() throws Exception {
+    long cluster1 = 1L;
     ActionQueue aq = new ActionQueue();
     Clusters fsm = mock(Clusters.class);
     Cluster oneClusterMock = mock(Cluster.class);
@@ -1735,19 +1740,19 @@ public class TestActionScheduler {
     stage.setStageId(1);
     stage.addHostRoleExecutionCommand("host1", Role.DATANODE, RoleCommand.UPGRADE,
         new ServiceComponentHostUpgradeEvent(Role.DATANODE.toString(), "host1", now, "HDP-0.2"),
-        "cluster1", Service.Type.HDFS.toString(), false, false);
+        cluster1, Service.Type.HDFS.toString(), false, false);
     stage.getExecutionCommandWrapper("host1",
         Role.DATANODE.toString()).getExecutionCommand();
 
     stage.addHostRoleExecutionCommand("host2", Role.DATANODE, RoleCommand.UPGRADE,
         new ServiceComponentHostUpgradeEvent(Role.DATANODE.toString(), "host2", now, "HDP-0.2"),
-        "cluster1", Service.Type.HDFS.toString(), false, false);
+        cluster1, Service.Type.HDFS.toString(), false, false);
     stage.getExecutionCommandWrapper("host2",
         Role.DATANODE.toString()).getExecutionCommand();
 
     stage.addHostRoleExecutionCommand("host3", Role.DATANODE, RoleCommand.UPGRADE,
         new ServiceComponentHostUpgradeEvent(Role.DATANODE.toString(), "host3", now, "HDP-0.2"),
-        "cluster1", Service.Type.HDFS.toString(), false, false);
+        cluster1, Service.Type.HDFS.toString(), false, false);
     stage.getExecutionCommandWrapper("host3",
         Role.DATANODE.toString()).getExecutionCommand();
 
@@ -1881,7 +1886,8 @@ public class TestActionScheduler {
   }
 
   private Stage createStage(String clusterName, int stageId, int requestId) {
-    Stage stage = stageFactory.createNew(requestId, "/tmp", clusterName, 1L, "getStageWithSingleTask",
+    Long cluster1 = 1L;
+    Stage stage = stageFactory.createNew(requestId, "/tmp", "cluster1", 1L, "getStageWithSingleTask",
       "{\"host_param\":\"param_value\"}", "{\"stage_param\":\"param_value\"}");
     stage.setStageId(stageId);
     return stage;
@@ -1889,9 +1895,10 @@ public class TestActionScheduler {
 
   private Stage addTask(Stage stage, String hostname, String clusterName, Role role,
                         RoleCommand roleCommand, String serviceName, int taskId) {
+    Long cluster1 = 1L;
     stage.addHostRoleExecutionCommand(hostname, role, roleCommand,
         new ServiceComponentHostUpgradeEvent(role.toString(), hostname, System.currentTimeMillis(), "HDP-0.2"),
-        clusterName, serviceName, false, false);
+        cluster1, serviceName, false, false);
     stage.getExecutionCommandWrapper(hostname,
         role.toString()).getExecutionCommand();
     stage.getOrderedHostRoleCommands().get(0).setTaskId(taskId);
@@ -1924,9 +1931,10 @@ public class TestActionScheduler {
                               RoleCommand roleCommand, Service.Type service,
                               int taskId) {
 
+    Long cluster1 = 1L;
     stage.addHostRoleExecutionCommand(hostname, role, roleCommand,
       new ServiceComponentHostInstallEvent(role.toString(), hostname,
-        System.currentTimeMillis(), "HDP-0.2"), clusterName, service.toString(), false, false);
+        System.currentTimeMillis(), "HDP-0.2"), cluster1, service.toString(), false, false);
     ExecutionCommand command = stage.getExecutionCommandWrapper
       (hostname, role.toString()).getExecutionCommand();
     command.setTaskId(taskId);
@@ -2059,6 +2067,7 @@ public class TestActionScheduler {
    */
   @Test
   public void testCommandAbortForDeletedComponent() throws Exception {
+    Long cluster1 = 1L;
     ActionQueue aq = new ActionQueue();
     Properties properties = new Properties();
     Configuration conf = new Configuration(properties);

@@ -1197,7 +1197,7 @@ public class ServiceComponentHostImpl implements ServiceComponentHost {
 
     HostComponentDesiredStateEntity hostComponentDesiredStateEntity = getDesiredStateEntity();
 
-    String clusterName = serviceComponent.getClusterName();
+    Long clusterId = serviceComponent.getClusterId();
     String serviceName = serviceComponent.getServiceName();
     String serviceComponentName = serviceComponent.getName();
     String hostName = getHostName();

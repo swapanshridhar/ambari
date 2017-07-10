@@ -275,7 +275,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
 
     // keys
     KEY_PROPERTY_IDS.put(Resource.Type.Upgrade, UPGRADE_REQUEST_ID);
-    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, UPGRADE_CLUSTER_NAME);
+    KEY_PROPERTY_IDS.put(Resource.Type.Cluster, UPGRADE_CLUSTER_ID);
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(UpgradeResourceProvider.class);
@@ -303,7 +303,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
 
     // !!! above check ensures only one
     final Map<String, Object> requestMap = requestMaps.iterator().next();
-    final String clusterName = (String) requestMap.get(UPGRADE_CLUSTER_NAME);
+    final String clusterName = (String) requestMap.get(UPGRADE_CLUSTER_ID);
     final Cluster cluster;
 
     try {
@@ -360,19 +360,19 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
     Set<String> requestPropertyIds = getRequestPropertyIds(request, predicate);
 
     for (Map<String, Object> propertyMap : getPropertyMaps(predicate)) {
-      String clusterName = (String) propertyMap.get(UPGRADE_CLUSTER_NAME);
+      Long clusterId = MapUtils.parseLong(propertyMap, UPGRADE_CLUSTER_ID);
 
-      if (null == clusterName || clusterName.isEmpty()) {
+      if (null == clusterId) {
         throw new IllegalArgumentException(
             "The cluster name is required when querying for upgrades");
       }
 
       Cluster cluster;
       try {
-        cluster = clusters.get().getCluster(clusterName);
+        cluster = getManagementController().getClusters().getCluster(clusterId);
       } catch (AmbariException e) {
         throw new NoSuchResourceException(
-            String.format("Cluster %s could not be loaded", clusterName));
+            String.format("Cluster %s could not be loaded", clusterId));
       }
 
       List<UpgradeEntity> upgrades = new ArrayList<>();
@@ -389,7 +389,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
       }
 
       for (UpgradeEntity entity : upgrades) {
-        Resource r = toResource(entity, clusterName, requestPropertyIds);
+        Resource r = toResource(entity, clusterId, requestPropertyIds);
         results.add(r);
 
         RequestEntity rentity = s_requestDAO.findByPK(entity.getRequestId());
@@ -428,14 +428,14 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
     // !!! above check ensures only one
     final Map<String, Object> propertyMap = requestMaps.iterator().next();
 
-    final String clusterName = (String) propertyMap.get(UPGRADE_CLUSTER_NAME);
+    Long clusterId = MapUtils.parseLong(propertyMap, UPGRADE_CLUSTER_ID);
     final Cluster cluster;
 
     try {
-      cluster = clusters.get().getCluster(clusterName);
+      cluster = clusters.get().getCluster(clusterId);
     } catch (AmbariException e) {
       throw new NoSuchParentResourceException(
-          String.format("Cluster %s could not be loaded", clusterName));
+          String.format("Cluster %s could not be loaded", clusterId));
     }
 
     if (!AuthorizationHelper.isAuthorized(ResourceType.CLUSTER, cluster.getResourceId(),
@@ -535,10 +535,10 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
     return PK_PROPERTY_IDS;
   }
 
-  private Resource toResource(UpgradeEntity entity, String clusterName, Set<String> requestedIds) {
+  private Resource toResource(UpgradeEntity entity, Long clusterId, Set<String> requestedIds) {
     ResourceImpl resource = new ResourceImpl(Resource.Type.Upgrade);
 
-    setResourceProperty(resource, UPGRADE_CLUSTER_NAME, clusterName, requestedIds);
+    setResourceProperty(resource, UPGRADE_CLUSTER_ID, clusterId, requestedIds);
     setResourceProperty(resource, UPGRADE_TYPE, entity.getUpgradeType(), requestedIds);
     setResourceProperty(resource, UPGRADE_PACK, entity.getUpgradePackage(), requestedIds);
     setResourceProperty(resource, UPGRADE_REQUEST_ID, entity.getRequestId(), requestedIds);
@@ -989,7 +989,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
     // Apply additional parameters to the command that come from the stage.
     applyAdditionalParameters(wrapper, commandParams);
 
-    ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterName(),
+    ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterId(),
         function, filters, commandParams);
     actionContext.setTimeout(wrapper.getMaxTimeout(s_configuration));
     actionContext.setRetryAllowed(allowRetry);
@@ -1048,7 +1048,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
     // Apply additional parameters to the command that come from the stage.
     applyAdditionalParameters(wrapper, commandParams);
 
-    ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterName(),
+    ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterId(),
         "SERVICE_CHECK", filters, commandParams);
 
     actionContext.setTimeout(wrapper.getMaxTimeout(s_configuration));
@@ -1176,7 +1176,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
         break;
     }
 
-    ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterName(),
+    ActionExecutionContext actionContext = new ActionExecutionContext(cluster.getClusterId(),
         Role.AMBARI_SERVER_ACTION.toString(), Collections.<RequestResourceFilter> emptyList(),
         commandParams);
 
@@ -1207,7 +1207,7 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
 
     stage.addServerActionCommand(task.getImplementationClass(),
         getManagementController().getAuthName(), Role.AMBARI_SERVER_ACTION, RoleCommand.EXECUTE,
-        cluster.getClusterName(),
+        cluster.getClusterId(),
         new ServiceComponentHostServerActionEvent(null, System.currentTimeMillis()), commandParams,
         itemDetail, null, s_configuration.getDefaultServerTaskTimeout(), group.allowRetry,
         context.isComponentFailureAutoSkipped());

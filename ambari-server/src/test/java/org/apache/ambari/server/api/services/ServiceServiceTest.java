@@ -40,85 +40,85 @@ public class ServiceServiceTest extends BaseServiceTest {
     List<ServiceTestInvocation> listInvocations = new ArrayList<>();
 
     //getService
-    ServiceService service = new TestServiceService("clusterName", "serviceName");
+    ServiceService service = new TestServiceService(1L, "serviceName");
     Method m = service.getClass().getMethod("getService", String.class, HttpHeaders.class, UriInfo.class, String.class);
     Object[] args = new Object[] {null, getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
     //getServices
-    service = new TestServiceService("clusterName", null);
+    service = new TestServiceService(1L, null);
     m = service.getClass().getMethod("getServices", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {null, getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, null));
 
     //createService
-    service = new TestServiceService("clusterName", "serviceName");
+    service = new TestServiceService(1L, "serviceName");
     m = service.getClass().getMethod("createService", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, service, m, args, "body"));
 
     //createServices
-    service = new TestServiceService("clusterName", null);
+    service = new TestServiceService(1L, null);
     m = service.getClass().getMethod("createServices", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, service, m, args, "body"));
 
     //updateServices
-    service = new TestServiceService("clusterName", "serviceName");
+    service = new TestServiceService(1L, "serviceName");
     m = service.getClass().getMethod("updateService", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));
 
     //updateServices
-    service = new TestServiceService("clusterName", null);
+    service = new TestServiceService(1L, null);
     m = service.getClass().getMethod("updateServices", String.class, HttpHeaders.class, UriInfo.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo()};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));
 
     //deleteServices
-    service = new TestServiceService("clusterName", "serviceName");
+    service = new TestServiceService(1L, "serviceName");
     m = service.getClass().getMethod("deleteService", HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, service, m, args, null));
 
     //createArtifact
-    service = new TestServiceService("clusterName", "serviceName", "artifactName");
+    service = new TestServiceService(1L, "serviceName", "artifactName");
     m = service.getClass().getMethod("createArtifact", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName", "artifactName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.POST, service, m, args, "body"));
 
     //getArtifact
-    service = new TestServiceService("clusterName", "serviceName", "artifactName");
+    service = new TestServiceService(1L, "serviceName", "artifactName");
     m = service.getClass().getMethod("getArtifact", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName", "artifactName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, "body"));
 
     //getArtifacts
-    service = new TestServiceService("clusterName", "serviceName");
+    service = new TestServiceService(1L, "serviceName");
     m = service.getClass().getMethod("getArtifacts", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.GET, service, m, args, "body"));
 
     //updateArtifact
-    service = new TestServiceService("clusterName", "serviceName", "artifactName");
+    service = new TestServiceService(1L, "serviceName", "artifactName");
     m = service.getClass().getMethod("updateArtifact", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName", "artifactName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));
 
     //updateArtifacts
-    service = new TestServiceService("clusterName", "serviceName");
+    service = new TestServiceService(1L, "serviceName");
     m = service.getClass().getMethod("updateArtifacts", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.PUT, service, m, args, "body"));
 
     //deleteArtifact
-    service = new TestServiceService("clusterName", "serviceName", "artifactName");
+    service = new TestServiceService(1L, "serviceName", "artifactName");
     m = service.getClass().getMethod("deleteArtifact", String.class, HttpHeaders.class, UriInfo.class, String.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName", "artifactName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, service, m, args, "body"));
 
     //deleteArtifacts
-    service = new TestServiceService("clusterName", "serviceName");
+    service = new TestServiceService(1L, "serviceName");
     m = service.getClass().getMethod("deleteArtifacts", String.class, HttpHeaders.class, UriInfo.class, String.class);
     args = new Object[] {"body", getHttpHeaders(), getUriInfo(), "serviceName"};
     listInvocations.add(new ServiceTestInvocation(Request.Type.DELETE, service, m, args, "body"));
@@ -146,15 +146,15 @@ public class ServiceServiceTest extends BaseServiceTest {
     }
 
     @Override
-    ResourceInstance createServiceResource(String clusterName, String serviceName) {
-      assertEquals(m_clusterId, clusterName);
+    ResourceInstance createServiceResource(Long clusterId, String serviceName) {
+      assertEquals(m_clusterId, clusterId);
       assertEquals(m_serviceId, serviceName);
       return getTestResource();
     }
 
     @Override
-    ResourceInstance createArtifactResource(String clusterName, String serviceName, String artifactName) {
-      assertEquals(m_clusterId, clusterName);
+    ResourceInstance createArtifactResource(Long clusterId, String serviceName, String artifactName) {
+      assertEquals(m_clusterId, clusterId);
       assertEquals(m_serviceId, serviceName);
       assertEquals(m_artifact_id, artifactName);
       return getTestResource();

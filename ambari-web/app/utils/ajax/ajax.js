@@ -43,7 +43,7 @@ var urls = {
   },
 
   'common.services.update' : {
-    'real': '/clusters/{clusterName}/services?{urlParams}',
+    'real': '/clusters/{clusterId}/services?{urlParams}',
     'mock': '/data/wizard/deploy/poll_1.json',
     'format': function (data) {
       return {
@@ -53,7 +53,7 @@ var urls = {
             "context": data.context,
             "operation_level": {
               "level": "CLUSTER",
-              "cluster_name" : data.clusterName
+              "cluster_id" : data.clusterId
             }
           },
           Body: {
@@ -1984,13 +1984,28 @@ var urls = {
   },
 
   'wizard.step8.create_cluster': {
-    'real': '/clusters/{cluster}',
+    'real': '/clusters',
     'mock': '',
     'format': function (data) {
       return {
         type: 'POST',
         dataType: 'text',
         data: data.data
+      }
+    }
+  },
+
+  'wizard.step8.get_cluster': {
+    'real': '/clusters',
+    'mock': '',
+    'format': function (data) {
+      return {
+        type: 'GET',
+        dataType: 'text',
+        data: {
+          urlParams: '?fields=Clusters/cluster_id',
+          data: apiObject
+        }
       }
     }
   },
@@ -2258,7 +2273,7 @@ var urls = {
     }
   },
   'router.login': {
-    'real': '/users/{loginName}?fields=*,privileges/PrivilegeInfo/cluster_name,privileges/PrivilegeInfo/permission_name',
+    'real': '/users/{loginName}?fields=*,privileges/PrivilegeInfo/cluster_id,privileges/PrivilegeInfo/permission_name',
     'mock': '/data/users/user_{usr}.json',
     'format': function (data) {
       var statusCode = jQuery.extend({}, require('data/statusCodes'));
@@ -2287,7 +2302,7 @@ var urls = {
     mock: '/data/users/privileges_{userName}.json'
   },
   'router.login.clusters': {
-    'real': '/clusters?fields=Clusters/provisioning_state,Clusters/security_type',
+    'real': '/clusters?fields=Clusters/provisioning_state,Clusters/security_type,Clusters/cluster_id',
     'mock': '/data/clusters/info.json'
   },
   'router.login.message': {
@@ -3144,7 +3159,8 @@ var ajax = Em.Object.extend({
 
     // default parameters
     var params = {
-      clusterName: (App.get('clusterName') || App.clusterStatus.get('clusterName'))
+      clusterName: (App.get('clusterName') || App.clusterStatus.get('clusterName')),
+      clusterId: (App.get('clusterId') || App.clusterStatus.get('clusterId'))
     };
 
     // extend default parameters with provided

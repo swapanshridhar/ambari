@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 import org.apache.ambari.server.AmbariException;
+import org.apache.ambari.server.controller.AmbariManagementController;
+import org.apache.ambari.server.controller.AmbariServer;
 import org.apache.ambari.server.controller.internal.PropertyInfo;
 import org.apache.ambari.server.controller.metrics.MetricHostProvider;
 import org.apache.ambari.server.controller.metrics.ThreadPoolEnabledPropertyProvider;
@@ -40,6 +42,7 @@ import org.apache.ambari.server.controller.spi.Request;
 import org.apache.ambari.server.controller.spi.Resource;
 import org.apache.ambari.server.controller.spi.SystemException;
 import org.apache.ambari.server.controller.utilities.StreamProvider;
+import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.services.MetricsRetrievalService;
 import org.apache.ambari.server.state.services.MetricsRetrievalService.MetricSourceType;
 import org.slf4j.Logger;
@@ -126,7 +129,7 @@ public class JMXPropertyProvider extends ThreadPoolEnabledPropertyProvider {
 
   private final JMXHostProvider jmxHostProvider;
 
-  private final String clusterNamePropertyId;
+  private final String clusterIdPropertyId;
 
   private final String hostNamePropertyId;
 
@@ -151,8 +154,8 @@ public class JMXPropertyProvider extends ThreadPoolEnabledPropertyProvider {
    * @param componentMetrics         the map of supported metrics
    * @param streamProvider           the stream provider
    * @param jmxHostProvider          the JMX host mapping
-   * @param metricHostProvider      the host mapping
-   * @param clusterNamePropertyId    the cluster name property id
+   * @param metricHostProvider       the host mapping
+   * @param clusterIdPropertyId      the cluster name property id
    * @param hostNamePropertyId       the host name property id
    * @param componentNamePropertyId  the component name property id
    * @param statePropertyId          the state property id
@@ -163,16 +166,16 @@ public class JMXPropertyProvider extends ThreadPoolEnabledPropertyProvider {
       @Assisted("streamProvider") StreamProvider streamProvider,
       @Assisted("jmxHostProvider") JMXHostProvider jmxHostProvider,
       @Assisted("metricHostProvider") MetricHostProvider metricHostProvider,
-      @Assisted("clusterNamePropertyId") String clusterNamePropertyId,
+      @Assisted("clusterIdPropertyId") String clusterIdPropertyId,
       @Assisted("hostNamePropertyId") @Nullable String hostNamePropertyId,
       @Assisted("componentNamePropertyId") String componentNamePropertyId,
       @Assisted("statePropertyId") @Nullable String statePropertyId) {
 
-    super(componentMetrics, hostNamePropertyId, metricHostProvider, clusterNamePropertyId);
+    super(componentMetrics, hostNamePropertyId, metricHostProvider, clusterIdPropertyId);
 
     this.streamProvider           = streamProvider;
     this.jmxHostProvider          = jmxHostProvider;
-    this.clusterNamePropertyId    = clusterNamePropertyId;
+    this.clusterIdPropertyId      = clusterIdPropertyId;
     this.hostNamePropertyId       = hostNamePropertyId;
     this.componentNamePropertyId  = componentNamePropertyId;
     this.statePropertyId          = statePropertyId;
@@ -234,8 +237,17 @@ public class JMXPropertyProvider extends ThreadPoolEnabledPropertyProvider {
       }
     }
 
-    String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+    Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+    AmbariManagementController amc = AmbariServer.getController();
+    Cluster cluster = null;
+    try {
+      cluster = amc.getClusters().getCluster(clusterId);
+    } catch (IOException e) {
+      logException(e);
+      return resource;
+    }
 
+    String clusterName = cluster.getClusterName();
     String protocol = jmxHostProvider.getJMXProtocol(clusterName, componentName);
 
     boolean httpsEnabled = false;
@@ -345,7 +357,10 @@ public class JMXPropertyProvider extends ThreadPoolEnabledPropertyProvider {
     Map<String, Map<String, Object>> categories = new HashMap<>();
     String componentName = (String) resource.getPropertyValue(componentNamePropertyId);
 
-    String clusterName = (String) resource.getPropertyValue(clusterNamePropertyId);
+    Long clusterId = (Long) resource.getPropertyValue(clusterIdPropertyId);
+    AmbariManagementController amc = AmbariServer.getController();
+    Cluster cluster = amc.getClusters().getCluster(clusterId);
+    String clusterName = cluster.getClusterName();
 
     for (Map<String, Object> bean : metricHolder.getBeans()) {
       String category = getCategory(bean, clusterName, componentName);

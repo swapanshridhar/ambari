@@ -1,0 +1,47 @@
+***************
+*** 46,67 ****
+   */
+  public class ClusterKerberosDescriptorService extends BaseService {
+    /**
+-    * Parent cluster name.
+     */
+-   private String clusterName;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName cluster id
+     */
+-   public ClusterKerberosDescriptorService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+-    * Handles URL: /clusters/{clusterID}/kerberos_descriptors
+     * Gets Kerberos descriptors
+     *
+     * @param headers http headers
+--- 46,67 ----
+   */
+  public class ClusterKerberosDescriptorService extends BaseService {
+    /**
++    * Parent cluster Id.
+     */
++   private Long clusterId;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster id
+     */
++   public ClusterKerberosDescriptorService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    /**
++    * Handles URL: /clusters/{clusterId}/kerberos_descriptors
+     * Gets Kerberos descriptors
+     *
+     * @param headers http headers

@@ -1,0 +1,42 @@
+***************
+*** 187,193 ****
+  
+    /**
+     * Get right Upgrade Pack, depends on stack, direction and upgrade type information
+-    * @param clusterName The name of the cluster
+     * @param upgradeFromVersion Current stack version
+     * @param upgradeToVersion Target stack version
+     * @param direction {@code Direction} of the upgrade
+--- 187,193 ----
+  
+    /**
+     * Get right Upgrade Pack, depends on stack, direction and upgrade type information
++    * @param clusterId The Id of the cluster
+     * @param upgradeFromVersion Current stack version
+     * @param upgradeToVersion Target stack version
+     * @param direction {@code Direction} of the upgrade
+***************
+*** 196,206 ****
+     * @return {@code UpgradeType} object
+     * @throws AmbariException
+     */
+-   public UpgradePack suggestUpgradePack(String clusterName, String upgradeFromVersion, String upgradeToVersion,
+      Direction direction, UpgradeType upgradeType, String preferredUpgradePackName) throws AmbariException {
+  
+      // Find upgrade packs based on current stack. This is where to upgrade from
+-     Cluster cluster = clusters.get().getCluster(clusterName);
+      StackId stack =  cluster.getCurrentStackVersion();
+  
+      String repoVersion = upgradeToVersion;
+--- 196,206 ----
+     * @return {@code UpgradeType} object
+     * @throws AmbariException
+     */
++   public UpgradePack suggestUpgradePack(Long clusterId, String upgradeFromVersion, String upgradeToVersion,
+      Direction direction, UpgradeType upgradeType, String preferredUpgradePackName) throws AmbariException {
+  
+      // Find upgrade packs based on current stack. This is where to upgrade from
++     Cluster cluster = clusters.get().getCluster(clusterId);
+      StackId stack =  cluster.getCurrentStackVersion();
+  
+      String repoVersion = upgradeToVersion;

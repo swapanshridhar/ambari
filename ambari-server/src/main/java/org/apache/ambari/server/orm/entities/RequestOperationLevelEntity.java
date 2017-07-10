@@ -70,9 +70,9 @@ public class RequestOperationLevelEntity {
   @Basic
   private String level;
 
-  @Column(name = "cluster_name")
+  @Column(name = "cluster_id")
   @Basic
-  private String clusterName;
+  private Long clusterId;
 
   @Column(name = "service_name")
   @Basic
@@ -94,12 +94,12 @@ public class RequestOperationLevelEntity {
     this.level = level;
   }
 
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   public String getServiceName() {

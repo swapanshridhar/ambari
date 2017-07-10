@@ -64,9 +64,9 @@ public class CheckHelper {
                                                        List<AbstractCheckDescriptor> checksRegistry) {
     List<DescriptorPreCheck> applicablePreChecks = new LinkedList<>();
 
-    final String clusterName = request.getClusterName();
+    final Long clusterId = request.getClusterId();
     for (AbstractCheckDescriptor checkDescriptor : checksRegistry) {
-      final PrerequisiteCheck prerequisiteCheck = new PrerequisiteCheck(checkDescriptor.getDescription(), clusterName);
+      final PrerequisiteCheck prerequisiteCheck = new PrerequisiteCheck(checkDescriptor.getDescription(), clusterId);
 
       try {
         if (checkDescriptor.isApplicable(request)) {
@@ -89,7 +89,7 @@ public class CheckHelper {
   public List<PrerequisiteCheck> performChecks(PrereqCheckRequest request,
                                                List<AbstractCheckDescriptor> checksRegistry, Configuration config) {
 
-    final String clusterName = request.getClusterName();
+    final Long clusterId = request.getClusterId();
     final List<PrerequisiteCheck> prerequisiteCheckResults = new ArrayList<>();
     final boolean canBypassPreChecks = config.isUpgradePrecheckBypass();
 

@@ -22,7 +22,7 @@ package org.apache.ambari.server.controller;
 
 public class ServiceComponentHostRequest {
 
-  private String clusterName; // REF
+  private Long clusterId; // REF
   private String serviceName;
   private String componentName;
   private String hostname;
@@ -34,13 +34,13 @@ public class ServiceComponentHostRequest {
   private String adminState; // GET - predicate
   private String maintenanceState; // UPDATE
   
-  public ServiceComponentHostRequest(String clusterName,
+  public ServiceComponentHostRequest(Long clusterId,
                                      String serviceName,
                                      String componentName,
                                      String hostname,
                                      String desiredState) {
     super();
-    this.clusterName = clusterName;
+    this.clusterId = clusterId;
     this.serviceName = serviceName;
     this.componentName = componentName;
     this.hostname = hostname;
@@ -118,17 +118,17 @@ public class ServiceComponentHostRequest {
   }
 
   /**
-   * @return the clusterName
+   * @return the clusterId
    */
-  public String getClusterName() {
-    return clusterName;
+  public Long getClusterId() {
+    return clusterId;
   }
 
   /**
-   * @param clusterName the clusterName to set
+   * @param clusterId the clusterId to set
    */
-  public void setClusterName(String clusterName) {
-    this.clusterName = clusterName;
+  public void setClusterId(Long clusterId) {
+    this.clusterId = clusterId;
   }
 
   /**
@@ -162,7 +162,7 @@ public class ServiceComponentHostRequest {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("{" + " clusterName=").append(clusterName)
+    sb.append("{" + " clusterId=").append(clusterId)
       .append(", serviceName=").append(serviceName)
       .append(", componentName=").append(componentName)
       .append(", hostname=").append(hostname)

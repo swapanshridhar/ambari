@@ -1,0 +1,245 @@
+***************
+*** 353,365 ****
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      StageUtils.setTopologyManager(injector.getInstance(TopologyManager.class));
+      StageUtils.setConfiguration(injector.getInstance(Configuration.class));
+  
+-     expect(clusterVersionDAO.findByCluster(anyObject(String.class))).andReturn(Collections.<ClusterVersionEntity>emptyList()).once();
+  
+      // replay
+      replay(managementController, response, clusters, resourceProviderFactory, csvResourceProvider,
+--- 353,365 ----
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      StageUtils.setTopologyManager(injector.getInstance(TopologyManager.class));
+      StageUtils.setConfiguration(injector.getInstance(Configuration.class));
+  
++     expect(clusterVersionDAO.findByCluster(anyObject(Long.class))).andReturn(Collections.<ClusterVersionEntity>emptyList()).once();
+  
+      // replay
+      replay(managementController, response, clusters, resourceProviderFactory, csvResourceProvider,
+***************
+*** 559,565 ****
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      TopologyManager topologyManager = injector.getInstance(TopologyManager.class);
+--- 559,565 ----
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      TopologyManager topologyManager = injector.getInstance(TopologyManager.class);
+***************
+*** 760,766 ****
+                      anyObject(StackId.class),
+                      anyObject(String.class))).andReturn(repoVersion);
+  
+-     expect(clusterVersionDAO.findByCluster(anyObject(String.class))).andReturn(Collections.<ClusterVersionEntity>emptyList()).once();
+  
+      Capture<org.apache.ambari.server.actionmanager.Request> c = Capture.newInstance();
+      Capture<ExecuteActionRequest> ear = Capture.newInstance();
+--- 760,766 ----
+                      anyObject(StackId.class),
+                      anyObject(String.class))).andReturn(repoVersion);
+  
++     expect(clusterVersionDAO.findByCluster(anyObject(Long.class))).andReturn(Collections.<ClusterVersionEntity>emptyList()).once();
+  
+      Capture<org.apache.ambari.server.actionmanager.Request> c = Capture.newInstance();
+      Capture<ExecuteActionRequest> ear = Capture.newInstance();
+***************
+*** 774,780 ****
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+  
+--- 774,780 ----
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+  
+***************
+*** 1010,1022 ****
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      StageUtils.setTopologyManager(injector.getInstance(TopologyManager.class));
+      StageUtils.setConfiguration(injector.getInstance(Configuration.class));
+  
+-     expect(clusterVersionDAO.findByCluster(anyObject(String.class))).andReturn(Collections.<ClusterVersionEntity>emptyList()).once();
+  
+      // replay
+      replay(managementController, response, clusters, hdfsService, hbaseService, resourceProviderFactory, csvResourceProvider,
+--- 1010,1022 ----
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      StageUtils.setTopologyManager(injector.getInstance(TopologyManager.class));
+      StageUtils.setConfiguration(injector.getInstance(Configuration.class));
+  
++     expect(clusterVersionDAO.findByCluster(anyObject(Long.class))).andReturn(Collections.<ClusterVersionEntity>emptyList()).once();
+  
+      // replay
+      replay(managementController, response, clusters, hdfsService, hbaseService, resourceProviderFactory, csvResourceProvider,
+***************
+*** 1201,1207 ****
+      Map<String, Object> properties = new LinkedHashMap<>();
+  
+      // add properties to the request map
+-     properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, clusterName);
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_STATE_PROPERTY_ID, "CURRENT");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID, "HDP-2.2.2.0-2561");
+  
+--- 1201,1207 ----
+      Map<String, Object> properties = new LinkedHashMap<>();
+  
+      // add properties to the request map
++     properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, clusterName);
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_STATE_PROPERTY_ID, "CURRENT");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID, "HDP-2.2.2.0-2561");
+  
+***************
+*** 1357,1363 ****
+      Map<String, Object> properties = new LinkedHashMap<>();
+  
+      // add properties to the request map
+-     properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, clusterName);
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_STATE_PROPERTY_ID, "CURRENT");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID, "HDP-2.2.2.0-2561");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_FORCE, "true");
+--- 1357,1363 ----
+      Map<String, Object> properties = new LinkedHashMap<>();
+  
+      // add properties to the request map
++     properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, clusterName);
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_STATE_PROPERTY_ID, "CURRENT");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID, "HDP-2.2.2.0-2561");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_FORCE, "true");
+***************
+*** 1533,1539 ****
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      TopologyManager topologyManager = injector.getInstance(TopologyManager.class);
+--- 1533,1539 ----
+      clusterEntity.setClusterName(clusterName);
+      ClusterVersionEntity cve = new ClusterVersionEntity(clusterEntity,
+              repoVersion, RepositoryVersionState.INSTALL_FAILED, 0, "");
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+              anyObject(StackId.class), anyObject(String.class))).andReturn(cve);
+  
+      TopologyManager topologyManager = injector.getInstance(TopologyManager.class);
+***************
+*** 1548,1554 ****
+      badRve.setVersion("2.2.1.0-1000");
+      bad.setRepositoryVersion(badRve);
+  
+-     expect(clusterVersionDAO.findByCluster(anyObject(String.class))).andReturn(Collections.singletonList(bad)).once();
+  
+      // replay
+      replay(managementController, response, clusters, resourceProviderFactory, csvResourceProvider,
+--- 1548,1554 ----
+      badRve.setVersion("2.2.1.0-1000");
+      bad.setRepositoryVersion(badRve);
+  
++     expect(clusterVersionDAO.findByCluster(anyObject(Long.class))).andReturn(Collections.singletonList(bad)).once();
+  
+      // replay
+      replay(managementController, response, clusters, resourceProviderFactory, csvResourceProvider,
+***************
+*** 1667,1673 ****
+      expect(repositoryVersionDAOMock.findByStackAndVersion(anyObject(StackId.class),
+          anyObject(String.class))).andReturn(repoVersionEntity);
+  
+-     expect(clusterVersionDAO.findByCluster(anyObject(String.class))).andReturn(
+          Collections.<ClusterVersionEntity> emptyList()).once();
+  
+      ClusterEntity clusterEntity = new ClusterEntity();
+--- 1667,1673 ----
+      expect(repositoryVersionDAOMock.findByStackAndVersion(anyObject(StackId.class),
+          anyObject(String.class))).andReturn(repoVersionEntity);
+  
++     expect(clusterVersionDAO.findByCluster(anyObject(Long.class))).andReturn(
+          Collections.<ClusterVersionEntity> emptyList()).once();
+  
+      ClusterEntity clusterEntity = new ClusterEntity();
+***************
+*** 1679,1685 ****
+  
+      // first expect back a null to make the code think it needs to create one,
+      // then return the real one it's going to use
+-     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(String.class),
+          anyObject(StackId.class), anyObject(String.class))).andReturn(null).once();
+  
+      expect(cluster.createClusterVersion(anyObject(StackId.class), eq(repoVersion),
+--- 1679,1685 ----
+  
+      // first expect back a null to make the code think it needs to create one,
+      // then return the real one it's going to use
++     expect(clusterVersionDAO.findByClusterAndStackAndVersion(anyObject(Long.class),
+          anyObject(StackId.class), anyObject(String.class))).andReturn(null).once();
+  
+      expect(cluster.createClusterVersion(anyObject(StackId.class), eq(repoVersion),
+***************
+*** 1710,1716 ****
+  
+      // add properties to the request map
+      properties.put(
+-         ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID,
+          clusterName);
+  
+      properties.put(
+--- 1710,1716 ----
+  
+      // add properties to the request map
+      properties.put(
++         ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID,
+          clusterName);
+  
+      properties.put(
+***************
+*** 1778,1784 ****
+      Map<String, Object> properties = new LinkedHashMap<>();
+  
+      // add properties to the request map
+-     properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_NAME_PROPERTY_ID, "Cluster100");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID, "2.2.0.1-885");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_STACK_PROPERTY_ID, "HDP");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID, "2.1.1");
+--- 1778,1784 ----
+      Map<String, Object> properties = new LinkedHashMap<>();
+  
+      // add properties to the request map
++     properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_CLUSTER_ID_PROPERTY_ID, "Cluster100");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_REPOSITORY_VERSION_PROPERTY_ID, "2.2.0.1-885");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_STACK_PROPERTY_ID, "HDP");
+      properties.put(ClusterStackVersionResourceProvider.CLUSTER_STACK_VERSION_VERSION_PROPERTY_ID, "2.1.1");

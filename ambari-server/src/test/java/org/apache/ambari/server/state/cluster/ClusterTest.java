@@ -197,6 +197,7 @@ public class ClusterTest {
     org.junit.Assert.assertNotNull(stackEntity);
 
     String clusterName = "c1";
+    Long clusterId = 1L;
 
     clusters.addCluster(clusterName, stackId);
 
@@ -226,7 +227,7 @@ public class ClusterTest {
       hostDAO.merge(hostEntity);
     }
 
-    clusters.mapAndPublishHostsToCluster(hostNames, clusterName);
+    clusters.mapAndPublishHostsToCluster(hostNames, clusterId);
     c1 = clusters.getCluster(clusterName);
 
 
@@ -326,7 +327,7 @@ public class ClusterTest {
     cluster.setDesiredStackVersion(stackId);
     cluster.setCurrentStackVersion(stackId);
     for(String hostName : hostNames) {
-      clusters.mapHostToCluster(hostName, clusterName);
+      clusters.mapHostToCluster(hostName, 1L);
     }
 
     // Transition all hosts to HEALTHY state
@@ -1049,7 +1050,7 @@ public class ClusterTest {
     host.setHealthStatus(new HostHealthStatus(HostHealthStatus.HealthStatus.HEALTHY, ""));
     host.setStatus(host.getHealthStatus().getHealthStatus().name());
     c1.setDesiredStackVersion(new StackId("HDP-2.0.6"));
-    clusters.mapHostToCluster("h3", "c1");
+    clusters.mapHostToCluster("h3", 1L);
 
     r = c1.convertToResponse();
 
@@ -1223,7 +1224,7 @@ public class ClusterTest {
       activeServiceConfigVersions.get("HDFS").iterator().next();
 
     Assert.assertEquals("HDFS", hdfsResponse.getServiceName());
-    Assert.assertEquals("c1", hdfsResponse.getClusterName());
+    Assert.assertEquals("c1", hdfsResponse.getClusterId());
     Assert.assertEquals("admin", hdfsResponse.getUserName());
     Assert.assertEquals("Default", hdfsResponse.getGroupName());
     Assert.assertEquals(Long.valueOf(-1), hdfsResponse.getGroupId());
@@ -1239,7 +1240,7 @@ public class ClusterTest {
     Assert.assertEquals(1, activeServiceConfigVersions.size());
     hdfsResponse = activeServiceConfigVersions.get("HDFS").iterator().next();
     Assert.assertEquals("HDFS", hdfsResponse.getServiceName());
-    Assert.assertEquals("c1", hdfsResponse.getClusterName());
+    Assert.assertEquals("c1", hdfsResponse.getClusterId());
     Assert.assertEquals("admin", hdfsResponse.getUserName());
     assertEquals(Long.valueOf(2), hdfsResponse.getVersion());
 
@@ -1254,7 +1255,7 @@ public class ClusterTest {
     Assert.assertEquals(1, activeServiceConfigVersions.size());
     hdfsResponse = activeServiceConfigVersions.get("HDFS").iterator().next();
     Assert.assertEquals("HDFS", hdfsResponse.getServiceName());
-    Assert.assertEquals("c1", hdfsResponse.getClusterName());
+    Assert.assertEquals("c1", hdfsResponse.getClusterId());
     Assert.assertEquals("admin", hdfsResponse.getUserName());
     assertEquals(Long.valueOf(3), hdfsResponse.getVersion());
   }
@@ -1390,7 +1391,7 @@ public class ClusterTest {
 
     ServiceConfigVersionResponse hdfsSiteConfigResponseV1 = c1.addDesiredConfig("admin", Collections.singleton(hdfsSiteConfigV1));
     List<ConfigurationResponse> configResponsesDefaultGroup =  Collections.singletonList(
-      new ConfigurationResponse(c1.getClusterName(), hdfsSiteConfigV1.getStackId(),
+      new ConfigurationResponse(c1.getClusterId(), hdfsSiteConfigV1.getStackId(),
         hdfsSiteConfigV1.getType(), hdfsSiteConfigV1.getTag(), hdfsSiteConfigV1.getVersion(),
         hdfsSiteConfigV1.getProperties(), hdfsSiteConfigV1.getPropertiesAttributes(), hdfsSiteConfigV1.getPropertiesTypes())
     );
@@ -1405,7 +1406,7 @@ public class ClusterTest {
     c1.addConfigGroup(configGroup);
     ServiceConfigVersionResponse hdfsSiteConfigResponseV2 = c1.createServiceConfigVersion("HDFS", "admin", "test note", configGroup);
     hdfsSiteConfigResponseV2.setConfigurations(Collections.singletonList(
-      new ConfigurationResponse(c1.getClusterName(), hdfsSiteConfigV2.getStackId(),
+      new ConfigurationResponse(c1.getClusterId(), hdfsSiteConfigV2.getStackId(),
         hdfsSiteConfigV2.getType(), hdfsSiteConfigV2.getTag(), hdfsSiteConfigV2.getVersion(),
         hdfsSiteConfigV2.getProperties(), hdfsSiteConfigV2.getPropertiesAttributes(), hdfsSiteConfigV2.getPropertiesTypes())
     ));
@@ -1449,7 +1450,7 @@ public class ClusterTest {
 
     ServiceConfigVersionResponse hdfsSiteConfigResponseV1 = c1.addDesiredConfig("admin", Collections.singleton(hdfsSiteConfigV1));
     List<ConfigurationResponse> configResponsesDefaultGroup =  Collections.singletonList(
-      new ConfigurationResponse(c1.getClusterName(), hdfsSiteConfigV1.getStackId(),
+      new ConfigurationResponse(c1.getClusterId(), hdfsSiteConfigV1.getStackId(),
         hdfsSiteConfigV1.getType(), hdfsSiteConfigV1.getTag(), hdfsSiteConfigV1.getVersion(),
         hdfsSiteConfigV1.getProperties(), hdfsSiteConfigV1.getPropertiesAttributes(), hdfsSiteConfigV1.getPropertiesTypes())
     );
@@ -1464,7 +1465,7 @@ public class ClusterTest {
     c1.addConfigGroup(configGroup);
     ServiceConfigVersionResponse hdfsSiteConfigResponseV2 = c1.createServiceConfigVersion("HDFS", "admin", "test note", configGroup);
     hdfsSiteConfigResponseV2.setConfigurations(Collections.singletonList(
-      new ConfigurationResponse(c1.getClusterName(), hdfsSiteConfigV2.getStackId(),
+      new ConfigurationResponse(c1.getClusterId(), hdfsSiteConfigV2.getStackId(),
         hdfsSiteConfigV2.getType(), hdfsSiteConfigV2.getTag(), hdfsSiteConfigV2.getVersion(),
         hdfsSiteConfigV2.getProperties(), hdfsSiteConfigV2.getPropertiesAttributes(), hdfsSiteConfigV2.getPropertiesTypes())
     ));
@@ -1577,7 +1578,7 @@ public class ClusterTest {
     // two in the INSTALLING state
     c1.transitionHostsToInstalling(repositoryVersion, null, false);
 
-    hostVersionsH1After = hostVersionDAO.findByClusterAndHost("c1", "h1");
+    hostVersionsH1After = hostVersionDAO.findByClusterAndHost(1L, "h1");
     assertEquals(2, hostVersionsH1After.size());
 
     checked = false;
@@ -1616,10 +1617,10 @@ public class ClusterTest {
     // transition host versions to INSTALLING
     c1.transitionHostsToInstalling(repositoryVersion, null, false);
 
-    List<HostVersionEntity> hostInMaintModeVersions = hostVersionDAO.findByClusterAndHost("c1",
+    List<HostVersionEntity> hostInMaintModeVersions = hostVersionDAO.findByClusterAndHost(1L,
         hostInMaintenanceMode.getHostName());
 
-    List<HostVersionEntity> otherHostVersions = hostVersionDAO.findByClusterAndHost("c1",
+    List<HostVersionEntity> otherHostVersions = hostVersionDAO.findByClusterAndHost(1L,
         hostNotInMaintenanceMode.getHostName());
 
     // verify the MM host has moved to OUT_OF_SYNC
@@ -1702,7 +1703,7 @@ public class ClusterTest {
     // Add another Host with components ZK Server, ZK Client, and Ganglia Monitor.
     // This host should get a HostVersion in CURRENT, and the ClusterVersion should stay in CURRENT
     addHost("h-4", hostAttributes);
-    clusters.mapHostToCluster("h-4", clusterName);
+    clusters.mapHostToCluster("h-4", 1L);
 
     Service svc2 = cluster.getService("ZOOKEEPER");
     Service svc3 = cluster.getService("GANGLIA");
@@ -1794,7 +1795,7 @@ public class ClusterTest {
       }
     }
 
-    Collection<HostVersionEntity> v2HostVersions = hostVersionDAO.findByClusterStackAndVersion(clusterName, stackId, v2);
+    Collection<HostVersionEntity> v2HostVersions = hostVersionDAO.findByClusterStackAndVersion(1L, stackId, v2);
     Assert.assertEquals(v2HostVersions.size(), clusters.getHostsForCluster(clusterName).size());
     for (HostVersionEntity hve : v2HostVersions) {
       Assert.assertTrue(TERMINAL_VERSION_STATES.contains(hve.getState()));
@@ -1906,7 +1907,7 @@ public class ClusterTest {
     HostEntity hostEntity = hostDAO.findByName("h-3");
     assertNotNull(hostEntity);
 
-    List<HostVersionEntity> entities = hostVersionDAO.findByClusterAndHost(clusterName, "h-3");
+    List<HostVersionEntity> entities = hostVersionDAO.findByClusterAndHost(1L, "h-3");
     assertTrue("Expected no host versions", null == entities || 0 == entities.size());
 
     List<ServiceComponentHost> componentsOnHost3 = c1.getServiceComponentHosts("h-3");

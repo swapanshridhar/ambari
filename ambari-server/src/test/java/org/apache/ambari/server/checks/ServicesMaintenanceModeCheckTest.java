@@ -44,7 +44,7 @@ public class ServicesMaintenanceModeCheckTest {
 
   @Test
   public void testIsApplicable() throws Exception {
-    PrereqCheckRequest checkRequest = new PrereqCheckRequest("c1");
+    PrereqCheckRequest checkRequest = new PrereqCheckRequest(1L);
     checkRequest.setRepositoryVersion("HDP-2.2.0.0");
     checkRequest.setSourceStackId(new StackId("HDP", "2.2"));
     checkRequest.setTargetStackId(new StackId("HDP", "2.2"));
@@ -84,12 +84,12 @@ public class ServicesMaintenanceModeCheckTest {
     // We don't bother checking service desired state as it's performed by a separate check
     Mockito.when(service.getDesiredState()).thenReturn(State.UNKNOWN);
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    servicesMaintenanceModeCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMaintenanceModeCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
 
     Mockito.when(service.getDesiredState()).thenReturn(State.STARTED);
     check = new PrerequisiteCheck(null, null);
-    servicesMaintenanceModeCheck.perform(check, new PrereqCheckRequest("cluster"));
+    servicesMaintenanceModeCheck.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 }

@@ -1,0 +1,41 @@
+***************
+*** 55,73 ****
+  
+    /**
+     * Constructor.
+-    * @param clusterName  cluster id
+     * @param requestId    request id
+     * @param stageId      stage id
+     */
+-   public TaskService(ApiVersion apiVersion, String clusterName, String requestId, String stageId) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+      m_requestId = requestId;
+      m_stageId = stageId;
+    }
+  
+    /**
+-    * Handles GET: /clusters/{clusterID}/requests/{requestID}/tasks/{taskID}
+     * Get a specific task.
+     *
+     * @param headers  http headers
+--- 55,73 ----
+  
+    /**
+     * Constructor.
++    * @param clusterId    cluster id
+     * @param requestId    request id
+     * @param stageId      stage id
+     */
++   public TaskService(ApiVersion apiVersion, Long clusterId, String requestId, String stageId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+      m_requestId = requestId;
+      m_stageId = stageId;
+    }
+  
+    /**
++    * Handles GET: /clusters/{clusterId}/requests/{requestID}/tasks/{taskID}
+     * Get a specific task.
+     *
+     * @param headers  http headers

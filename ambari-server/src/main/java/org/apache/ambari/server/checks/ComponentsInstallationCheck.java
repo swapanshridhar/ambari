@@ -59,8 +59,8 @@ public class ComponentsInstallationCheck extends AbstractCheckDescriptor {
 
   @Override
   public void perform(PrerequisiteCheck prerequisiteCheck, PrereqCheckRequest request) throws AmbariException {
-    final String clusterName = request.getClusterName();
-    final Cluster cluster = clustersProvider.get().getCluster(clusterName);
+    final Long clusterId = request.getClusterId();
+    final Cluster cluster = clustersProvider.get().getCluster(clusterId);
     Set<String> failedServiceNames = new HashSet<>();
 
     // Preq-req check should fail if any service component is in INSTALL_FAILED state

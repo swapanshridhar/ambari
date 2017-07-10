@@ -1,0 +1,76 @@
+***************
+*** 42,62 ****
+    /**
+     * Name of the cluster.
+     */
+-   private String clusterName;
+  
+    /**
+     * Constructor.
+     *
+-    * @param clusterName name of the cluster
+     */
+-   public ClusterStackVersionService(ApiVersion apiVersion, String clusterName) {
+      super(apiVersion);
+-     this.clusterName = clusterName;
+    }
+  
+    /**
+     * Gets all cluster stack versions.
+-    * Handles: GET /clusters/{clustername}/stack_versions requests.
+     *
+     * @param headers http headers
+     * @param ui      uri info
+--- 42,62 ----
+    /**
+     * Name of the cluster.
+     */
++   private Long clusterId;
+  
+    /**
+     * Constructor.
+     *
++    * @param clusterId cluster Id
+     */
++   public ClusterStackVersionService(ApiVersion apiVersion, Long clusterId) {
+      super(apiVersion);
++     this.clusterId = clusterId;
+    }
+  
+    /**
+     * Gets all cluster stack versions.
++    * Handles: GET /clusters/{clusterId}/stack_versions requests.
+     *
+     * @param headers http headers
+     * @param ui      uri info
+***************
+*** 101,114 ****
+    public RepositoryVersionService getRepositoryVersionService(@Context javax.ws.rs.core.Request request,
+                                                                    @PathParam("stackVersionId") String stackVersion) {
+      final Map<Resource.Type, String> mapIds = new HashMap<>();
+-     mapIds.put(Resource.Type.Cluster, clusterName);
+      mapIds.put(Resource.Type.ClusterStackVersion, stackVersion);
+      return new RepositoryVersionService(m_apiVersion, mapIds);
+    }
+  
+  
+    /**
+-    * Handles: POST /{clustername}/stack_versions requests
+     * Distribute repositories/install packages.
+     *
+     * @param body        http body
+--- 101,114 ----
+    public RepositoryVersionService getRepositoryVersionService(@Context javax.ws.rs.core.Request request,
+                                                                    @PathParam("stackVersionId") String stackVersion) {
+      final Map<Resource.Type, String> mapIds = new HashMap<>();
++     mapIds.put(Resource.Type.Cluster, clusterId.toString());
+      mapIds.put(Resource.Type.ClusterStackVersion, stackVersion);
+      return new RepositoryVersionService(m_apiVersion, mapIds);
+    }
+  
+  
+    /**
++    * Handles: POST /{clusterId}/stack_versions requests
+     * Distribute repositories/install packages.
+     *
+     * @param body        http body

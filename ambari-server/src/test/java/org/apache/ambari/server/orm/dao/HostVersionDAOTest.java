@@ -216,59 +216,59 @@ public class HostVersionDAOTest {
   }
 
   /**
-   * Test the {@link HostVersionDAO#findByClusterStackAndVersion(String, org.apache.ambari.server.state.StackId, String)} method.
+   * Test the {@link HostVersionDAO#findByClusterStackAndVersion(Long, org.apache.ambari.server.state.StackId, String)} method.
    */
   @Test
   public void testFindByClusterStackAndVersion() {
-    Assert.assertEquals(3, hostVersionDAO.findByClusterStackAndVersion("test_cluster1", HDP_22_STACK, repoVersion_2200).size());
+    Assert.assertEquals(3, hostVersionDAO.findByClusterStackAndVersion(1L, HDP_22_STACK, repoVersion_2200).size());
     Assert.assertEquals(3, hostVersionDAO.findAll().size());
 
     addMoreVersions();
 
-    Assert.assertEquals(3, hostVersionDAO.findByClusterStackAndVersion("test_cluster1", HDP_22_STACK, repoVersion_2201).size());
-    Assert.assertEquals(3, hostVersionDAO.findByClusterStackAndVersion("test_cluster1", HDP_22_STACK, repoVersion_2202).size());
+    Assert.assertEquals(3, hostVersionDAO.findByClusterStackAndVersion(1L, HDP_22_STACK, repoVersion_2201).size());
+    Assert.assertEquals(3, hostVersionDAO.findByClusterStackAndVersion(1L, HDP_22_STACK, repoVersion_2202).size());
     Assert.assertEquals(9, hostVersionDAO.findAll().size());
   }
 
   /**
-   * Test the {@link HostVersionDAO#findByClusterAndHost(String, String)} method.
+   * Test the {@link HostVersionDAO#findByClusterAndHost(Long, String)} method.
    */
   @Test
   public void testFindByClusterAndHost() {
-    Assert.assertEquals(1, hostVersionDAO.findByClusterAndHost("test_cluster1", "test_host1").size());
-    Assert.assertEquals(1, hostVersionDAO.findByClusterAndHost("test_cluster1", "test_host2").size());
-    Assert.assertEquals(1, hostVersionDAO.findByClusterAndHost("test_cluster1", "test_host3").size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterAndHost(1L, "test_host1").size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterAndHost(1L, "test_host2").size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterAndHost(1L, "test_host3").size());
 
     addMoreVersions();
 
-    Assert.assertEquals(3, hostVersionDAO.findByClusterAndHost("test_cluster1", "test_host1").size());
-    Assert.assertEquals(3, hostVersionDAO.findByClusterAndHost("test_cluster1", "test_host2").size());
-    Assert.assertEquals(3, hostVersionDAO.findByClusterAndHost("test_cluster1", "test_host3").size());
+    Assert.assertEquals(3, hostVersionDAO.findByClusterAndHost(1L, "test_host1").size());
+    Assert.assertEquals(3, hostVersionDAO.findByClusterAndHost(1L, "test_host2").size());
+    Assert.assertEquals(3, hostVersionDAO.findByClusterAndHost(1L, "test_host3").size());
   }
 
   /**
-   * Test the {@link HostVersionDAO#findByClusterHostAndState(String, String, org.apache.ambari.server.state.RepositoryVersionState)} method.
+   * Test the {@link HostVersionDAO#findByClusterHostAndState(Long, String, org.apache.ambari.server.state.RepositoryVersionState)} method.
    */
   @Test
   public void testFindByClusterHostAndState() {
-    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host1", RepositoryVersionState.CURRENT).size());
-    Assert.assertEquals(0, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host1", RepositoryVersionState.INSTALLED).size());
-    Assert.assertEquals(0, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host2", RepositoryVersionState.INSTALLING).size());
-    Assert.assertEquals(0, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host3", RepositoryVersionState.INSTALL_FAILED).size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState(1L, "test_host1", RepositoryVersionState.CURRENT).size());
+    Assert.assertEquals(0, hostVersionDAO.findByClusterHostAndState(1L, "test_host1", RepositoryVersionState.INSTALLED).size());
+    Assert.assertEquals(0, hostVersionDAO.findByClusterHostAndState(1L, "test_host2", RepositoryVersionState.INSTALLING).size());
+    Assert.assertEquals(0, hostVersionDAO.findByClusterHostAndState(1L, "test_host3", RepositoryVersionState.INSTALL_FAILED).size());
 
     addMoreVersions();
 
-    Assert.assertEquals(2, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host1", RepositoryVersionState.INSTALLED).size());
-    Assert.assertEquals(2, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host2", RepositoryVersionState.INSTALLED).size());
-    Assert.assertEquals(2, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host3", RepositoryVersionState.INSTALLED).size());
+    Assert.assertEquals(2, hostVersionDAO.findByClusterHostAndState(1L, "test_host1", RepositoryVersionState.INSTALLED).size());
+    Assert.assertEquals(2, hostVersionDAO.findByClusterHostAndState(1L, "test_host2", RepositoryVersionState.INSTALLED).size());
+    Assert.assertEquals(2, hostVersionDAO.findByClusterHostAndState(1L, "test_host3", RepositoryVersionState.INSTALLED).size());
 
-    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host1", RepositoryVersionState.CURRENT).size());
-    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host2", RepositoryVersionState.INSTALLING).size());
-    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState("test_cluster1", "test_host3", RepositoryVersionState.INSTALL_FAILED).size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState(1L, "test_host1", RepositoryVersionState.CURRENT).size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState(1L, "test_host2", RepositoryVersionState.INSTALLING).size());
+    Assert.assertEquals(1, hostVersionDAO.findByClusterHostAndState(1L, "test_host3", RepositoryVersionState.INSTALL_FAILED).size());
   }
 
   /**
-   * Test the {@link HostVersionDAO#findByClusterStackVersionAndHost(String, StackId, String, String)} method.
+   * Test the {@link HostVersionDAO#findByClusterStackVersionAndHost(Long, StackId, String, String)} method.
    */
   @Test
   public void testFindByClusterStackVersionAndHost() {
@@ -286,15 +286,15 @@ public class HostVersionDAOTest {
         helper.getOrCreateRepositoryVersion(HDP_22_STACK, repoVersion_2200), RepositoryVersionState.INSTALLED);
     hostVersionEntity3.setId(3L);
 
-    Assert.assertEquals(hostVersionEntity1, hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, repoVersion_2200, "test_host1"));
-    Assert.assertEquals(hostVersionEntity2, hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, repoVersion_2200, "test_host2"));
-    Assert.assertEquals(hostVersionEntity3, hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, repoVersion_2200, "test_host3"));
+    Assert.assertEquals(hostVersionEntity1, hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, repoVersion_2200, "test_host1"));
+    Assert.assertEquals(hostVersionEntity2, hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, repoVersion_2200, "test_host2"));
+    Assert.assertEquals(hostVersionEntity3, hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, repoVersion_2200, "test_host3"));
 
     // Test non-existent objects
-    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost("non_existent_cluster", HDP_22_STACK, repoVersion_2200, "test_host3"));
-    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", BAD_STACK, repoVersion_2200, "test_host3"));
-    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, "non_existent_version", "test_host3"));
-    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, "non_existent_version", "non_existent_host"));
+    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost(999L, HDP_22_STACK, repoVersion_2200, "test_host3"));
+    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost(1L, BAD_STACK, repoVersion_2200, "test_host3"));
+    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, "non_existent_version", "test_host3"));
+    Assert.assertEquals(null, hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, "non_existent_version", "non_existent_host"));
 
     addMoreVersions();
 
@@ -307,9 +307,9 @@ public class HostVersionDAOTest {
         helper.getOrCreateRepositoryVersion(HDP_22_STACK, repoVersion_2202), RepositoryVersionState.INSTALL_FAILED);
 
     // Actual
-    HostVersionEntity hostVersionEntity1LastActual = hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, repoVersion_2202, "test_host1");
-    HostVersionEntity hostVersionEntity2LastActual = hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, repoVersion_2202, "test_host2");
-    HostVersionEntity hostVersionEntity3LastActual = hostVersionDAO.findByClusterStackVersionAndHost("test_cluster1", HDP_22_STACK, repoVersion_2202, "test_host3");
+    HostVersionEntity hostVersionEntity1LastActual = hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, repoVersion_2202, "test_host1");
+    HostVersionEntity hostVersionEntity2LastActual = hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, repoVersion_2202, "test_host2");
+    HostVersionEntity hostVersionEntity3LastActual = hostVersionDAO.findByClusterStackVersionAndHost(1L, HDP_22_STACK, repoVersion_2202, "test_host3");
 
     // Trying to Mock the actual objects to override the getId() method will not work because the class that mockito creates
     // is still a Mockito wrapper. Instead, take advantage of an overloaded constructor that ignores the Id.

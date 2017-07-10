@@ -88,7 +88,7 @@ public class YarnTimelineServerStatePreservingCheckTest {
     Mockito.when(prerequisiteCheckConfig.getCheckProperties(
         m_check.getClass().getName())).thenReturn(checkProperties);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("cluster");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setRepositoryVersion("2.3.0.0");
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
@@ -125,12 +125,12 @@ public class YarnTimelineServerStatePreservingCheckTest {
     Mockito.when(config.getProperties()).thenReturn(properties);
 
     PrerequisiteCheck check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.FAIL, check.getStatus());
 
     properties.put("yarn.timeline-service.recovery.enabled", "true");
     check = new PrerequisiteCheck(null, null);
-    m_check.perform(check, new PrereqCheckRequest("cluster"));
+    m_check.perform(check, new PrereqCheckRequest(1L));
     Assert.assertEquals(PrereqCheckStatus.PASS, check.getStatus());
   }
 
@@ -154,7 +154,7 @@ public class YarnTimelineServerStatePreservingCheckTest {
     Mockito.when(prerequisiteCheckConfig.getCheckProperties(
         m_check.getClass().getName())).thenReturn(checkProperties);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("c1");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     // Check < 2.2.4.2
@@ -199,7 +199,7 @@ public class YarnTimelineServerStatePreservingCheckTest {
     Mockito.when(prerequisiteCheckConfig.getCheckProperties(
         m_check.getClass().getName())).thenReturn(checkProperties);
 
-    PrereqCheckRequest request = new PrereqCheckRequest("c1");
+    PrereqCheckRequest request = new PrereqCheckRequest(1L);
     request.setPrerequisiteCheckConfig(prerequisiteCheckConfig);
 
     Mockito.when(repositoryVersionEntity.getVersion()).thenReturn("2.3.0.1");

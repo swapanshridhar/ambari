@@ -177,7 +177,7 @@ public class ServiceComponentTest {
   }
 
   private void addHostToCluster(String hostname,
-      String clusterName) throws AmbariException {
+      Long clusterId) throws AmbariException {
     clusters.addHost(hostname);
     Host h = clusters.getHost(hostname);
     h.setIPv4(hostname + "ipv4");
@@ -188,7 +188,7 @@ public class ServiceComponentTest {
     hostAttributes.put("os_release_version", "6.3");
     h.setHostAttributes(hostAttributes);
 
-    clusters.mapHostToCluster(hostname, clusterName);
+    clusters.mapHostToCluster(hostname, clusterId);
   }
 
   @Test
@@ -209,9 +209,9 @@ public class ServiceComponentTest {
       // Expected
     }
 
-    addHostToCluster("h1", service.getCluster().getClusterName());
-    addHostToCluster("h2", service.getCluster().getClusterName());
-    addHostToCluster("h3", service.getCluster().getClusterName());
+    addHostToCluster("h1", service.getCluster().getClusterId());
+    addHostToCluster("h2", service.getCluster().getClusterId());
+    addHostToCluster("h3", service.getCluster().getClusterId());
 
     HostEntity hostEntity1 = hostDAO.findByName("h1");
     assertNotNull(hostEntity1);
@@ -272,7 +272,7 @@ public class ServiceComponentTest {
     ServiceComponent component = serviceComponentFactory.createNew(service, componentName);
     service.addServiceComponent(component);
 
-    addHostToCluster("h1", service.getCluster().getClusterName());
+    addHostToCluster("h1", service.getCluster().getClusterId());
     ServiceComponentHost sch =
       serviceComponentHostFactory.createNew(component, "h1");
     sch.setState(State.INSTALLED);
@@ -316,7 +316,7 @@ public class ServiceComponentTest {
     String componentName = "NAMENODE";
     ServiceComponent component = serviceComponentFactory.createNew(service,
                                                                    componentName);
-    addHostToCluster("h1", service.getCluster().getClusterName());
+    addHostToCluster("h1", service.getCluster().getClusterId());
     ServiceComponentHost sch = serviceComponentHostFactory.createNew(component, "h1");
     component.addServiceComponentHost(sch);
 
@@ -359,8 +359,8 @@ public class ServiceComponentTest {
 
     Assert.assertTrue(sc.getServiceComponentHosts().isEmpty());
 
-    addHostToCluster("h1", service.getCluster().getClusterName());
-    addHostToCluster("h2", service.getCluster().getClusterName());
+    addHostToCluster("h1", service.getCluster().getClusterId());
+    addHostToCluster("h2", service.getCluster().getClusterId());
 
     HostEntity hostEntity1 = hostDAO.findByName("h1");
     assertNotNull(hostEntity1);
@@ -547,8 +547,8 @@ public class ServiceComponentTest {
     RepositoryVersionEntity repoVersion2202 = helper.getOrCreateRepositoryVersion(
         component.getDesiredStackId(), "2.2.0.2");
 
-    addHostToCluster("h1", clusterName);
-    addHostToCluster("h2", clusterName);
+    addHostToCluster("h1", 1L);
+    addHostToCluster("h2", 1L);
 
     sc.setDesiredState(State.INSTALLED);
     Assert.assertEquals(State.INSTALLED, sc.getDesiredState());

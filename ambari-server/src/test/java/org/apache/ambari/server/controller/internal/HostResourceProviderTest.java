@@ -136,7 +136,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     expect(clusters.getCluster("Cluster100")).andReturn(cluster).atLeastOnce();
     expect(clusters.getHost("Host100")).andReturn(null).atLeastOnce();
-    clusters.updateHostWithClusterAndAttributes(EasyMock.<Map<String, Set<String>>>anyObject(), EasyMock.<Map<String, Map<String, String>>>anyObject());
+    clusters.updateHostWithClusterAndAttributes(EasyMock.<Map<String, Set<Long>>>anyObject(), EasyMock.<Map<String, Map<String, String>>>anyObject());
     EasyMock.expectLastCall().once();
 
     expect(managementController.getClusters()).andReturn(clusters).atLeastOnce();
@@ -197,9 +197,9 @@ public class HostResourceProviderTest extends EasyMockSupport {
     AmbariManagementController managementController = injector.getInstance(AmbariManagementController.class);
     Clusters clusters = injector.getInstance(Clusters.class);
     Cluster cluster = createMock(Cluster.class);
-    Host host100 = createMockHost("Host100", "Cluster100", null, "HEALTHY", "RECOVERABLE", null);
-    Host host101 = createMockHost("Host101", "Cluster100", null, "HEALTHY", "RECOVERABLE", null);
-    Host host102 = createMockHost("Host102", "Cluster100", null, "HEALTHY", "RECOVERABLE", null);
+    Host host100 = createMockHost("Host100", 100L, null, "HEALTHY", "RECOVERABLE", null);
+    Host host101 = createMockHost("Host101", 100L, null, "HEALTHY", "RECOVERABLE", null);
+    Host host102 = createMockHost("Host102", 100L, null, "HEALTHY", "RECOVERABLE", null);
     HostHealthStatus healthStatus = createNiceMock(HostHealthStatus.class);
     AmbariMetaInfo ambariMetaInfo = createNiceMock(AmbariMetaInfo.class);
     ResourceProviderFactory resourceProviderFactory = createNiceMock(ResourceProviderFactory.class);
@@ -266,7 +266,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(3, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       MaintenanceState maintenanceState = (MaintenanceState)resource.getPropertyValue(HostResourceProvider.HOST_MAINTENANCE_STATE_PROPERTY_ID);
       Assert.assertEquals(MaintenanceState.OFF, maintenanceState);
@@ -288,7 +288,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     AmbariMetaInfo ambariMetaInfo = createNiceMock(AmbariMetaInfo.class);
     ComponentInfo componentInfo = createNiceMock(ComponentInfo.class);
 
-    Host host100 = createMockHost("Host100", "Cluster100", null, "HEALTHY", "RECOVERABLE", null);
+    Host host100 = createMockHost("Host100", 100L, null, "HEALTHY", "RECOVERABLE", null);
 
     HostResponse hostResponse1 = createNiceMock(HostResponse.class);
 
@@ -327,7 +327,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     expect(cluster.getClusterId()).andReturn(2L).anyTimes();
     expect(cluster.getDesiredConfigs()).andReturn(new HashMap<String, DesiredConfig>()).anyTimes();
 
-    expect(hostResponse1.getClusterName()).andReturn("").anyTimes();
+    expect(hostResponse1.getClusterId()).andReturn(null).anyTimes();
     expect(hostResponse1.getHostname()).andReturn("Host100").anyTimes();
     expect(hostResponse1.getStatus()).andReturn(HealthStatus.HEALTHY.name()).anyTimes();
     expect(hostResponse1.getHealthReport()).andReturn("HEALTHY").anyTimes();
@@ -366,7 +366,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       String status = (String) resource.getPropertyValue(HostResourceProvider.HOST_HOST_STATUS_PROPERTY_ID);
       Assert.assertEquals("HEALTHY", status);
@@ -388,7 +388,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     AmbariMetaInfo ambariMetaInfo = createNiceMock(AmbariMetaInfo.class);
     ComponentInfo componentInfo = createNiceMock(ComponentInfo.class);
 
-    Host host100 = createMockHost("Host100", "Cluster100", null, "HEALTHY", "RECOVERABLE", null);
+    Host host100 = createMockHost("Host100", 100L, null, "HEALTHY", "RECOVERABLE", null);
 
     ResourceProviderFactory resourceProviderFactory = createNiceMock(ResourceProviderFactory.class);
     ResourceProvider hostResourceProvider = getHostProvider(injector);
@@ -462,7 +462,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       String status = (String) resource.getPropertyValue(HostResourceProvider.HOST_HOST_STATUS_PROPERTY_ID);
       Assert.assertEquals("HEALTHY", status);
@@ -520,7 +520,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     expect(cluster.getClusterId()).andReturn(2L).anyTimes();
     expect(cluster.getDesiredConfigs()).andReturn(new HashMap<String, DesiredConfig>()).anyTimes();
 
-    expect(hostResponse1.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(hostResponse1.getClusterId()).andReturn(100L).anyTimes();
     expect(hostResponse1.getHostname()).andReturn("Host100").anyTimes();
     expect(hostResponse1.getStatus()).andReturn(HealthStatus.UNHEALTHY.name()).anyTimes();
     expect(hostResponse1.getHealthReport()).andReturn("HEALTHY").anyTimes();
@@ -558,7 +558,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       String status = (String) resource.getPropertyValue(HostResourceProvider.HOST_HOST_STATUS_PROPERTY_ID);
       Assert.assertEquals("UNHEALTHY", status);
@@ -582,7 +582,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     ResourceProvider hostResourceProvider = getHostProvider(injector);
     AbstractControllerResourceProvider.init(resourceProviderFactory);
 
-    Host host100 = createMockHost("Host100", "Cluster100", null, "UNKNOWN", "RECOVERABLE", null);
+    Host host100 = createMockHost("Host100", 100L, null, "UNKNOWN", "RECOVERABLE", null);
 
     Set<Cluster> clusterSet = new HashSet<>();
     clusterSet.add(cluster);
@@ -600,7 +600,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     expect(cluster.getClusterId()).andReturn(2L).anyTimes();
     expect(cluster.getDesiredConfigs()).andReturn(new HashMap<String, DesiredConfig>()).anyTimes();
 
-    expect(hostResponse1.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(hostResponse1.getClusterId()).andReturn(100L).anyTimes();
     expect(hostResponse1.getHostname()).andReturn("Host100").anyTimes();
     expect(hostResponse1.getStatus()).andReturn(HealthStatus.UNKNOWN.name()).anyTimes();
     expect(hostResponse1.getHealthReport()).andReturn("UNKNOWN").anyTimes();
@@ -632,7 +632,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       String status = (String) resource.getPropertyValue(HostResourceProvider.HOST_HOST_STATUS_PROPERTY_ID);
       Assert.assertEquals("UNKNOWN", status);
@@ -738,7 +738,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       String recovery = (String) resource.getPropertyValue(HostResourceProvider.HOST_RECOVERY_SUMMARY_PROPERTY_ID);
       Assert.assertEquals("RECOVERABLE", recovery);
@@ -797,7 +797,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     expect(clusters.getHosts()).andReturn(Arrays.asList(host100)).anyTimes();
     expect(cluster.getClusterId()).andReturn(2L).anyTimes();
     expect(cluster.getDesiredConfigs()).andReturn(new HashMap<String, DesiredConfig>()).anyTimes();
-    expect(hostResponse1.getClusterName()).andReturn("Cluster100").anyTimes();
+    expect(hostResponse1.getClusterId()).andReturn(100L).anyTimes();
     expect(hostResponse1.getHostname()).andReturn("Host100").anyTimes();
     expect(hostResponse1.getStatus()).andReturn(HealthStatus.ALERT.name()).anyTimes();
     expect(hostResponse1.getHealthReport()).andReturn("HEALTHY").anyTimes();
@@ -834,7 +834,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     Assert.assertEquals(1, resources.size());
     for (Resource resource : resources) {
-      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_NAME_PROPERTY_ID);
+      String clusterName = (String) resource.getPropertyValue(HostResourceProvider.HOST_CLUSTER_ID_PROPERTY_ID);
       Assert.assertEquals("Cluster100", clusterName);
       String status = (String) resource.getPropertyValue(HostResourceProvider.HOST_HOST_STATUS_PROPERTY_ID);
       Assert.assertEquals("ALERT", status);
@@ -880,7 +880,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     Set<Cluster> clusterSet = new HashSet<>();
     clusterSet.add(cluster);
 
-    Host host100 = createMockHost("Host100", "Cluster100", null, "HEALTHY", "RECOVERABLE", null);
+    Host host100 = createMockHost("Host100", 100L, null, "HEALTHY", "RECOVERABLE", null);
 
     // set expectations
     expect(managementController.getClusters()).andReturn(clusters).anyTimes();
@@ -1142,7 +1142,7 @@ public class HostResourceProviderTest extends EasyMockSupport {
     expect(host.getDesiredHostConfigs(cluster, desiredConfigs)).andReturn(desiredHostConfigs);
     expect(host.getHostName()).andReturn("host1").anyTimes();
     expect(host.convertToResponse()).andReturn(response);
-    response.setClusterName("cluster1");
+    response.setClusterId(1L);
 
     // replay mocks
     replayAll();
@@ -1258,19 +1258,19 @@ public class HostResourceProviderTest extends EasyMockSupport {
 
     expect(managementController.getClusters()).andReturn(clusters).anyTimes();
 
-    expect(clusters.getCluster("cluster1")).andReturn(cluster).times(4);
+    expect(clusters.getCluster(1L)).andReturn(cluster).times(4);
 
     expect(clusters.getHost("host1")).andReturn(host1);
     expect(host1.getHostName()).andReturn("host1").anyTimes();
     expect(clusters.getClustersForHost("host1")).andReturn(Collections.singleton(cluster));
     expect(host1.convertToResponse()).andReturn(response);
-    response.setClusterName("cluster1");
+    response.setClusterId(1L);
 
     expect(clusters.getHost("host2")).andReturn(host2);
     expect(host2.getHostName()).andReturn("host2").anyTimes();
     expect(clusters.getClustersForHost("host2")).andReturn(Collections.singleton(cluster));
     expect(host2.convertToResponse()).andReturn(response2);
-    response2.setClusterName("cluster1");
+    response2.setClusterId(1L);
 
     expect(clusters.getHost("host3")).andThrow(new HostNotFoundException("host3"));
     expect(clusters.getHost("host4")).andThrow(new HostNotFoundException("host4"));

@@ -1,0 +1,44 @@
+***************
+*** 56,67 ****
+    /**
+     * Constructor.
+     *
+-    * @param clusterName  cluster id
+     * @param requestId    request id
+     */
+-   public StageService(ApiVersion apiVersion, String clusterName, String requestId) {
+      super(apiVersion);
+-     m_clusterName = clusterName;
+      m_requestId = requestId;
+    }
+  
+--- 56,67 ----
+    /**
+     * Constructor.
+     *
++    * @param clusterId    cluster id
+     * @param requestId    request id
+     */
++   public StageService(ApiVersion apiVersion, Long clusterId, String requestId) {
+      super(apiVersion);
++     m_clusterId = clusterId;
+      m_requestId = requestId;
+    }
+  
+***************
+*** 107,113 ****
+     */
+    @Path("{stageId}/tasks")
+    public TaskService getTaskHandler(@PathParam("stageId") String stageId) {
+-     return new TaskService(m_apiVersion, m_clusterName, m_requestId, stageId);
+    }
+  
+    /**
+--- 107,113 ----
+     */
+    @Path("{stageId}/tasks")
+    public TaskService getTaskHandler(@PathParam("stageId") String stageId) {
++     return new TaskService(m_apiVersion, m_clusterId, m_requestId, stageId);
+    }
+  
+    /**

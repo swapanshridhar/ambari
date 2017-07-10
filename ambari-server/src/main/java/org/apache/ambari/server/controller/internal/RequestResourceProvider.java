@@ -17,7 +17,7 @@
  */
 package org.apache.ambari.server.controller.internal;
 
-import static org.apache.ambari.server.controller.internal.HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID;
+import static org.apache.ambari.server.controller.internal.HostComponentResourceProvider.HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID;
 import static org.apache.ambari.server.controller.internal.HostComponentResourceProvider.HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID;
 import static org.apache.ambari.server.controller.internal.HostComponentResourceProvider.HOST_COMPONENT_HOST_NAME_PROPERTY_ID;
 import static org.apache.ambari.server.controller.internal.HostComponentResourceProvider.HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID;
@@ -69,6 +69,7 @@ import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.Clusters;
 import org.apache.ambari.server.topology.LogicalRequest;
 import org.apache.ambari.server.topology.TopologyManager;
+import org.apache.ambari.server.utils.MapUtils;
 import org.apache.ambari.server.utils.SecretReference;
 import org.apache.commons.lang.StringUtils;
 
@@ -195,17 +196,17 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
       @Override
       public RequestStatusResponse invoke() throws AmbariException, AuthorizationException {
 
-        String clusterName = actionRequest.getClusterName();
+        Long clusterId = actionRequest.getClusterId();
 
         ResourceType resourceType;
         Long resourceId;
 
-        if (StringUtils.isEmpty(clusterName)) {
+        if (null == clusterId) {
           resourceType = ResourceType.AMBARI;
           resourceId = null;
         } else {
           resourceType = ResourceType.CLUSTER;
-          resourceId = getClusterResourceId(clusterName);
+          resourceId = getClusterResourceId(clusterId);
         }
 
         if (actionRequest.isCommand()) {
@@ -284,19 +285,15 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
       // process /clusters/[cluster]/requests with a predicate
 
       for (Map<String, Object> properties : getPropertyMaps(predicate)) {
-        String clusterName = (String) properties.get(REQUEST_CLUSTER_NAME_PROPERTY_ID);
-
-        Long requestId = null;
-        if (properties.get(REQUEST_ID_PROPERTY_ID) != null) {
-          requestId = Long.valueOf((String) properties.get(REQUEST_ID_PROPERTY_ID));
-        }
+        Long clusterId = MapUtils.parseLong(properties, REQUEST_CLUSTER_ID_PROPERTY_ID);
+        Long requestId = MapUtils.parseLong(properties, REQUEST_ID_PROPERTY_ID);
 
         String requestStatus = null;
         if (properties.get(REQUEST_STATUS_PROPERTY_ID) != null) {
           requestStatus = (String) properties.get(REQUEST_STATUS_PROPERTY_ID);
         }
 
-        resources.addAll(getRequestResources(clusterName, requestId, requestStatus, maxResults,
+        resources.addAll(getRequestResources(clusterId, requestId, requestStatus, maxResults,
             ascOrder, requestedIds));
       }
     }
@@ -378,8 +375,8 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
   }
 
   private RequestRequest getRequest(Map<String, Object> propertyMap) {
-    // Cluster name may be empty for custom actions
-    String clusterNameStr = (String) propertyMap.get(REQUEST_CLUSTER_NAME_PROPERTY_ID);
+    // Cluster id may be empty for custom actions
+    Long clusterId = MapUtils.parseLong(propertyMap, REQUEST_CLUSTER_ID_PROPERTY_ID);
     String requestIdStr = (String) propertyMap.get(REQUEST_ID_PROPERTY_ID);
     long requestId = Integer.valueOf(requestIdStr);
     String requestStatusStr = (String) propertyMap.get(REQUEST_STATUS_PROPERTY_ID);
@@ -392,7 +389,7 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
     String abortReason = (String) propertyMap.get(REQUEST_ABORT_REASON_PROPERTY_ID);
     String removePendingHostRequests = (String) propertyMap.get(REQUEST_REMOVE_PENDING_HOST_REQUESTS_ID);
 
-    RequestRequest requestRequest = new RequestRequest(clusterNameStr, requestId);
+    RequestRequest requestRequest = new RequestRequest(clusterId, requestId);
     requestRequest.setStatus(requestStatus);
     requestRequest.setAbortReason(abortReason);
     if (removePendingHostRequests != null) {
@@ -449,9 +446,9 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
       resourceFilters = (HashSet<Map<String, Object>>) resourceFilterObj;
       resourceFilterList = new ArrayList<>();
 
+      Long clusterId = MapUtils.parseLong(propertyMap, REQUEST_CLUSTER_ID_PROPERTY_ID);
       for (Map<String, Object> resourceMap : resourceFilters) {
-        resourceFilterList.addAll(parseRequestResourceFilter(resourceMap,
-          (String) propertyMap.get(REQUEST_CLUSTER_NAME_PROPERTY_ID)));
+        resourceFilterList.addAll(parseRequestResourceFilter(resourceMap, clusterId));
       }
       LOG.debug("RequestResourceFilters : {}", resourceFilters);
     }
@@ -474,8 +471,9 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
       exclusive = Boolean.valueOf(requestInfoProperties.get(EXLUSIVE_ID).trim());
     }
 
+    Long clusterId = MapUtils.parseLong(propertyMap, REQUEST_CLUSTER_ID_PROPERTY_ID);
     return new ExecuteActionRequest(
-      (String) propertyMap.get(REQUEST_CLUSTER_NAME_PROPERTY_ID),
+      clusterId,
       commandName,
       actionName,
       resourceFilterList,
@@ -486,12 +484,12 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
   /**
    *  Allow host component resource predicate to decide hosts to operate on.
    * @param resourceMap Properties
-   * @param clusterName clusterName
+   * @param clusterId   clusterId
    * @return Populated resource filter
    * @throws SystemException
    */
   private List<RequestResourceFilter> parseRequestResourceFilter(Map<String, Object> resourceMap,
-                                                           String clusterName) throws SystemException {
+                                                                 Long clusterId) throws SystemException {
 
     List<RequestResourceFilter> resourceFilterList = new ArrayList<>();
 
@@ -520,14 +518,14 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
       ResourceProvider resourceProvider = getResourceProvider(Resource.Type.HostComponent);
 
       Set<String> propertyIds = new HashSet<>();
-      propertyIds.add(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID);
+      propertyIds.add(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID);
       propertyIds.add(HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID);
       propertyIds.add(HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID);
 
       Request request = PropertyHelper.getReadRequest(propertyIds);
 
       Predicate finalPredicate = new PredicateBuilder(filterPredicate)
-        .property(HOST_COMPONENT_CLUSTER_NAME_PROPERTY_ID).equals(clusterName).and()
+        .property(HOST_COMPONENT_CLUSTER_ID_PROPERTY_ID).equals(clusterId).and()
         .property(HOST_COMPONENT_SERVICE_NAME_PROPERTY_ID).equals(serviceName).and()
         .property(HOST_COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals(componentName)
         .toPredicate();
@@ -626,7 +624,7 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
   /**
    * Gets all of the request resources for the given properties.
    */
-  private Set<Resource> getRequestResources(String clusterName,
+  private Set<Resource> getRequestResources(Long clusterId,
                                             Long requestId,
                                             String requestStatus,
                                             Integer maxResults,
@@ -637,14 +635,14 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
     Set<Resource> response = new HashSet<>();
     ActionManager actionManager = getManagementController().getActionManager();
 
-    Long clusterId = null;
+    String clusterName = null;
 
-    if (clusterName != null) {
+    if (clusterId != null) {
       Clusters clusters = getManagementController().getClusters();
       //validate that cluster exists, throws exception if it doesn't.
       try {
-        Cluster cluster = clusters.getCluster(clusterName);
-        clusterId = cluster.getClusterId();
+        Cluster cluster = clusters.getCluster(clusterId);
+        clusterName = cluster.getClusterName();
       } catch (AmbariException e) {
         throw new NoSuchParentResourceException(e.getMessage(), e);
       }
@@ -738,7 +736,8 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
 
     if (null != clusterName) {
       setResourceProperty(resource, REQUEST_CLUSTER_NAME_PROPERTY_ID, clusterName, requestedPropertyIds);
-    } else if (null != entity.getClusterId() && -1L != entity.getClusterId()) {
+    }
+    if (null != entity.getClusterId() && -1L != entity.getClusterId()) {
       setResourceProperty(resource, REQUEST_CLUSTER_ID_PROPERTY_ID, entity.getClusterId(), requestedPropertyIds);
     }
 

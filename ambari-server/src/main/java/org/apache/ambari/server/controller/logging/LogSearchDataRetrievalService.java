@@ -178,12 +178,12 @@ public class LogSearchDataRetrievalService extends AbstractService {
    *
    * @param component the component name
    * @param host the host name
-   * @param cluster the cluster name
+   * @param clusterId the cluster Id
    *
    * @return a Set<String> that includes the log file names associated with this Host/Component
    *         combination, or null if that object does not exist in the cache.
    */
-  public Set<String> getLogFileNames(String component, String host, String cluster) {
+  public Set<String> getLogFileNames(String component, String host, Long clusterId) {
     final String key = generateKey(component, host);
 
     // check cache for data
@@ -203,7 +203,7 @@ public class LogSearchDataRetrievalService extends AbstractService {
           // add request key to queue, to keep multiple copies of the same request from
           // being submitted
           currentRequests.add(key);
-          startLogSearchFileNameRequest(host, component, cluster);
+          startLogSearchFileNameRequest(host, component, clusterId);
         }
       } else {
         LOG.debug("Too many failures occurred while attempting to obtain log file metadata for component = {}, Ambari will ignore this component for LogSearch Integration", component);
@@ -213,7 +213,7 @@ public class LogSearchDataRetrievalService extends AbstractService {
     return null;
   }
 
-  public String getLogFileTailURI(String baseURI, String component, String host, String cluster) {
+  public String getLogFileTailURI(String baseURI, String component, String host, Long clusterId) {
     String key = generateKey(component, host);
 
     String result = logFileTailURICache.getIfPresent(key);
@@ -224,7 +224,7 @@ public class LogSearchDataRetrievalService extends AbstractService {
       // create URI and add to cache before returning
       if (loggingRequestHelperFactory != null) {
         LoggingRequestHelper helper =
-          loggingRequestHelperFactory.getHelper(getController(), cluster);
+          loggingRequestHelperFactory.getHelper(getController(), clusterId);
 
         if (helper != null) {
           String tailFileURI =
@@ -293,14 +293,14 @@ public class LogSearchDataRetrievalService extends AbstractService {
     return componentRequestFailureCounts;
   }
 
-  private void startLogSearchFileNameRequest(String host, String component, String cluster) {
+  private void startLogSearchFileNameRequest(String host, String component, Long clusterId) {
     // Create a separate instance of LoggingRequestHelperFactory for
     // each task launched, since these tasks will occur on a separate thread
     // TODO: In a future patch, this should be refactored, to either remove the need
     // TODO: for the separate factory instance at the level of this class, or to make
     // TODO: the LoggingRequestHelperFactory implementation thread-safe, so that
     // TODO: a single factory instance can be shared across multiple threads safely
-    executor.execute(new LogSearchFileNameRequestRunnable(host, component, cluster, logFileNameCache, currentRequests,
+    executor.execute(new LogSearchFileNameRequestRunnable(host, component, clusterId, logFileNameCache, currentRequests,
                                                           injector.getInstance(LoggingRequestHelperFactory.class), componentRequestFailureCounts));
   }
 
@@ -329,7 +329,7 @@ public class LogSearchDataRetrievalService extends AbstractService {
 
     private final String component;
 
-    private final String cluster;
+    private final Long clusterId;
 
     private final Set<String> currentRequests;
 
@@ -341,16 +341,16 @@ public class LogSearchDataRetrievalService extends AbstractService {
 
     private AmbariManagementController controller;
 
-    LogSearchFileNameRequestRunnable(String host, String component, String cluster, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests, LoggingRequestHelperFactory loggingRequestHelperFactory,
+    LogSearchFileNameRequestRunnable(String host, String component, Long clusterId, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests, LoggingRequestHelperFactory loggingRequestHelperFactory,
                                      Map<String, AtomicInteger> componentRequestFailureCounts) {
-      this(host, component, cluster, logFileNameCache, currentRequests, loggingRequestHelperFactory, componentRequestFailureCounts, AmbariServer.getController());
+      this(host, component, clusterId, logFileNameCache, currentRequests, loggingRequestHelperFactory, componentRequestFailureCounts, AmbariServer.getController());
     }
 
-    LogSearchFileNameRequestRunnable(String host, String component, String cluster, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests,
+    LogSearchFileNameRequestRunnable(String host, String component, Long clusterId, Cache<String, Set<String>> logFileNameCache, Set<String> currentRequests,
                                                LoggingRequestHelperFactory loggingRequestHelperFactory, Map<String, AtomicInteger> componentRequestFailureCounts, AmbariManagementController controller) {
       this.host  = host;
       this.component = component;
-      this.cluster = cluster;
+      this.clusterId = clusterId;
       this.logFileNameCache = logFileNameCache;
       this.currentRequests = currentRequests;
       this.loggingRequestHelperFactory = loggingRequestHelperFactory;
@@ -363,7 +363,7 @@ public class LogSearchDataRetrievalService extends AbstractService {
       LOG.debug("LogSearchFileNameRequestRunnable: starting...");
       try {
         LoggingRequestHelper helper =
-          loggingRequestHelperFactory.getHelper(controller, cluster);
+          loggingRequestHelperFactory.getHelper(controller, clusterId);
 
         if (helper != null) {
           // make request to LogSearch service

@@ -208,7 +208,7 @@ public class AmbariCustomCommandExecutionHelperTest {
       }
     };
 
-    ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1", "REFRESHQUEUES",
+    ExecuteActionRequest actionRequest = new ExecuteActionRequest(clusters.getCluster("c1").getClusterId(), "REFRESHQUEUES",
         new HashMap<String, String>() {
           {
             put("forceRefreshConfigTagsBeforeExecution", "true");
@@ -251,13 +251,13 @@ public class AmbariCustomCommandExecutionHelperTest {
     };
 
     ExecuteActionRequest actionRequest = new ExecuteActionRequest(
-       "c1", "RESTART", null,
+        clusters.getCluster("c1").getClusterId(), "RESTART", null,
        Arrays.asList(
            new RequestResourceFilter("GANGLIA", "GANGLIA_SERVER", Collections.singletonList("c1-c6401")),
            new RequestResourceFilter("GANGLIA", "GANGLIA_MONITOR", Collections.singletonList("c1-c6401")),
            new RequestResourceFilter("GANGLIA", "GANGLIA_MONITOR", Collections.singletonList("c1-c6402"))
        ),
-       new RequestOperationLevel(Resource.Type.Service, "c1", "GANGLIA", null, null),
+       new RequestOperationLevel(Resource.Type.Service, clusters.getCluster("c1").getClusterId(), "GANGLIA", null, null),
         new HashMap<String, String>(), false);
 
     EasyMock.replay(hostRoleCommand, actionManager, configHelper);
@@ -287,12 +287,12 @@ public class AmbariCustomCommandExecutionHelperTest {
       }
     };
 
-    ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1", "RESTART", null,
+    ExecuteActionRequest actionRequest = new ExecuteActionRequest(clusters.getCluster("c1").getClusterId(), "RESTART", null,
         Arrays.asList(
             new RequestResourceFilter("GANGLIA", "GANGLIA_SERVER", Collections.singletonList("c1-c6401")),
             new RequestResourceFilter("GANGLIA", "GANGLIA_MONITOR", Collections.singletonList("c1-c6401")),
             new RequestResourceFilter("GANGLIA", "GANGLIA_MONITOR", Collections.singletonList("c1-c6402"))),
-        new RequestOperationLevel(Resource.Type.Service, "c1", "GANGLIA", null, null),
+        new RequestOperationLevel(Resource.Type.Service, 1L, "GANGLIA", null, null),
         new HashMap<String, String>(), false);
 
     EasyMock.replay(hostRoleCommand, actionManager, configHelper);
@@ -324,12 +324,12 @@ public class AmbariCustomCommandExecutionHelperTest {
       }
     };
 
-    ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1", "RESTART", null,
+    ExecuteActionRequest actionRequest = new ExecuteActionRequest(clusters.getCluster("c1").getClusterId(), "RESTART", null,
         Arrays.asList(
             new RequestResourceFilter("GANGLIA", "GANGLIA_SERVER", Collections.singletonList("c1-c6401")),
             new RequestResourceFilter("GANGLIA", "GANGLIA_MONITOR", Collections.singletonList("c1-c6401")),
             new RequestResourceFilter("GANGLIA", "GANGLIA_MONITOR", Collections.singletonList("c1-c6402"))),
-        new RequestOperationLevel(Resource.Type.Host, "c1", "GANGLIA", null, null),
+        new RequestOperationLevel(Resource.Type.Host, 1L, "GANGLIA", null, null),
         new HashMap<String, String>(), false);
 
     EasyMock.replay(hostRoleCommand, actionManager, configHelper);
@@ -370,12 +370,12 @@ public class AmbariCustomCommandExecutionHelperTest {
     };
 
     // create the service check on the host in MM
-    ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1",
+    ExecuteActionRequest actionRequest = new ExecuteActionRequest(1L,
         "ZOOKEEPER_QUORUM_SERVICE_CHECK",
         null, Collections.singletonList(new RequestResourceFilter("ZOOKEEPER", "ZOOKEEPER_CLIENT",
         Collections.singletonList("c6402"))),
 
-        new RequestOperationLevel(Resource.Type.Service, "c1", "ZOOKEEPER", null, null),
+        new RequestOperationLevel(Resource.Type.Service, 1L, "ZOOKEEPER", null, null),
         new HashMap<String, String>(), false);
 
     EasyMock.replay(hostRoleCommand, actionManager, configHelper);
@@ -411,11 +411,11 @@ public class AmbariCustomCommandExecutionHelperTest {
 
     // create the service check on the host in MM, passing in null for the
     // component name
-    ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1",
+    ExecuteActionRequest actionRequest = new ExecuteActionRequest(1L,
         "ZOOKEEPER_QUORUM_SERVICE_CHECK", null, Collections.singletonList(new RequestResourceFilter("ZOOKEEPER", null,
         Collections.singletonList("c6402"))),
 
-        new RequestOperationLevel(Resource.Type.Service, "c1", "ZOOKEEPER", null, null),
+        new RequestOperationLevel(Resource.Type.Service, 1L, "ZOOKEEPER", null, null),
         new HashMap<String, String>(), false);
 
     EasyMock.replay(hostRoleCommand, actionManager, configHelper);
@@ -431,7 +431,7 @@ public class AmbariCustomCommandExecutionHelperTest {
     List<RequestResourceFilter> requestResourceFilter = new ArrayList<RequestResourceFilter>() {{
       add(new RequestResourceFilter("FLUME", null, null));
     }};
-    ActionExecutionContext actionExecutionContext = new ActionExecutionContext("c1", "SERVICE_CHECK", requestResourceFilter);
+    ActionExecutionContext actionExecutionContext = new ActionExecutionContext(1L, "SERVICE_CHECK", requestResourceFilter);
     Stage stage = EasyMock.niceMock(Stage.class);
 
     ambariCustomCommandExecutionHelper.addExecutionCommandsToStage(actionExecutionContext, stage, new HashMap<String, String>(), null);
@@ -452,7 +452,7 @@ public class AmbariCustomCommandExecutionHelperTest {
     List<RequestResourceFilter> requestResourceFilter = new ArrayList<RequestResourceFilter>() {{
       add(new RequestResourceFilter("ZOOKEEPER", "ZOOKEEPER_CLIENT", Arrays.asList(new String[]{"c1-c6401"})));
     }};
-    ActionExecutionContext actionExecutionContext = new ActionExecutionContext("c1", "SERVICE_CHECK", requestResourceFilter);
+    ActionExecutionContext actionExecutionContext = new ActionExecutionContext(c1.getClusterId(), "SERVICE_CHECK", requestResourceFilter);
     Stage stage = EasyMock.niceMock(Stage.class);
     ExecutionCommandWrapper execCmdWrapper = EasyMock.niceMock(ExecutionCommandWrapper.class);
     ExecutionCommand execCmd = EasyMock.niceMock(ExecutionCommand.class);
@@ -503,7 +503,7 @@ public class AmbariCustomCommandExecutionHelperTest {
     List<RequestResourceFilter> requestResourceFilter = new ArrayList<RequestResourceFilter>() {{
       add(new RequestResourceFilter("ZOOKEEPER", "ZOOKEEPER_CLIENT", null));
     }};
-    ActionExecutionContext actionExecutionContext = new ActionExecutionContext("c1", "SERVICE_CHECK", requestResourceFilter);
+    ActionExecutionContext actionExecutionContext = new ActionExecutionContext(c1.getClusterId(), "SERVICE_CHECK", requestResourceFilter);
     Stage stage = EasyMock.niceMock(Stage.class);
     ExecutionCommandWrapper execCmdWrapper = EasyMock.niceMock(ExecutionCommandWrapper.class);
     ExecutionCommand execCmd = EasyMock.niceMock(ExecutionCommand.class);
@@ -528,9 +528,9 @@ public class AmbariCustomCommandExecutionHelperTest {
 
     createClusterFixture("c2", new StackId("HDP-2.1.1"), "2.1.1.0-1234", "c2");
 
-    Assert.assertTrue(helper.isTopologyRefreshRequired("START", "c2", "HDFS"));
-    Assert.assertTrue(helper.isTopologyRefreshRequired("RESTART", "c2", "HDFS"));
-    Assert.assertFalse(helper.isTopologyRefreshRequired("STOP", "c2", "HDFS"));
+    Assert.assertTrue(helper.isTopologyRefreshRequired("START", clusters.getCluster("c2").getClusterId(), "HDFS"));
+    Assert.assertTrue(helper.isTopologyRefreshRequired("RESTART", 2L, "HDFS"));
+    Assert.assertFalse(helper.isTopologyRefreshRequired("STOP", 2L, "HDFS"));
   }
 
   @Test
@@ -542,7 +542,7 @@ public class AmbariCustomCommandExecutionHelperTest {
         put("command", "REFRESHQUEUES");
       }
     };
-    ExecuteActionRequest actionRequest = new ExecuteActionRequest("c1", "REFRESHQUEUES",
+    ExecuteActionRequest actionRequest = new ExecuteActionRequest(clusters.getCluster("c1").getClusterId(), "REFRESHQUEUES",
             new HashMap<String, String>() {
               {
                 put("forceRefreshConfigTags", "capacity-scheduler");
@@ -719,13 +719,13 @@ public class AmbariCustomCommandExecutionHelperTest {
     ComponentResourceProviderTest.createComponents(ambariManagementController, requests);
   }
 
-  private void createServiceComponentHost(String clusterName, String serviceName, String componentName, String hostname, State desiredState)
+  private void createServiceComponentHost(Long clusterId, String serviceName, String componentName, String hostname, State desiredState)
       throws AmbariException, AuthorizationException {
     String dStateStr = null;
     if (desiredState != null) {
       dStateStr = desiredState.toString();
     }
-    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterName,
+    ServiceComponentHostRequest r = new ServiceComponentHostRequest(clusterId,
         serviceName, componentName, hostname, dStateStr);
     Set<ServiceComponentHostRequest> requests =
       new HashSet<>();

@@ -1,0 +1,41 @@
+***************
+*** 81,99 ****
+    }
+  
+    private class TestConfigGroupService extends ConfigGroupService {
+-     private String m_clusterName;
+      private String m_groupId;
+  
+-     public TestConfigGroupService(String m_clusterName, String groupId) {
+-       super(ApiVersion.Default, m_clusterName);
+-       this.m_clusterName = m_clusterName;
+        this.m_groupId = groupId;
+      }
+  
+      @Override
+-     ResourceInstance createConfigGroupResource(String clusterName,
+                                                 String groupId) {
+-       assertEquals(m_clusterName, clusterName);
+        assertEquals(m_groupId, groupId);
+        return getTestResource();
+      }
+--- 81,99 ----
+    }
+  
+    private class TestConfigGroupService extends ConfigGroupService {
++     private Long m_clusterId;
+      private String m_groupId;
+  
++     public TestConfigGroupService(Long m_clusterId, String groupId) {
++       super(ApiVersion.Default, m_clusterId);
++       this.m_clusterId = m_clusterId;
+        this.m_groupId = groupId;
+      }
+  
+      @Override
++     ResourceInstance createConfigGroupResource(Long clusterId,
+                                                 String groupId) {
++       assertEquals(m_clusterId, clusterId);
+        assertEquals(m_groupId, groupId);
+        return getTestResource();
+      }

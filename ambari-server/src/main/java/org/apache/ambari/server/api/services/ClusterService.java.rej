@@ -1,0 +1,1308 @@
+***************
+*** 34,44 ****
+  import javax.ws.rs.core.Response;
+  import javax.ws.rs.core.UriInfo;
+  
+  import org.apache.ambari.server.api.resources.ResourceInstance;
+  import org.apache.ambari.server.api.util.ApiVersion;
+  import org.apache.ambari.server.controller.AmbariServer;
+  import org.apache.ambari.server.controller.spi.Resource;
+  import org.apache.ambari.server.state.Clusters;
+  
+  
+  /**
+--- 34,48 ----
+  import javax.ws.rs.core.Response;
+  import javax.ws.rs.core.UriInfo;
+  
++ import org.apache.ambari.server.AmbariException;
+  import org.apache.ambari.server.api.resources.ResourceInstance;
+  import org.apache.ambari.server.api.util.ApiVersion;
++ import org.apache.ambari.server.controller.AmbariManagementControllerImpl;
+  import org.apache.ambari.server.controller.AmbariServer;
+  import org.apache.ambari.server.controller.spi.Resource;
+  import org.apache.ambari.server.state.Clusters;
++ import org.slf4j.Logger;
++ import org.slf4j.LoggerFactory;
+  
+  
+  /**
+***************
+*** 92,114 ****
+    // ----- ClusterService ----------------------------------------------------
+  
+    /**
+-    * Handles: GET /clusters/{clusterID}
+     * Get a specific cluster.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster id
+     *
+     * @return cluster instance representation
+     */
+    @GET
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response getCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+-                              @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, body, ui, Request.Type.GET, createClusterResource(clusterName));
+    }
+- 
+    /**
+     * Handles: GET  /clusters
+     * Get all clusters.
+--- 98,138 ----
+    // ----- ClusterService ----------------------------------------------------
+  
+    /**
++    * Handles: GET /clusters/{clusterRef}
+     * Get a specific cluster.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
++    * @param clusterRef   cluster Reference
+     *
+     * @return cluster instance representation
+     */
+    @GET
++   @Path("{clusterRef}")
+    @Produces("text/plain")
+    public Response getCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
++                              @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET cluster -  clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return handleRequest(headers, body, ui, Request.Type.GET, createClusterResource(clusterId));
++   }
++ 
++   private Long convertToClusterId(String clusterRef) {
++     Long clusterId = null;
++     if (clusterRef.matches("^-?\\d+$")) {
++       clusterId = Long.parseLong(clusterRef);
++       LOG.info("\n\n SWAP - Integer already - clusterId = " + clusterId);
++     }
++     else if (clusterRef instanceof String) {
++       try {
++         clusterId = clusters.getCluster(clusterRef).getClusterId();
++       } catch (AmbariException e) {
++         e.printStackTrace();
++       }
++       LOG.info("\n\n SWAP - String initially - clusterId = "+clusterId);
++     }
++     return clusterId;
+    }
+    /**
+     * Handles: GET  /clusters
+     * Get all clusters.
+***************
+*** 121,127 ****
+    @GET
+    @Produces("text/plain")
+    public Response getClusters(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
+-     return handleRequest(headers, body, ui, Request.Type.GET, createClusterResource(null));
+    }
+  
+    /**
+--- 145,151 ----
+    @GET
+    @Produces("text/plain")
+    public Response getClusters(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
++     return handleRequest(headers, body, ui, Request.Type.GET, createClusterResource(-1L));
+    }
+  
+    /**
+***************
+*** 130,293 ****
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster id
+     *
+     * @return information regarding the created cluster
+     */
+-    @POST
+-    @Path("{clusterName}")
+-    @Produces("text/plain")
+-    public Response createCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+-                                  @PathParam("clusterName") String clusterName) {
+-      return handleRequest(headers, body, ui, Request.Type.POST, createClusterResource(clusterName));
+    }
+  
+    /**
+-    * Handles: PUT /clusters/{clusterID}
+     * Update a specific cluster.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster id
+     *
+     * @return information regarding the updated cluster
+     */
+    @PUT
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response updateCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
+-                                 @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, body, ui, Request.Type.PUT, createClusterResource(clusterName));
+    }
+  
+    /**
+-    * Handles: DELETE /clusters/{clusterID}
+     * Delete a specific cluster.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster id
+     *
+     * @return information regarding the deleted cluster
+     */
+    @DELETE
+-   @Path("{clusterName}")
+    @Produces("text/plain")
+    public Response deleteCluster(@Context HttpHeaders headers, @Context UriInfo ui,
+-                                 @PathParam("clusterName") String clusterName) {
+-     return handleRequest(headers, null, ui, Request.Type.DELETE, createClusterResource(clusterName));
+    }
+  
+    /**
+-    * Handles: GET /clusters/{clusterID}/artifacts
+     * Get all artifacts associated with the cluster.
+     *
+     * @param body         request body
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster name
+     *
+     * @return artifact collection resource representation
+     */
+    @GET
+-   @Path("{clusterName}/artifacts")
+    @Produces("text/plain")
+    public Response getArtifacts(String body,
+                                 @Context HttpHeaders headers,
+                                 @Context UriInfo ui,
+-                                @PathParam("clusterName") String clusterName) {
+      return handleRequest(headers, body, ui, Request.Type.GET,
+-         createArtifactResource(clusterName, null));
+    }
+  
+    /**
+-    * Handles: GET /clusters/{clusterID}/artifacts/{artifactName}
+     * Get an artifact resource instance.
+     *
+     * @param body          request body
+     * @param headers       http headers
+     * @param ui            uri info
+-    * @param clusterName   cluster name
+     * @param artifactName  artifact name
+     *
+     * @return  artifact instance resource representation
+     */
+    @GET
+-   @Path("{clusterName}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response getArtifact(String body,
+                                @Context HttpHeaders headers,
+                                @Context UriInfo ui,
+-                               @PathParam("clusterName") String clusterName,
+                                @PathParam("artifactName") String artifactName) {
+-     return handleRequest(headers, body, ui, Request.Type.GET, createArtifactResource(clusterName, artifactName));
+    }
+  
+    /**
+-    * Handles: POST /clusters/{clusterID}/artifacts/{artifactName}
+     * Create a cluster artifact.
+     *
+     * @param body          request body
+     * @param headers       http headers
+     * @param ui            uri info
+-    * @param clusterName   cluster name
+     * @param artifactName  artifact name
+     * @return
+     */
+    @POST
+-   @Path("{clusterName}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response createArtifact(String body,
+                                   @Context HttpHeaders headers,
+                                   @Context UriInfo ui,
+-                                  @PathParam("clusterName") String clusterName,
+                                   @PathParam("artifactName") String artifactName) {
+      return handleRequest(headers, body, ui, Request.Type.POST,
+-         createArtifactResource(clusterName, artifactName));
+    }
+  
+    /**
+-    * Handles: PUT /clusters/{clusterID}/artifacts
+     * Update all artifacts matching the provided predicate.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster name
+     *
+     * @return information regarding the updated artifacts
+     */
+    @PUT
+-   @Path("{clusterName}/artifacts")
+    @Produces("text/plain")
+    public Response updateArtifacts(String body,
+                                    @Context HttpHeaders headers,
+                                    @Context UriInfo ui,
+-                                   @PathParam("clusterName") String clusterName) {
+      return handleRequest(headers, body, ui, Request.Type.PUT,
+-         createArtifactResource(clusterName, null));
+    }
+  
+    /**
+-    * Handles: PUT /clusters/{clusterID}/artifacts/{artifactName}
+     * Update a specific artifact.
+     *
+     * @param headers       http headers
+     * @param ui            uri info
+-    * @param clusterName   cluster name
+     * @param artifactName  artifactName
+     *
+     * @return information regarding the updated artifact
+     */
+    @PUT
+-   @Path("{clusterName}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response updateArtifact(String body,
+                                   @Context HttpHeaders headers,
+                                  @Context UriInfo ui,
+-                                 @PathParam("clusterName") String clusterName,
+                                  @PathParam("artifactName") String artifactName) {
+      return handleRequest(headers, body, ui, Request.Type.PUT,
+-         createArtifactResource(clusterName, artifactName));
+    }
+  
+    /**
+--- 154,338 ----
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+     *
+     * @return information regarding the created cluster
+     */
++ 
++   @POST
++   @Produces("text/plain")
++   public Response createCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui) {
++     return handleRequest(headers, body, ui, Request.Type.POST, createClusterResource(-1L));
+    }
+  
++   /*
++   @POST
++   @Path("{clusterName}")
++   @Produces("text/plain")
++   public Response createCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
++                                 @PathParam("clusterName") String clusterName) {
++     return handleRequest(headers, body, ui, Request.Type.POST, createClusterResource(clusterName));
++   }
++  */
+    /**
++    * Handles: PUT /clusters/{clusterId}
+     * Update a specific cluster.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
++    * @param clusterRef   Cluster Reference
+     *
+     * @return information regarding the updated cluster
+     */
+    @PUT
++   @Path("{clusterRef}")
+    @Produces("text/plain")
+    public Response updateCluster(String body, @Context HttpHeaders headers, @Context UriInfo ui,
++                                 @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @Put clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return handleRequest(headers, body, ui, Request.Type.PUT, createClusterResource(clusterId));
+    }
+  
+    /**
++    * Handles: DELETE /clusters/{clusterId}
+     * Delete a specific cluster.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
++    * @param clusterRef   Cluster Reference
+     *
+     * @return information regarding the deleted cluster
+     */
+    @DELETE
++   @Path("{clusterRef}")
+    @Produces("text/plain")
+    public Response deleteCluster(@Context HttpHeaders headers, @Context UriInfo ui,
++                                 @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @delte clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return handleRequest(headers, null, ui, Request.Type.DELETE, createClusterResource(clusterId));
+    }
+  
+    /**
++    * Handles: GET /clusters/{clusterId}/artifacts
+     * Get all artifacts associated with the cluster.
+     *
+     * @param body         request body
+     * @param headers      http headers
+     * @param ui           uri info
++    * @param clusterRef   Cluster Reference
+     *
+     * @return artifact collection resource representation
+     */
+    @GET
++   @Path("{clusterRef}/artifacts")
+    @Produces("text/plain")
+    public Response getArtifacts(String body,
+                                 @Context HttpHeaders headers,
+                                 @Context UriInfo ui,
++                                @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET artifacts clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
+      return handleRequest(headers, body, ui, Request.Type.GET,
++         createArtifactResource(clusterId, null));
+    }
+  
+    /**
++    * Handles: GET /clusters/{clusterId}/artifacts/{artifactName}
+     * Get an artifact resource instance.
+     *
+     * @param body          request body
+     * @param headers       http headers
+     * @param ui            uri info
++    * @param clusterRef    Cluster Reference
+     * @param artifactName  artifact name
+     *
+     * @return  artifact instance resource representation
+     */
+    @GET
++   @Path("{clusterRef}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response getArtifact(String body,
+                                @Context HttpHeaders headers,
+                                @Context UriInfo ui,
++                               @PathParam("clusterRef") String clusterRef,
+                                @PathParam("artifactName") String artifactName) {
++     System.out.println("\n\n SWAP - @GET artfacts artifact clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return handleRequest(headers, body, ui, Request.Type.GET, createArtifactResource(clusterId, artifactName));
+    }
+  
+    /**
++    * Handles: POST /clusters/{clusterId}/artifacts/{artifactName}
+     * Create a cluster artifact.
+     *
+     * @param body          request body
+     * @param headers       http headers
+     * @param ui            uri info
++    * @param clusterRef    Cluster Reference
+     * @param artifactName  artifact name
+     * @return
+     */
+    @POST
++   @Path("{clusterRef}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response createArtifact(String body,
+                                   @Context HttpHeaders headers,
+                                   @Context UriInfo ui,
++                                  @PathParam("clusterRef") String clusterRef,
+                                   @PathParam("artifactName") String artifactName) {
++     System.out.println("\n\n SWAP - @post artifact clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
+      return handleRequest(headers, body, ui, Request.Type.POST,
++         createArtifactResource(clusterId, artifactName));
+    }
+  
+    /**
++    * Handles: PUT /clusters/{clusterId}/artifacts
+     * Update all artifacts matching the provided predicate.
+     *
+     * @param headers      http headers
+     * @param ui           uri info
++    * @param clusterRef   Cluster Reference
+     *
+     * @return information regarding the updated artifacts
+     */
+    @PUT
++   @Path("{clusterRef}/artifacts")
+    @Produces("text/plain")
+    public Response updateArtifacts(String body,
+                                    @Context HttpHeaders headers,
+                                    @Context UriInfo ui,
++                                   @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @put artifact clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
+      return handleRequest(headers, body, ui, Request.Type.PUT,
++         createArtifactResource(clusterId, null));
+    }
+  
+    /**
++    * Handles: PUT /clusters/{clusterId}/artifacts/{artifactName}
+     * Update a specific artifact.
+     *
+     * @param headers       http headers
+     * @param ui            uri info
++    * @param clusterRef    Cluster Reference
+     * @param artifactName  artifactName
+     *
+     * @return information regarding the updated artifact
+     */
+    @PUT
++   @Path("{clusterRef}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response updateArtifact(String body,
+                                   @Context HttpHeaders headers,
+                                  @Context UriInfo ui,
++                                 @PathParam("clusterRef") String clusterRef,
+                                  @PathParam("artifactName") String artifactName) {
++     System.out.println("\n\n SWAP - @put artifacts artifact clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
+      return handleRequest(headers, body, ui, Request.Type.PUT,
++         createArtifactResource(clusterId, artifactName));
+    }
+  
+    /**
+***************
+*** 296,316 ****
+     *
+     * @param headers       http headers
+     * @param ui            uri info
+-    * @param clusterName   cluster name
+     * @param artifactName  artifactName
+     *
+     * @return information regarding the deleted artifact
+     */
+    @DELETE
+-   @Path("{clusterName}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response deleteArtifact(String body,
+                                   @Context HttpHeaders headers,
+                                   @Context UriInfo ui,
+-                                  @PathParam("clusterName") String clusterName,
+                                   @PathParam("artifactName") String artifactName) {
+      return handleRequest(headers, body, ui, Request.Type.DELETE,
+-         createArtifactResource(clusterName, artifactName));
+    }
+  
+    /**
+--- 341,363 ----
+     *
+     * @param headers       http headers
+     * @param ui            uri info
++    * @param clusterRef    Cluster Reference
+     * @param artifactName  artifactName
+     *
+     * @return information regarding the deleted artifact
+     */
+    @DELETE
++   @Path("{clusterRef}/artifacts/{artifactName}")
+    @Produces("text/plain")
+    public Response deleteArtifact(String body,
+                                   @Context HttpHeaders headers,
+                                   @Context UriInfo ui,
++                                  @PathParam("clusterRef") String clusterRef,
+                                   @PathParam("artifactName") String artifactName) {
++     System.out.println("\n\n SWAP - @delete artifacts artifact clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
+      return handleRequest(headers, body, ui, Request.Type.DELETE,
++         createArtifactResource(clusterId, artifactName));
+    }
+  
+    /**
+***************
+*** 319,389 ****
+     *
+     * @param headers      http headers
+     * @param ui           uri info
+-    * @param clusterName  cluster name
+     *
+     * @return information regarding the deleted artifacts
+     */
+    @DELETE
+-   @Path("{clusterName}/artifacts")
+    @Produces("text/plain")
+    public Response deleteArtifacts(String body,
+                                    @Context HttpHeaders headers,
+                                    @Context UriInfo ui,
+-                                   @PathParam("clusterName") String clusterName) {
+      return handleRequest(headers, body, ui, Request.Type.DELETE,
+-         createArtifactResource(clusterName, null));
+    }
+  
+    /**
+     * Get the hosts sub-resource
+     *
+     * @param request      the request
+-    * @param clusterName  cluster id
+     *
+     * @return the hosts service
+     */
+-   @Path("{clusterName}/hosts")
+-   public HostService getHostHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new HostService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Get the services sub-resource
+     *
+     * @param request      the request
+-    * @param clusterName  cluster id
+     *
+     * @return the services service
+     */
+-   @Path("{clusterName}/services")
+-   public ServiceService getServiceHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new ServiceService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the configurations sub-resource.
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return the configuration service
+     */
+-   @Path("{clusterName}/configurations")
+-   public ConfigurationService getConfigurationHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new ConfigurationService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the requests sub-resource.
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return the requests service
+     */
+-   @Path("{clusterName}/requests")
+-   public RequestService getRequestHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new RequestService(m_apiVersion, clusterName);
+    }
+  
+    /**
+--- 366,446 ----
+     *
+     * @param headers      http headers
+     * @param ui           uri info
++    * @param clusterRef   Cluster Reference
+     *
+     * @return information regarding the deleted artifacts
+     */
+    @DELETE
++   @Path("{clusterRef}/artifacts")
+    @Produces("text/plain")
+    public Response deleteArtifacts(String body,
+                                    @Context HttpHeaders headers,
+                                    @Context UriInfo ui,
++                                   @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @delete artifacts clusterRef = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
+      return handleRequest(headers, body, ui, Request.Type.DELETE,
++         createArtifactResource(clusterId, null));
+    }
+  
+    /**
+     * Get the hosts sub-resource
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the hosts service
+     */
++   @Path("{clusterRef}/hosts")
++   public HostService getHostHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET hists = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new HostService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Get the services sub-resource
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the services service
+     */
++   @Path("{clusterRef}/services")
++   public ServiceService getServiceHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET services = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ServiceService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the configurations sub-resource.
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the configuration service
+     */
++   @Path("{clusterRef}/configurations")
++   public ConfigurationService getConfigurationHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET configs = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ConfigurationService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the requests sub-resource.
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the requests service
+     */
++   @Path("{clusterRef}/requests")
++   public RequestService getRequestHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET requests = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new RequestService(m_apiVersion, clusterId);
+    }
+  
+    /**
+***************
+*** 391,403 ****
+     * Allows accessing host component resources across hosts.
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the host component service with no parent set
+     */
+-   @Path("{clusterName}/host_components")
+-   public HostComponentService getHostComponentHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new HostComponentService(m_apiVersion, clusterName, null);
+    }
+  
+    /**
+--- 448,462 ----
+     * Allows accessing host component resources across hosts.
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the host component service with no parent set
+     */
++   @Path("{clusterRef}/host_components")
++   public HostComponentService getHostComponentHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET host_comp = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new HostComponentService(m_apiVersion, clusterId, null);
+    }
+  
+    /**
+***************
+*** 405,417 ****
+     * Allows accessing host Kerberos identity resources across hosts.
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the host component service with no parent set
+     */
+-   @Path("{clusterName}/kerberos_identities")
+-   public HostKerberosIdentityService getHostKerberosIdentityHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new HostKerberosIdentityService(m_apiVersion, clusterName, null);
+    }
+  
+    /**
+--- 464,478 ----
+     * Allows accessing host Kerberos identity resources across hosts.
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the host component service with no parent set
+     */
++   @Path("{clusterRef}/kerberos_identities")
++   public HostKerberosIdentityService getHostKerberosIdentityHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET kerbersos = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new HostKerberosIdentityService(m_apiVersion, clusterId, null);
+    }
+  
+    /**
+***************
+*** 419,485 ****
+     * Allows accessing component resources across services.
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the host component service with no parent set
+     */
+-   @Path("{clusterName}/components")
+-   public ComponentService getComponentHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new ComponentService(m_apiVersion, clusterName, null);
+    }
+  
+    /**
+     * Gets the workflows sub-resource.
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+-    *
+     * @return  the workflow service
+     */
+-   @Path("{clusterName}/workflows")
+-   public WorkflowService getWorkflowHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new WorkflowService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the config group service
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the config group service
+     */
+-   @Path("{clusterName}/config_groups")
+-   public ConfigGroupService getConfigGroupService(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new ConfigGroupService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the request schedule service
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the request schedule service
+     */
+-   @Path("{clusterName}/request_schedules")
+    public RequestScheduleService getRequestScheduleService
+-                              (@Context javax.ws.rs.core.Request request, @PathParam ("clusterName") String clusterName) {
+-     return new RequestScheduleService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the alert definition service
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the alert definition service
+     */
+-   @Path("{clusterName}/alert_definitions")
+    public AlertDefinitionService getAlertDefinitionService(
+-       @Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new AlertDefinitionService(m_apiVersion, clusterName);
+    }
+  
+    /**
+--- 480,555 ----
+     * Allows accessing component resources across services.
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the host component service with no parent set
+     */
++   @Path("{clusterRef}/components")
++   public ComponentService getComponentHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET components = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ComponentService(m_apiVersion, clusterId, null);
+    }
+  
+    /**
+     * Gets the workflows sub-resource.
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     * @return  the workflow service
+     */
++   @Path("{clusterRef}/workflows")
++   public WorkflowService getWorkflowHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET workflows = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new WorkflowService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the config group service
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the config group service
+     */
++   @Path("{clusterRef}/config_groups")
++   public ConfigGroupService getConfigGroupService(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET config_groups = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ConfigGroupService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the request schedule service
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the request schedule service
+     */
++   @Path("{clusterRef}/request_schedules")
+    public RequestScheduleService getRequestScheduleService
++                              (@Context javax.ws.rs.core.Request request, @PathParam ("clusterId") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET request_schedules = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new RequestScheduleService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the alert definition service
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the alert definition service
+     */
++   @Path("{clusterRef}/alert_definitions")
+    public AlertDefinitionService getAlertDefinitionService(
++       @Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET alert_defs = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new AlertDefinitionService(m_apiVersion, clusterId);
+    }
+  
+    /**
+***************
+*** 487,501 ****
+     *
+     * @param request
+     *          the request.
+-    * @param clusterName
+-    *          the cluster name.
+     * @return the alert group service.
+     */
+-   @Path("{clusterName}/alert_groups")
+    public AlertGroupService getAlertGroups(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new AlertGroupService(m_apiVersion, clusterName);
+    }
+  
+    /**
+--- 557,573 ----
+     *
+     * @param request
+     *          the request.
++    * @param clusterRef
++    *          Cluster Reference
+     * @return the alert group service.
+     */
++   @Path("{clusterRef}/alert_groups")
+    public AlertGroupService getAlertGroups(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET alert_groups = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new AlertGroupService(m_apiVersion, clusterId);
+    }
+  
+    /**
+***************
+*** 503,530 ****
+     *
+     * @param request
+     *          the request
+-    * @param clusterName
+-    *          the cluster name
+     *
+     * @return the privileges service
+     */
+-   @Path("{clusterName}/privileges")
+-   public PrivilegeService getPrivilegeService(@Context javax.ws.rs.core.Request request, @PathParam ("clusterName") String clusterName) {
+-     return new ClusterPrivilegeService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the alert definition service
+     *
+     * @param request      the request
+-    * @param clusterName  the cluster name
+     *
+     * @return  the alert definition service
+     */
+-   @Path("{clusterName}/alerts")
+    public AlertService getAlertService(
+-       @Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new AlertService(m_apiVersion, clusterName, null, null);
+    }
+  
+    /**
+--- 575,606 ----
+     *
+     * @param request
+     *          the request
++    * @param clusterRef
++    *          Cluster Reference
+     *
+     * @return the privileges service
+     */
++   @Path("{clusterRef}/privileges")
++   public PrivilegeService getPrivilegeService(@Context javax.ws.rs.core.Request request, @PathParam ("clusterId") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET privs = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ClusterPrivilegeService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the alert definition service
+     *
+     * @param request      the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return  the alert definition service
+     */
++   @Path("{clusterRef}/alerts")
+    public AlertService getAlertService(
++       @Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET alerst = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new AlertService(m_apiVersion, clusterId, null, null);
+    }
+  
+    /**
+***************
+*** 532,547 ****
+     *
+     * @param request
+     *          the request
+-    * @param clusterName
+-    *          the cluster name
+     *
+     * @return the alert history service
+     */
+-   @Path("{clusterName}/alert_history")
+    public AlertHistoryService getAlertHistoryService(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new AlertHistoryService(m_apiVersion, clusterName, null, null);
+    }
+  
+    /**
+--- 608,625 ----
+     *
+     * @param request
+     *          the request
++    * @param clusterRef
++    *          Cluster Reference
+     *
+     * @return the alert history service
+     */
++   @Path("{clusterRef}/alert_history")
+    public AlertHistoryService getAlertHistoryService(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET alerst hostory = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new AlertHistoryService(m_apiVersion, clusterId, null, null);
+    }
+  
+    /**
+***************
+*** 549,564 ****
+     *
+     * @param request
+     *          the request
+-    * @param clusterName
+-    *          the cluster name
+     *
+     * @return the alert notice service
+     */
+-   @Path("{clusterName}/alert_notices")
+    public AlertNoticeService getAlertNoticeService(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new AlertNoticeService(m_apiVersion, clusterName);
+    }
+  
+    /**
+--- 627,644 ----
+     *
+     * @param request
+     *          the request
++    * @param clusterRef
++    *          Cluster Reference
+     *
+     * @return the alert notice service
+     */
++   @Path("{clusterRef}/alert_notices")
+    public AlertNoticeService getAlertNoticeService(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET aert notces = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new AlertNoticeService(m_apiVersion, clusterId);
+    }
+  
+    /**
+***************
+*** 566,686 ****
+     *
+     * @param request
+     *          the request
+-    * @param clusterName
+-    *          the cluster name
+     *
+     * @return the cluster stack versions service
+     */
+-   @Path("{clusterName}/stack_versions")
+    public ClusterStackVersionService getClusterStackVersionService(@Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new ClusterStackVersionService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the services for upgrades.
+     *
+     * @param request the request
+-    * @param clusterName the cluster name
+     *
+     * @return the upgrade services
+     */
+-   @Path("{clusterName}/upgrades")
+    public UpgradeService getUpgradeService(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new UpgradeService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets a list of upgrade summaries.
+     *
+     * @param request the request
+-    * @param clusterName the cluster name
+     *
+     * @return the upgrade summary service
+     */
+-   @Path("{clusterName}/upgrade_summary")
+    public UpgradeSummaryService getUpgradeSummaryService(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new UpgradeSummaryService(m_apiVersion, clusterName);
+    }
+    
+    /**
+     * Gets the pre-upgrade checks service.
+     *
+     * @param request the request
+-    * @param clusterName the cluster name
+     *
+     * @return the pre-upgrade checks service.
+     */
+-   @Path("{clusterName}/rolling_upgrades_check")
+-   public PreUpgradeCheckService getPreUpgradeCheckService(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
+-     return new PreUpgradeCheckService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the widget layout service
+     */
+-   @Path("{clusterName}/widget_layouts")
+    public WidgetLayoutService getWidgetLayoutService(@Context javax.ws.rs.core.Request request,
+-                                                     @PathParam ("clusterName") String clusterName) {
+- 
+-     return new WidgetLayoutService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the widget service
+     */
+-   @Path("{clusterName}/widgets")
+    public WidgetService getWidgetService(@Context javax.ws.rs.core.Request request,
+-                                                     @PathParam ("clusterName") String clusterName) {
+- 
+-     return new WidgetService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the credentials service.
+     *
+     * @param request          the request.
+-    * @param clusterName         the cluster name.
+     * @return the credentials service.
+     */
+-   @Path("{clusterName}/credentials")
+    public CredentialService getCredentials(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new CredentialService(m_apiVersion, clusterName);
+    }
+  
+    /**
+-    * Handles: GET /clusters/{clusterID}/kerberos_descriptor
+     * Gets the composite Kerberos descriptor associated with the cluster.
+     *
+     * @param request     the request.
+-    * @param clusterName the cluster name.
+     * @return composite Kerberos descriptor resource representation
+     */
+-   @Path("{clusterName}/kerberos_descriptors")
+    public ClusterKerberosDescriptorService getCompositeKerberosDescriptor(
+        @Context javax.ws.rs.core.Request request,
+-       @PathParam("clusterName") String clusterName) {
+-     return new ClusterKerberosDescriptorService(m_apiVersion, clusterName);
+    }
+  
+    /**
+     * Gets the Logging Service
+     *
+     * @param request the request
+-    * @param clusterName the cluster name
+     *
+     * @return a new instance of the LoggingService
+     */
+-   @Path("{clusterName}/logging")
+    public LoggingService getLogging(@Context javax.ws.rs.core.Request request,
+-                                    @PathParam("clusterName") String clusterName) {
+-     return AmbariServer.getController().getLoggingService(m_apiVersion, clusterName);
+    }
+  
+    // ----- helper methods ----------------------------------------------------
+--- 646,782 ----
+     *
+     * @param request
+     *          the request
++    * @param clusterRef
++    *          Cluster Reference
+     *
+     * @return the cluster stack versions service
+     */
++   @Path("{clusterRef}/stack_versions")
+    public ClusterStackVersionService getClusterStackVersionService(@Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET stack_versions = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ClusterStackVersionService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the services for upgrades.
+     *
+     * @param request the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the upgrade services
+     */
++   @Path("{clusterRef}/upgrades")
+    public UpgradeService getUpgradeService(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET upgrades = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new UpgradeService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets a list of upgrade summaries.
+     *
+     * @param request the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the upgrade summary service
+     */
++   @Path("{clusterRef}/upgrade_summary")
+    public UpgradeSummaryService getUpgradeSummaryService(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET upgrade_summary = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new UpgradeSummaryService(m_apiVersion, clusterId);
+    }
+    
+    /**
+     * Gets the pre-upgrade checks service.
+     *
+     * @param request the request
++    * @param clusterRef   Cluster Reference
+     *
+     * @return the pre-upgrade checks service.
+     */
++   @Path("{clusterRef}/rolling_upgrades_check")
++   public PreUpgradeCheckService getPreUpgradeCheckService(@Context javax.ws.rs.core.Request request, @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET rolling = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new PreUpgradeCheckService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the widget layout service
+     */
++   @Path("{clusterRef}/widget_layouts")
+    public WidgetLayoutService getWidgetLayoutService(@Context javax.ws.rs.core.Request request,
++                                                     @PathParam ("clusterId") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET widget layouts = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new WidgetLayoutService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the widget service
+     */
++   @Path("{clusterRef}/widgets")
+    public WidgetService getWidgetService(@Context javax.ws.rs.core.Request request,
++                                                     @PathParam ("clusterId") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET widgets = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new WidgetService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the credentials service.
+     *
+     * @param request          the request.
++    * @param clusterRef       Cluster Reference
+     * @return the credentials service.
+     */
++   @Path("{clusterRef}/credentials")
+    public CredentialService getCredentials(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET creds = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new CredentialService(m_apiVersion, clusterId);
+    }
+  
+    /**
++    * Handles: GET /clusters/{clusterId}/kerberos_descriptor
+     * Gets the composite Kerberos descriptor associated with the cluster.
+     *
+     * @param request     the request.
++    * @param clusterRef  Cluster Reference
+     * @return composite Kerberos descriptor resource representation
+     */
++   @Path("{clusterRef}/kerberos_descriptors")
+    public ClusterKerberosDescriptorService getCompositeKerberosDescriptor(
+        @Context javax.ws.rs.core.Request request,
++       @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET kerbs desc = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return new ClusterKerberosDescriptorService(m_apiVersion, clusterId);
+    }
+  
+    /**
+     * Gets the Logging Service
+     *
+     * @param request the request
++    * @param clusterRef Cluster Reference
+     *
+     * @return a new instance of the LoggingService
+     */
++   @Path("{clusterRef}/logging")
+    public LoggingService getLogging(@Context javax.ws.rs.core.Request request,
++                                    @PathParam("clusterRef") String clusterRef) {
++     System.out.println("\n\n SWAP - @GET logging = " + clusterRef);
++     Long clusterId = convertToClusterId(clusterRef);
++     return AmbariServer.getController().getLoggingService(m_apiVersion, clusterId);
+    }
+  
+    // ----- helper methods ----------------------------------------------------
