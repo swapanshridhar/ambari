@@ -107,11 +107,9 @@ import org.apache.ambari.server.orm.entities.HostComponentDesiredStateEntity;
 import org.apache.ambari.server.orm.entities.HostEntity;
 import org.apache.ambari.server.orm.entities.PermissionEntity;
 import org.apache.ambari.server.orm.entities.PrivilegeEntity;
-import org.apache.ambari.server.orm.entities.RepositoryVersionEntity;
 import org.apache.ambari.server.orm.entities.RequestScheduleEntity;
 import org.apache.ambari.server.orm.entities.ResourceEntity;
 import org.apache.ambari.server.orm.entities.ServiceConfigEntity;
-import org.apache.ambari.server.orm.entities.ServiceDesiredStateEntity;
 import org.apache.ambari.server.orm.entities.ServiceGroupEntity;
 import org.apache.ambari.server.orm.entities.StackEntity;
 import org.apache.ambari.server.orm.entities.TopologyRequestEntity;
@@ -313,6 +311,7 @@ public class ClusterImpl implements Cluster {
   @Inject
   private ClusterSettingDAO clusterSettingDAO;
 
+  @Inject
   private TopologyDeleteFormer topologyDeleteFormer;
 
 
@@ -480,15 +479,14 @@ public class ClusterImpl implements Cluster {
     }
 
     for (ClusterServiceEntity serviceEntity : clusterEntity.getClusterServiceEntities()) {
-      ServiceDesiredStateEntity serviceDesiredStateEntity = serviceEntity.getServiceDesiredStateEntity();
-      StackEntity stackEntity = serviceDesiredStateEntity.getDesiredStack();
-      StackId stackId = new StackId(stackEntity);
+      ServiceGroupEntity serviceGroupEntity = serviceEntity.getClusterServiceGroupEntity();
+      StackId stackId = new StackId(serviceGroupEntity.getStack());
       try {
         if (ambariMetaInfo.getService(stackId.getStackName(),
           stackId.getStackVersion(), serviceEntity.getServiceType()) != null) {
           Service service = serviceFactory.createExisting(this, getServiceGroup(serviceEntity.getServiceGroupId()), serviceEntity);
           services.put(serviceEntity.getServiceName(), service);
-          stackId = getService(serviceEntity.getServiceName()).getDesiredStackId();
+          stackId = getService(serviceEntity.getServiceName()).getStackId();
           servicesById.put(serviceEntity.getServiceId(), service);
         }
 
@@ -752,9 +750,11 @@ public class ClusterImpl implements Cluster {
 
     if (serviceComponentHosts.get(serviceName).get(componentName).containsKey(
       hostname)) {
-      throw new AmbariException("Duplicate entry for ServiceComponentHost"
-        + ", serviceName=" + serviceName + ", serviceComponentName"
-        + componentName + ", hostname= " + hostname);
+      if(serviceComponentHosts.get(serviceName).get(componentName).get(hostname).getServiceGroupName().equals(svcCompHost.getServiceGroupName())) {
+        throw new AmbariException("Duplicate entry for ServiceComponentHost"
+                + ", serviceName=" + serviceName + ", serviceComponentName"
+                + componentName + ", hostname= " + hostname);
+      }
     }
 
     if (!serviceComponentHostsByHost.containsKey(hostname)) {
@@ -945,17 +945,19 @@ public class ClusterImpl implements Cluster {
    * {@inheritDoc}
    */
   @Override
-  public Service addService(ServiceGroup serviceGroup, String serviceName, String serviceType,
-                            RepositoryVersionEntity repositoryVersion) throws AmbariException {
+  public Service addService(ServiceGroup serviceGroup, String serviceName, String serviceType)
+      throws AmbariException {
     if (services.containsKey(serviceName)) {
-      String message = MessageFormat.format("The {0} service already exists in {1}", serviceName,
-        getClusterName());
+      if (services.get(serviceName).getServiceGroupName().equals(serviceGroup.getServiceGroupName())) {
+        String message = MessageFormat.format("The {0} service already exists in {1}", serviceName,
+                getClusterName());
 
-      throw new AmbariException(message);
+        throw new AmbariException(message);
+      }
     }
 
     @Experimental(feature = ExperimentalFeature.PATCH_UPGRADES)
-    Service service = serviceFactory.createNew(this, serviceGroup, new ArrayList<>(), serviceName, serviceType, repositoryVersion);
+    Service service = serviceFactory.createNew(this, serviceGroup, new ArrayList<>(), serviceName, serviceType);
     addService(service);
 
     return service;
@@ -1288,7 +1290,6 @@ public class ClusterImpl implements Cluster {
     }
     return clusterSetting;
   }
-
 
   @Override
   public ClusterSetting getClusterSetting(Long clusterSettingId) throws ClusterSettingNotFoundException {
@@ -2098,9 +2099,9 @@ public class ClusterImpl implements Cluster {
         serviceId);
 
       Service service = getService(serviceId);
-      StackId serviceStackId = service.getDesiredStackId();
+      StackId serviceStackId = service.getStackId();
       StackEntity stackEntity = stackDAO.find(serviceStackId);
-      ClusterServiceEntity clusterServiceEntity = clusterServiceDAO.findById(clusterId, service.getServiceGroupId(), service.getServiceId());
+      ClusterServiceEntity clusterServiceEntity = clusterServiceDAO.findByPK(service.getServiceId());
 
       serviceConfigEntity.setServiceId(serviceId);
       serviceConfigEntity.setClusterEntity(clusterEntity);
@@ -3225,6 +3226,7 @@ Long serviceName = getServiceForConfigTypes( configs.stream().map(Config::getTyp
    *
    * @return
    */
+  @Override
   public ClusterEntity getClusterEntity() {
     return clusterDAO.findById(clusterId);
   }
@@ -3377,11 +3379,6 @@ Long serviceName = getServiceForConfigTypes( configs.stream().map(Config::getTyp
       for (ServiceComponent component : service.getServiceComponents().values()) {
         // skip components which don't advertise a version
         if (!component.isVersionAdvertised()) {
-          continue;
-        }
-
-        // if the repo isn't resolved, then we can't trust the version
-        if (!component.getDesiredRepositoryVersion().isResolved()) {
           continue;
         }
 

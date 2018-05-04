@@ -19,7 +19,6 @@
 package org.apache.ambari.server.topology;
 
 import static java.util.stream.Collectors.toSet;
-import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.capture;
@@ -27,7 +26,6 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.newCapture;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
@@ -350,7 +348,7 @@ public class TopologyManagerTest {
     expect(ambariContext.composeStacks(anyObject())).andReturn(stack).anyTimes();
     expect(ambariContext.getPersistedTopologyState()).andReturn(persistedState).anyTimes();
     //todo: don't ignore param
-    ambariContext.createAmbariResources(isA(ClusterTopology.class), eq(CLUSTER_NAME), eq(SecurityType.NONE), isNull(), anyLong());
+    ambariContext.createAmbariResources(isA(ClusterTopology.class), eq(CLUSTER_NAME), eq(SecurityType.NONE));
     expectLastCall().anyTimes();
     expect(ambariContext.getNextRequestId()).andReturn(1L).anyTimes();
     expect(ambariContext.isClusterKerberosEnabled(CLUSTER_ID)).andReturn(false).anyTimes();
@@ -415,7 +413,7 @@ public class TopologyManagerTest {
     expect(persistedState.getAllRequests()).andReturn(Collections.emptyMap()).anyTimes();
     replayAll();
 
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
     //todo: assertions
   }
 
@@ -439,7 +437,7 @@ public class TopologyManagerTest {
 
     replayAll();
 
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
     //todo: assertions
   }
 
@@ -462,7 +460,7 @@ public class TopologyManagerTest {
     expect(logicalRequest.isFinished()).andReturn(true).anyTimes();
     expect(logicalRequest.isSuccessful()).andReturn(true).anyTimes();
     replayAll();
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
     requestFinished();
     Assert.assertTrue(topologyManager.isClusterProvisionWithBlueprintFinished(CLUSTER_ID));
   }
@@ -486,7 +484,7 @@ public class TopologyManagerTest {
     expect(logicalRequest.isFinished()).andReturn(true).anyTimes();
     expect(logicalRequest.isSuccessful()).andReturn(false).anyTimes();
     replayAll();
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
     requestFinished();
     Assert.assertTrue(topologyManager.isClusterProvisionWithBlueprintFinished(CLUSTER_ID));
   }
@@ -509,7 +507,7 @@ public class TopologyManagerTest {
     expect(persistedState.getProvisionRequest(CLUSTER_ID)).andReturn(logicalRequest).anyTimes();
     expect(logicalRequest.isFinished()).andReturn(false).anyTimes();
     replayAll();
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
     requestFinished();
     Assert.assertFalse(topologyManager.isClusterProvisionWithBlueprintFinished(CLUSTER_ID));
   }
@@ -583,7 +581,7 @@ public class TopologyManagerTest {
     replay(bpfMock);
     expect(persistedState.getAllRequests()).andReturn(Collections.emptyMap()).anyTimes();
     replayAll();
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
     topologyManager.scaleHosts(new ScaleClusterRequest(propertySet));
     Assert.fail("InvalidTopologyException should have been thrown");
   }
@@ -608,7 +606,7 @@ public class TopologyManagerTest {
 
     replayAll();
 
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
   }
 
   @Test
@@ -633,7 +631,7 @@ public class TopologyManagerTest {
 
     replayAll();
 
-    topologyManager.provisionCluster(request);
+    topologyManager.provisionCluster(request, "{}");
   }
 
   private SettingEntity createQuickLinksSettingEntity(String content, long timeStamp) {

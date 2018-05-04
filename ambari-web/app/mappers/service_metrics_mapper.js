@@ -36,8 +36,7 @@ App.serviceMetricsMapper = App.QuickDataMapper.create({
     installed_clients: 'installed_clients',
     client_components: 'client_components',
     slave_components: 'slave_components',
-    master_components: 'master_components',
-    desired_repository_version_id: 'ServiceInfo.desired_repository_version_id'
+    master_components: 'master_components'
   },
   hdfsConfig: {
     version: 'nameNodeComponent.host_components[0].metrics.dfs.namenode.Version',
@@ -193,6 +192,7 @@ App.serviceMetricsMapper = App.QuickDataMapper.create({
     work_status: 'HostRoles.state',
     passive_state: 'HostRoles.maintenance_state',
     display_name: 'HostRoles.display_name',
+    component_id: 'HostRoles.id',
     component_name: 'HostRoles.component_name',
     host_id: 'HostRoles.host_name',
     host_name: 'HostRoles.host_name',

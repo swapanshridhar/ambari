@@ -880,7 +880,6 @@ public class UpgradeHelper {
       Service service = cluster.getService(serviceName);
       RepositoryVersionEntity targetRepositoryVersion = upgradeContext.getTargetRepositoryVersion(serviceName);
       StackId targetStack = targetRepositoryVersion.getStackId();
-      service.setDesiredRepositoryVersion(targetRepositoryVersion);
 
       Collection<ServiceComponent> components = service.getServiceComponents().values();
       for (ServiceComponent serviceComponent : components) {
@@ -916,7 +915,7 @@ public class UpgradeHelper {
         }
 
         // set component desired repo
-        serviceComponent.setDesiredRepositoryVersion(targetRepositoryVersion);
+        serviceComponent.setDesiredRepositoryVersion();
       }
     }
   }

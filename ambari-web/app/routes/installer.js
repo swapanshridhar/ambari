@@ -303,18 +303,19 @@ module.exports = Em.Route.extend(App.RouterRedirections, {
         controller.save('selectedServices');
         controller.save('selectedMpacks');
         controller.save('advancedMode');
-        var wizardStep6Controller = router.get('wizardStep6Controller');
+        var wizardSelectMpacksController = router.get('wizardSelectMpacksController');
         // Clear subsequent settings if user changed service selections
-        if (!wizardStep6Controller.get('isSaved')) {
+        if (!wizardSelectMpacksController.get('isSaved')) {
           router.get('wizardStep5Controller').clearRecommendations();
           controller.setDBProperty('recommendations', undefined);
           controller.set('content.masterComponentHosts', undefined);
           controller.setDBProperty('masterComponentHosts', undefined);
           controller.clearEnhancedConfigs();
           controller.setDBProperty('slaveComponentHosts', undefined);
-          wizardStep6Controller.set('isClientsSet', false);
+          router.get('wizardStep6Controller').set('isClientsSet', false);
         }
         controller.setStepSaved('selectMpacks');
+        controller.save('downloadConfig');
         const downloadConfig = controller.get('content.downloadConfig');
         if (downloadConfig && downloadConfig.useCustomRepo) {
           router.transitionTo('customMpackRepos');
@@ -412,6 +413,9 @@ module.exports = Em.Route.extend(App.RouterRedirections, {
       }
       App.set('router.nextBtnClickInProgress', true);
       const controller = router.get('installerController');
+      controller.save('registeredMpacks');
+      controller.save('serviceGroups');
+      controller.save('selectedStack');
       const downloadConfig = controller.get('content.downloadConfig');
       if (downloadConfig && downloadConfig.useCustomRepo) {
         router.transitionTo('customProductRepos');
@@ -464,6 +468,7 @@ module.exports = Em.Route.extend(App.RouterRedirections, {
         const controller = router.get('installerController');
         controller.clearErrors();
         controller.save('selectedMpacks');
+        controller.save('registeredMpacks');
         controller.setStepSaved('customProductRepos');
         router.transitionTo('verifyProducts');
         console.timeEnd('customProductRepos next');

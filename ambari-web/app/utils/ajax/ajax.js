@@ -43,6 +43,10 @@ var urls = {
   },
 
   'common.cluster.settings' : {
+    'real': '/clusters/{clusterName}/settings/?fields=ClusterSettingInfo/cluster_setting_name,ClusterSettingInfo/cluster_setting_value',
+  },
+
+  'common.cluster.settings.create' : {
     'type': 'POST',
     'real': '/clusters/{clusterName}/settings',
     'format': function (data) {
@@ -52,8 +56,29 @@ var urls = {
     }
   },
 
+  'common.services.update.all' : {
+    'real': '/clusters/{clusterName}/servicegroups?{urlParams}',
+    'format': function (data) {
+      return {
+        type: 'PUT',
+        data: JSON.stringify({
+          RequestInfo: {
+            "context": data.context,
+            "operation_level": {
+              "level": "CLUSTER",
+              "cluster_name" : data.clusterName
+            }
+          },
+          Body: {
+            ServiceInfo: data.ServiceInfo
+          }
+        })
+      };
+    }
+  },
+
   'common.services.update' : {
-    'real': '/clusters/{clusterName}/servicegroups/{defaultServiceGroupName}/services?{urlParams}',
+    'real': '/clusters/{clusterName}/servicegroups/{serviceGroupName}/services?{urlParams}',
     'mock': '/data/wizard/deploy/poll_1.json',
     'format': function (data) {
       return {
@@ -75,7 +100,7 @@ var urls = {
   },
 
   'common.service.update' : {
-    'real': '/clusters/{clusterName}/servicegroups/{defaultServiceGroupName}/services/{serviceName}',
+    'real': '/clusters/{clusterName}/servicegroups/{serviceGroupName}/services/{serviceName}',
     'mock': '/data/wizard/deploy/poll_1.json',
     'format': function (data) {
       return {
@@ -108,7 +133,7 @@ var urls = {
   },
 
   'common.host_component.getNnCheckPointTime': {
-    'real': '/clusters/{clusterName}/hosts/{host}/host_components/NAMENODE?fields=metrics/dfs/FSNamesystem/HAState,metrics/dfs/FSNamesystem/LastCheckpointTime',
+    'real': '/clusters/{clusterName}/hosts/{host}/host_components/{nameNodeId}?fields=metrics/dfs/FSNamesystem/HAState,metrics/dfs/FSNamesystem/LastCheckpointTime',
     'mock': ''
   },
 
@@ -174,7 +199,7 @@ var urls = {
   },
 
   'common.host.host_component.update': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentName}?{urlParams}',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentId}?{urlParams}',
     'mock': '/data/wizard/deploy/2_hosts/poll_9.json',
     'type': 'PUT',
     'format': function (data) {
@@ -228,6 +253,7 @@ var urls = {
     }
   },
 
+  //This is now legacy and should be replaced by common.service.create.configs below
   'common.across.services.configurations': {
     'type': 'PUT',
     'real':'/clusters/{clusterName}',
@@ -236,6 +262,16 @@ var urls = {
       return {
         dataType: 'text',
         data: data.data
+      }
+    }
+  },
+
+  'common.service.create.configs': {
+    'type': 'POST',
+    'real': '/clusters/{clusterName}/servicegroups/{serviceGroupName}/services/{serviceName}/configurations/service_config_versions',
+    'format': function(data) {
+      return {
+        data: JSON.stringify(data.data)
       }
     }
   },
@@ -257,7 +293,7 @@ var urls = {
 
 
   'service.flume.agent.command': {
-    'real': '/clusters/{clusterName}/hosts/{host}/host_components/FLUME_HANDLER',
+    'real': '/clusters/{clusterName}/hosts/{host}/host_components/{componentId}',
     'mock': '',
     'format': function (data) {
       return {
@@ -340,34 +376,8 @@ var urls = {
     }
   },
 
-  'common.service.host_component.update': {
-    'real': '/clusters/{clusterName}/host_components',
-    'mock': '',
-    'type': 'PUT',
-    'format': function (data) {
-      return {
-        data: JSON.stringify({
-          RequestInfo: {
-            context: data.context,
-            operation_level: {
-              level: 'SERVICE',
-              cluster_name: data.clusterName,
-              service_name: data.serviceName
-            },
-            query: data.query
-          },
-          Body: {
-            HostRoles: {
-              state: data.state
-            }
-          }
-        })
-      }
-    }
-  },
-
   'common.host.host_component.passive': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentName}',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentId}',
     'mock': '',
     'type': 'PUT',
     'format': function (data) {
@@ -422,7 +432,7 @@ var urls = {
     'type': 'DELETE'
   },
   'common.delete.host_component': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentName}',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentId}',
     'type': 'DELETE'
   },
   'common.delete.user': {
@@ -580,7 +590,7 @@ var urls = {
   'background_operations.get_most_recent': {
     'real': '/clusters/{clusterName}/requests?to=end&page_size={operationsCount}&fields=' +
     'Requests/end_time,Requests/id,Requests/progress_percent,Requests/request_context,' +
-    'Requests/request_status,Requests/start_time,Requests/cluster_name,Requests/user_name&minimal_response=true',
+    'Requests/request_status,Requests/start_time,Requests/cluster_name&minimal_response=true',
     'mock': '/data/background_operations/list_on_start.json',
     'testInProduction': true
   },
@@ -618,7 +628,12 @@ var urls = {
           "context": data.displayName + " Service Check",
           "command": data.actionName
         },
-        "Requests/resource_filters": [{"service_name": data.serviceName}]
+        "Requests/resource_filters": [
+          {
+            "service_name": data.serviceName,
+            "service_group_name": data.serviceGroupName
+          }
+        ]
       };
       if (data.operationLevel) {
         requestData.RequestInfo.operation_level = data.operationLevel;
@@ -863,10 +878,6 @@ var urls = {
     'real': '/clusters/{clusterName}?fields=Clusters/desired_configs',
     'mock': '/data/clusters/cluster.json'
   },
-  'config.tags.site': {
-    'real': '/clusters/{clusterName}?fields=Clusters/desired_configs/{site}',
-    'mock': ''
-  },
   'config.tags_and_groups': {
     'real': '/clusters/{clusterName}?fields=Clusters/desired_configs,config_groups/*{urlParams}',
     'mock': '/data/clusters/tags_and_groups.json'
@@ -987,7 +998,7 @@ var urls = {
   },
 
   'host.host_component.slave_desired_admin_state': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentName}/?fields=HostRoles/desired_admin_state',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentId}/?fields=HostRoles/desired_admin_state',
     'mock': '/data/hosts/HDP2/decommission_state.json'
   },
   'host.host_component.decommission_status': {
@@ -999,7 +1010,7 @@ var urls = {
     'mock': ''
   },
   'host.host_component.decommission_status_datanode': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentName}?fields=metrics/dfs/namenode',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentId}?fields=metrics/dfs/namenode',
     'mock': '/data/hosts/HDP2/decommission_state.json'
   },
   'host.region_servers.in_inservice': {
@@ -1391,7 +1402,7 @@ var urls = {
     }
   },
   'cluster.load_cluster_name': {
-    'real': '/clusters?fields=Clusters/security_type,Clusters/version,Clusters/cluster_id',
+    'real': '/clusters?fields=Clusters/security_type,Clusters/version',
     'mock': '/data/clusters/info.json'
   },
   'cluster.load_last_upgrade': {
@@ -1451,15 +1462,15 @@ var urls = {
     'mock': '/data/background_operations/host_upgrade_tasks.json'
   },
   'admin.high_availability.getNnCheckPointStatus': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/NAMENODE',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{nameNodeId}',
     'mock': ''
   },
   'admin.high_availability.getJnCheckPointStatus': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/JOURNALNODE?fields=metrics',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{jnId}?fields=metrics',
     'mock': ''
   },
   'admin.high_availability.getHostComponent': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentName}',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{componentId}',
     'mock': ''
   },
   'common.create_component': {
@@ -2110,7 +2121,7 @@ var urls = {
 
   'wizard.step8.create_selected_services': {
     'type': 'POST',
-    'real': '/clusters/{cluster}/servicegroups/{defaultServiceGroupName}/services',
+    'real': '/clusters/{cluster}/servicegroups/{serviceGroupName}/services',
     'mock': '/data/stacks/HDP-2.1/recommendations.json',
     'format': function (data) {
       return {
@@ -2121,7 +2132,7 @@ var urls = {
   },
 
   'wizard.step8.create_components': {
-    'real': '/clusters/{cluster}/servicegroups/{defaultServiceGroupName}/services/{serviceName}/components',
+    'real': '/clusters/{cluster}/servicegroups/{serviceGroupName}/services/{serviceName}/components',
     'mock': '',
     'format': function (data) {
       return {
@@ -2400,7 +2411,7 @@ var urls = {
     mock: '/data/users/privileges_{userName}.json'
   },
   'router.login.clusters': {
-    'real': '/clusters?fields=Clusters/provisioning_state,Clusters/security_type,Clusters/version,Clusters/cluster_id',
+    'real': '/clusters?fields=Clusters/provisioning_state,Clusters/security_type,Clusters/version',
     'mock': '/data/clusters/info.json'
   },
   'router.login.message': {
@@ -2610,7 +2621,7 @@ var urls = {
     'mock': '/data/views/instances.json'
   },
   'host.host_component.flume.metrics': {
-    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/FLUME_HANDLER?fields=metrics/flume/flume/{flumeComponent}/*',
+    'real': '/clusters/{clusterName}/hosts/{hostName}/host_components/{flumeId}?fields=metrics/flume/flume/{flumeComponent}/*',
     'mock': ''
   },
   'host.host_component.flume.metrics.timeseries': {
@@ -2668,11 +2679,6 @@ var urls = {
   },
   'components.get_category': {
     'real': '/clusters/{clusterName}/components?fields=ServiceComponentInfo/component_name,ServiceComponentInfo/service_name,ServiceComponentInfo/service_name,ServiceComponentInfo/category,ServiceComponentInfo/recovery_enabled,ServiceComponentInfo/total_count&minimal_response=true',
-    'mock': ''
-  },
-  'components.get.staleConfigs': {
-    'real': '/clusters/{clusterName}/components?host_components/HostRoles/stale_configs=true' +
-    '&fields=host_components/HostRoles/host_name&minimal_response=true',
     'mock': ''
   },
   'components.update': {
@@ -2868,8 +2874,7 @@ var urls = {
   'hosts.bulk.operations': {
     real: '/clusters/{clusterName}/hosts?fields=Hosts/host_name,Hosts/maintenance_state,' +
     'host_components/HostRoles/state,host_components/HostRoles/maintenance_state,' +
-    'Hosts/total_mem,stack_versions/HostStackVersions,stack_versions/repository_versions/RepositoryVersions/repository_version,' +
-    'stack_versions/repository_versions/RepositoryVersions/id,' +
+    'Hosts/total_mem,' +
     'host_components/HostRoles/stale_configs' +
     'host_components/HostRoles/service_name&minimal_response=true',
     mock: '',
@@ -3181,8 +3186,37 @@ var urls = {
     }
   },
 
+  'mpack.get_registered_mpack': {
+    real: '/mpacks/{id}',
+  },
+
   'mpack.get_registered_mpacks': {
     real: '/mpacks?fields=*',
+  },
+
+  'mpack.create_os_repos': {
+    real: '/mpacks/{mpack}/operating_systems/{os}',
+    format: function (data) {
+      return {
+        type: 'POST',
+        data: JSON.stringify(data.data)
+      };
+    }
+  },
+
+  'mpack.update_os_repos': {
+    real: '/mpacks/{mpack}/operating_systems/{os}',
+    format: function (data) {
+      return {
+        type: 'PUT',
+        data: JSON.stringify(data.data)
+      };
+    }
+  },
+
+  'mpack.delete_os_repos': {
+    real: '/mpacks/{mpack}/operating_systems/{os}',
+    type: 'DELETE'
   },
 
   'mpack.create_version_definition': {
@@ -3207,6 +3241,10 @@ var urls = {
 
   'mpack.get_version_definitions': {
     real: '/version_definitions?fields=VersionDefinition/*,operating_systems/repositories/Repositories/*,operating_systems/OperatingSystems/*,VersionDefinition/stack_services,VersionDefinition/repository_version',
+  },
+
+  'mpack.get_all_registered': {
+    real: '/mpacks?fields=*'
   },
 
   'registry.all': {
@@ -3239,7 +3277,6 @@ var urls = {
           selected_scenarios: data.usecases
         })
       };
-
     }
   }
 };

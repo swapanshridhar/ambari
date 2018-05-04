@@ -1249,7 +1249,8 @@ describe('App.WizardStep8Controller', function () {
           {"ServiceInfo": { "service_name": 's3' }}
         ];
         installerStep8Controller.createSelectedServices();
-        expect(installerStep8Controller.addRequestToAjaxQueue.args[0][0].data.data).to.equal(JSON.stringify(data));
+        expect(installerStep8Controller.addRequestToAjaxQueue.args[0][0].data.data).to.equal(JSON.stringify({ "ServiceInfo": { "service_name": "s1" } }));
+        expect(installerStep8Controller.addRequestToAjaxQueue.calledThrice).to.be.true;
       });
 
     });
@@ -1301,45 +1302,21 @@ describe('App.WizardStep8Controller', function () {
 
     describe('#applyConfigurationsToCluster', function() {
       it('should call addRequestToAjaxQueue', function() {
-        var serviceConfigTags = [
-            {
-              type: 'hdfs',
-              tag: 'tag1',
-              properties: {
-                'prop1': 'value1'
-              }
+        var serviceConfig = {
+          serviceName: "service",
+          serviceGroupName: "serviceGroup",
+          data: {
+            properties: {
+              prop1: "val1"
             }
-          ],
-          data = '['+JSON.stringify({
-            Clusters: {
-              desired_config: [serviceConfigTags[0]]
-            }
-          })+']';
-        installerStep8Controller.reopen({
-          installedServices: [
-              Em.Object.create({
-                isSelected: true,
-                isInstalled: false,
-                configTypesRendered: {hdfs:'tag1'}
-              })
-            ], selectedServices: []
-        });
+          }
+        }
+        
+        var serviceConfigTags = [Em.Object.create(serviceConfig)];
+
         installerStep8Controller.applyConfigurationsToCluster(serviceConfigTags);
-        expect(installerStep8Controller.addRequestToAjaxQueue.args[0][0].data.data).to.equal(data);
+        expect(JSON.stringify(installerStep8Controller.addRequestToAjaxQueue.args[0][0].data)).to.deep.equal(JSON.stringify(serviceConfig));
       });
-    });
-
-    describe('#newServiceComponentErrorCallback', function() {
-
-      it('should add request for new component', function() {
-        var serviceName = 's1',
-          componentName = 'c1';
-        installerStep8Controller.newServiceComponentErrorCallback({}, {}, '', {}, {serviceName: serviceName, componentName: componentName});
-        var data = JSON.parse(installerStep8Controller.addRequestToAjaxQueue.args[0][0].data.data);
-        expect(installerStep8Controller.addRequestToAjaxQueue.args[0][0].data.serviceName).to.equal(serviceName);
-        expect(data.components[0].ServiceComponentInfo.component_name).to.equal(componentName);
-      });
-
     });
 
     describe('#createAdditionalHostComponents', function() {

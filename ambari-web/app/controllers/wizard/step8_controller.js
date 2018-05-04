@@ -315,23 +315,39 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
     } else {
       // from install wizard
       var downloadConfig = this.get('downloadConfig');
-      var selectedStack = this.getSelectedStack();
       var allRepos = [];
-      if (selectedStack && selectedStack.get('operatingSystems')) {
-        selectedStack.get('operatingSystems').forEach(function (os) {
-          if (os.get('isSelected')) {
-            os.get('repositories').forEach(function(repo) {
-              if (repo.get('showRepo')) {
-                allRepos.push(Em.Object.create({
-                  base_url: repo.get('baseUrl'),
-                  os_type: repo.get('osType'),
-                  repo_id: repo.get('repoId')
-                }));
+      var selectedMpacks = this.get('content.selectedMpacks');
+      var registeredMpacks = this.get('content.registeredMpacks');
+      if (selectedMpacks && registeredMpacks) {
+        selectedMpacks.forEach(mpack => {
+          if (mpack.operatingSystems) { //repos have been customized
+            mpack.operatingSystems.forEach(os => {
+              if (os.selected) {
+                os.repos.forEach(function (repo) {
+                  allRepos.push(Em.Object.create({
+                    base_url: repo.downloadUrl,
+                    os_type: os.type,
+                    repo_id: repo.repoId
+                  }));
+                });
               }
-            }, this);
+            })
+          } else { //repos have not been customized, so use default info
+            const rmp = registeredMpacks.find(rmp => rmp.MpackInfo.mpack_name === mpack.name && rmp.MpackInfo.mpack_version === mpack.version);
+            if (rmp) {
+              rmp.operating_systems.forEach(os => {
+                os.OperatingSystems.repositories.forEach(function (repo) {
+                  allRepos.push(Em.Object.create({
+                    base_url: repo.base_url,
+                    os_type: repo.os_type,
+                    repo_id: repo.repo_id
+                  }));
+                })
+              })  
+            }
           }
-        }, this);
-      }
+        });
+      }  
       allRepos.set('display_name', Em.I18n.t("installer.step8.repoInfo.displayName"));
       this.get('clusterInfo').set('useRedhatSatellite', downloadConfig.useRedhatSatellite);
       this.get('clusterInfo').set('repoInfo', allRepos);
@@ -1031,12 +1047,14 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
    */
   createSelectedServices: function () {
     var data = this.createSelectedServicesData();
-    if (!data.length) return;
-    this.addRequestToAjaxQueue({
-      name: 'wizard.step8.create_selected_services',
-      data: {
-        data: JSON.stringify(data)
-      }
+    data.forEach(service => {
+      this.addRequestToAjaxQueue({
+        name: 'wizard.step8.create_selected_services',
+        data: {
+          serviceGroupName: service.ServiceInfo.service_group_name,
+          data: JSON.stringify(service)
+        }
+      });
     });
   },
 
@@ -1051,10 +1069,8 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
         "ServiceInfo": {
           "service_name": service.get('serviceName'),
           "service_type": service.get('serviceName'),
-          //TODO: mpacks - needs to be revisited when we are no longer hard coding service groups to be named 
-          //               for mpacks and when the concept of a "selected stack" is no longer a thing
-          "service_group_name": service.get('stackName'),
-          "desired_stack": `${service.get('stackName')}-${service.get('stackVersion')}`,
+          //TODO: mpacks - needs to be revisited when we are no longer hard coding service groups to be named for mpacks
+          "service_group_name": service.get('stackName')
         }
       })
     );
@@ -1071,13 +1087,15 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
     var serviceComponents = App.StackServiceComponent.find();
     this.get('selectedServices').forEach(function (_service) {
       var serviceName = _service.get('serviceName');
+      //TODO - mpacks: when we are supporting user defined service groups, this must be changed
+      const serviceGroup = _service.get('stackName');
       var componentsData = serviceComponents.filterProperty('serviceName', serviceName).map(function (_component) {
         return { "ServiceComponentInfo": { "component_name": _component.get('componentName') } };
       });
 
       // Service must be specified in terms of a query for creating multiple components at the same time.
       // See AMBARI-1018.
-      this.addRequestToCreateComponent(componentsData, serviceName);
+      this.addRequestToCreateComponent(componentsData, serviceName, serviceGroup);
     }, this);
 
     if (this.get('isAddHost')) {
@@ -1090,16 +1108,18 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
       this.get('content.slaveComponentHosts').forEach(function (component) {
         if (component.componentName !== 'CLIENT' && !allServiceComponents.contains(component.componentName)) {
           this.addRequestToCreateComponent(
-              [{"ServiceComponentInfo": {"component_name": component.componentName}}],
-              App.StackServiceComponent.find().findProperty('componentName', component.componentName).get('serviceName')
+            [{"ServiceComponentInfo": {"component_name": component.componentName}}],
+            App.StackServiceComponent.find().findProperty('componentName', component.componentName).get('serviceName'),
+            App.StackServiceComponent.find().findProperty('componentName', component.componentName).get('stackName') //TODO - mpacks: when we are supporting user defined service groups, this must be changed
           );
         }
       }, this);
       this.get('content.clients').forEach(function (component) {
         if (!allServiceComponents.contains(component.component_name)) {
           this.addRequestToCreateComponent(
-              [{"ServiceComponentInfo": {"component_name": component.component_name}}],
-              App.StackServiceComponent.find().findProperty('componentName', component.component_name).get('serviceName')
+            [{"ServiceComponentInfo": {"component_name": component.component_name}}],
+            App.StackServiceComponent.find().findProperty('componentName', component.component_name).get('serviceName'),
+            App.StackServiceComponent.find().findProperty('componentName', component.componentName).get('stackName') //TODO - mpacks: when we are supporting user defined service groups, this must be changed
           );
         }
       }, this);
@@ -1111,40 +1131,13 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
    * @param componentsData
    * @param serviceName
    */
-  addRequestToCreateComponent: function (componentsData, serviceName) {
+  addRequestToCreateComponent: function (componentsData, serviceName, serviceGroupName) {
     this.addRequestToAjaxQueue({
       name: 'wizard.step8.create_components',
       data: {
         data: JSON.stringify(componentsData),
-        serviceName: serviceName
-      }
-    });
-  },
-
-  /**
-   * Error callback for new service component request
-   * So, if component doesn't exist we should create it
-   * @param {object} request
-   * @param {object} ajaxOptions
-   * @param {string} error
-   * @param {object} opt
-   * @param {object} params
-   * @method newServiceComponentErrorCallback
-   */
-  newServiceComponentErrorCallback: function (request, ajaxOptions, error, opt, params) {
-    this.addRequestToAjaxQueue({
-      name: 'wizard.step8.create_components',
-      data: {
-        serviceName: params.serviceName,
-        data: JSON.stringify({
-          "components": [
-            {
-              "ServiceComponentInfo": {
-                "component_name": params.componentName
-              }
-            }
-          ]
-        })
+        serviceName: serviceName,
+        serviceGroupName: serviceGroupName
       }
     });
   },
@@ -1522,7 +1515,7 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
     });
 
     this.addRequestToAjaxQueue({
-      name: 'common.cluster.settings',
+      name: 'common.cluster.settings.create',
       data: {
         clusterName: this.get('clusterName'),
         data: data
@@ -1536,16 +1529,54 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
    */
   createServiceConfigurations: function () {
     this.get('selectedServices').forEach(function (service) {
-      Object.keys(service.get('configTypes')).forEach(function (type) {
-        if (!this.get('serviceConfigTags').someProperty('type', type)) {
-          var configs = this.get('configs').filterProperty('filename', App.config.getOriginalFileName(type));
-          var serviceConfigNote = this.getServiceConfigNote(type, service.get('displayName'));
-          this.get('serviceConfigTags').pushObject(this.createDesiredConfig(type, configs, serviceConfigNote));
+      let serviceConfigs = {
+        serviceName: service.get('serviceName'),
+        serviceGroupName: service.get('stackName'), //TODO - mpacks: for now
+        data: {
+          "ServiceConfigVersion": {
+            "service_config_version_note": this.getServiceConfigNote('', service.get('displayName')),
+            "stack_id": `${service.get('stackName')}-${service.get('stackVersion')}`
+          },
+          "configurations": []
         }
+      };
+
+      Object.keys(service.get('configTypesRendered')).forEach(function (typeName) {
+        const type = service.get('configTypes')[typeName]; //just ensure that the type is in both lists; they contain the same data if so
+        if (type) {
+          const configs = this.get('configs').filterProperty('filename', App.config.getOriginalFileName(typeName));
+          serviceConfigs.data.configurations.push(this.createDesiredConfig(typeName, configs, null, true));
+        }  
       }, this);
+
+      if (serviceConfigs.data.configurations.length > 0) {
+        this.get('serviceConfigTags').pushObject(Em.Object.create(serviceConfigs));
+      }  
     }, this);
+    
     this.createNotification();
   },
+
+  /**
+   * Send <code>serviceConfigTags</code> to server
+   * Queued request
+   * One request for each service config data item,
+   * each of which corresponds to a single service instance
+   * @param serviceConfigData
+   * @method applyConfigurationsToCluster
+   */
+  applyConfigurationsToCluster: function (serviceConfigData) {
+    serviceConfigData.forEach(function (serviceConfig) {
+      this.addRequestToAjaxQueue({
+        name: 'common.service.create.configs',
+        data: {
+          serviceName: serviceConfig.get('serviceName'),
+          serviceGroupName: serviceConfig.get('serviceGroupName'),
+          data: serviceConfig.get('data')
+        }
+      });
+    }, this);
+  },  
 
   /**
    * Get config version message
@@ -1553,55 +1584,11 @@ App.WizardStep8Controller = App.WizardStepController.extend(App.AddSecurityConfi
    * @param type
    * @param serviceDisplayName
    * @returns {*}
-   */
+   */ 
   getServiceConfigNote: function(type, serviceDisplayName) {
     return this.get('isAddService') && type === 'core-site' ?
       Em.I18n.t('dashboard.configHistory.table.notes.addService') : Em.I18n.t('dashboard.configHistory.table.notes.default').format(serviceDisplayName);
-  },
-
-  /**
-   * Send <code>serviceConfigTags</code> to server
-   * Queued request
-   * One request for each service config tag
-   * @param serviceConfigTags
-   * @method applyConfigurationsToCluster
-   */
-  applyConfigurationsToCluster: function (serviceConfigTags) {
-    var allServices = this.get('installedServices').concat(this.get('selectedServices'));
-    var allConfigData = [];
-    allServices.forEach(function (service) {
-      var serviceConfigData = [];
-      Object.keys(service.get('configTypesRendered')).forEach(function (type) {
-        var serviceConfigTag = serviceConfigTags.findProperty('type', type);
-        if (serviceConfigTag) {
-          serviceConfigData.pushObject(serviceConfigTag);
-        }
-      }, this);
-      if (serviceConfigData.length) {
-        allConfigData.pushObject(JSON.stringify({
-          Clusters: {
-            desired_config: serviceConfigData.map(function(item) {
-              var props = {};
-              Em.keys(item.properties).forEach(function(propName) {
-                if (item.properties[propName] !== null) {
-                  props[propName] = item.properties[propName];
-                }
-              });
-              item.properties = props;
-              return item;
-            })
-          }
-        }));
-      }
-    }, this);
-
-    this.addRequestToAjaxQueue({
-      name: 'common.across.services.configurations',
-      data: {
-        data: '[' + allConfigData.toString() + ']'
-      }
-    });
-  },
+  },    
 
   /**
    * Create and update config groups
